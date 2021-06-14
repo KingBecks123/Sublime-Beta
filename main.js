@@ -1,3 +1,84 @@
+var loopNumberBasket = 0;
+var loopNumbercurrentTask = 0;
+
+function mainGameLoopSlow() {
+	
+	 if (gameData.autoStartSimulation == 1) {
+		startSimulation()
+	}
+	
+	 if (gameData.autoStartTask == 1) {
+		diseaseControlTask()
+	}
+	
+	
+	 if (gameData.autoCheckSimulation == 1) {
+		checkResults()
+	}
+
+	 if (gameData.currentTask == 'eatFood') {
+		eat()
+	}
+	
+	 else if (gameData.currentTask == 'rottenWisdom') {
+		barStartGranularSkillBasic('rottenWisdom')
+	}
+	
+	 else if (gameData.currentTask == 'intelligence') {
+		barStartGranularSkillBasic('intelligence')
+	}
+
+	 else if (gameData.currentTask == 'knifebidextrous') {
+		barStartGranularSkillBasic('knifebidextrous')
+	}
+	
+	 else if (gameData.currentTask == 'limebidextrous') {
+		barStartGranularSkillBasic('limebidextrous')
+	}
+	
+	 else if (gameData.currentTask == 'sellYourJuice') {
+		sellYourJuice()
+	}
+
+	 else if (gameData.currentTask == 'makeMaxJuice') {
+		makeMaxJuice()
+	}	
+
+	 else if (gameData.currentTask == 'makeJuice') {
+		makeJuice()
+	}	
+
+	 else if (gameData.currentTask == 'usePeelers') {
+		peelerPeel()
+	}	
+
+	 else if (gameData.currentTask == 'useMaxPeelers') {
+		peelerPeelMax()
+	}		
+
+	 else if (gameData.currentTask == 'keenEye') {
+		barStartGranularSkillBasic('keenEye')
+	}			
+	
+	
+	
+	setTimeout(mainGameLoopSlow, 500)
+}
+
+function mainGameLoop() {
+	
+	loopNumberBasket += 1	
+	
+	 if (gameData.basketBar < 100 && loopNumberBasket >= 24) {
+        gameData.basketBar += 0.2;
+		loopNumberBasket = 0
+    }
+
+	
+	setTimeout(mainGameLoop, 50)
+    updateValues()
+}
+
 function sellMaxJuice() {
     if (gameData.juice < gameData.juiceBulkAmountMax) {
         gameData.juiceBulkAmountToggle = gameData.juice
@@ -65,46 +146,87 @@ function startSimulation() {
 
 }
 
+function diseaseControlQuit() {
+
+
+		diseaseControlFailed = 1
+
+
+		if (gameData.simulationTime == 1) {
+
+			gameData.diseaseControlFinished = 1
+			diseaseControlReset("hard")
+					 if (gameData.autoStartTask == 1) {
+				diseaseControlTask()
+			}
+
+				gameData.respect -= (gameData.limeDiseaseLakes + 1)
+			
+		} else {
+			gameData.diseaseControlFinished = 1
+			diseaseControlReset("hard")
+			gameData.respect -= (gameData.limeDiseaseLakes + 1)
+			
+					 if (gameData.autoStartTask == 1) {
+				diseaseControlTask()
+			}
+		}
+
+
+    updateValues()
+
+}
 
 function checkResults() {
 
-    diseaseControlFailed = 0
-    for (x = 0; x < 4; x++) {
+if (gameData.civiliansPlaced == gameData.civiliansTotal)
+	
+		{
+		diseaseControlFailed = 0
+		for (x = 0; x < 4; x++) {
 
-        for (y = 0; y < 4; y++) {
+			for (y = 0; y < 4; y++) {
 
-            tileType = (gameData.diseaseArray[x][y])
-
-
-            if (tileType == 3) {
-
-                diseaseControlFailed = 1
-
-            }
-
-        }
-
-    }
+				tileType = (gameData.diseaseArray[x][y])
 
 
-    if (gameData.civiliansPlaced == gameData.civiliansTotal && gameData.simulationTime == 1) {
+				if (tileType == 3) {
 
-        gameData.diseaseControlFinished = 1
-        diseaseControlReset("hard")
+					diseaseControlFailed = 1
 
+				}
 
-        if (diseaseControlFailed == 0) {
-            gameData.respect += (gameData.limeDiseaseLakes + 1)
-        } else {
-            gameData.respect -= (gameData.limeDiseaseLakes + 1)
-        }
-    } else {
-        gameData.diseaseControlFinished = 1
-        diseaseControlReset("hard")
-        gameData.respect -= (gameData.limeDiseaseLakes + 1)
-    }
+			}
+
+		}
 
 
+		if (gameData.simulationTime == 1) {
+
+			gameData.diseaseControlFinished = 1
+			diseaseControlReset("hard")
+					 if (gameData.autoStartTask == 1) {
+				diseaseControlTask()
+			}
+
+
+			if (diseaseControlFailed == 0) {
+				gameData.respect += (gameData.limeDiseaseLakes + 1)
+			} else {
+				gameData.respect -= (gameData.limeDiseaseLakes + 1)
+			}
+			
+		} else {
+			gameData.diseaseControlFinished = 1
+			diseaseControlReset("hard")
+			gameData.respect -= (gameData.limeDiseaseLakes + 1)
+			
+					 if (gameData.autoStartTask == 1) {
+				diseaseControlTask()
+			}
+		}
+
+	}
 
     updateValues()
 
@@ -133,24 +255,43 @@ function mapTile(x, y) {
 
 function diseaseControlTask() {
 
-    diseaseControlReset("soft")
-    gameData.diseaseControlFinished = 0
-    gameData.civiliansTotal = beckyRandom(5)
+    if (gameData.diseaseControlFinished == 1) {
+		diseaseControlReset("soft")
+		gameData.diseaseControlFinished = 0
+		gameData.civiliansTotal = beckyRandom(4)
+				
+		tiles = gameData.numberOfTiles - 16
 
 
-    for (gameData.limeDiseaseLakesCurrent = 0; gameData.limeDiseaseLakesCurrent < gameData.limeDiseaseLakes; gameData.limeDiseaseLakesCurrent) {
+		for (gameData.limeDiseaseLakesCurrent = 0; gameData.limeDiseaseLakesCurrent < gameData.limeDiseaseLakes; gameData.limeDiseaseLakesCurrent) {
 
-        x = beckyRandom(4) - 1
-        y = beckyRandom(4) - 1
+			x = beckyRandom(5) - 1
+			y = beckyRandom(5) - 1
 
-        if (gameData.diseaseArray[x][y] !== 4) {
+			if( ((x < 4 && y < 4) || (x == 4 && y < tiles)) && gameData.diseaseArray[x][y] !== 4)
+			{
+				gameData.diseaseArray[x][y] = 4
+				gameData.limeDiseaseLakesCurrent += 1
+			}
+		}
+		
+		if (gameData.autoPlaceACivilian == 1 && gameData.numberOfTiles !== gameData.limeDiseaseLakes)  {
+			
+			for (i = 0; gameData.civiliansPlaced < 1; i) {
 
-            gameData.diseaseArray[x][y] = 4
-            gameData.limeDiseaseLakesCurrent += 1
+				x = beckyRandom(5) - 1
+				y = beckyRandom(5) - 1
 
-        }
-
-    }
+				if(( (x < 4 && y < 4) || (x == 4 && y < tiles) ) && gameData.diseaseArray[x][y] == 0)
+				{
+					gameData.diseaseArray[x][y] = 1
+					gameData.civiliansPlaced += 1
+				}
+				
+			}
+		}
+	
+	}
 
 
 
@@ -159,9 +300,9 @@ function diseaseControlTask() {
 
 function diseaseControlReset(type) {
 
-    for (x = 0; x < 4; x++) {
+    for (x = 0; x < 5; x++) {
 
-        for (y = 0; y < 4; y++) {
+        for (y = 0; y < 5; y++) {
 
             if (gameData.diseaseArray[x][y] !== 4 || type == "hard") {
                 gameData.diseaseArray[x][y] = 0
@@ -263,21 +404,35 @@ function getLimesButton() {
 }
 
 function getLimes() {
-
-    if (Math.random() <= (gameData.rottenWisdom / 100)) {
-        if (Math.random() <= (gameData.limebidextrous / 100)) {
-            gameData.limes += gameData.limesPerClick
-            if (gameData.teachBar > 0 && gameData.teachBar < 100) {
-                gameData.employeeCurrentSpeed += (gameData.limesPerClick * gameData.employeeSpeed) / 10
-            }
-        }
-        gameData.limes += gameData.limesPerClick
-        if (gameData.teachBar > 0 && gameData.teachBar < 100) {
-            gameData.employeeCurrentSpeed += (gameData.limesPerClick * gameData.employeeSpeed) / 10
-        }
-    } else {
-        gameData.rottenLimes += gameData.limesPerClick
-    }
+	if( beckyRandom(eval(gameData.keenEyeSkillLevelMax)) <= gameData.keenEyeSkillLevel)
+	{
+		if (gameData.keenEyeSkillLevel != gameData.keenEyeSkillLevelMax)
+		{
+			update("newInfo", "You found something!")
+		}
+		
+		
+		if (Math.random() <= (gameData.rottenWisdom / 100)) {
+			if (Math.random() <= (gameData.limebidextrous / 100)) {
+				gameData.limes += gameData.limesPerClick
+				if (gameData.teachBar > 0 && gameData.teachBar < 100) {
+					gameData.employeeCurrentSpeed += (gameData.limesPerClick * gameData.employeeSpeed) / 10
+				}
+			}
+			gameData.limes += gameData.limesPerClick
+			if (gameData.teachBar > 0 && gameData.teachBar < 100) {
+				gameData.employeeCurrentSpeed += (gameData.limesPerClick * gameData.employeeSpeed) / 10
+			}
+		} else {
+			gameData.rottenLimes += gameData.limesPerClick
+		}
+		
+	}
+	else
+	{
+		update("newInfo", "Couldn't find any limes...")
+	}
+		
     updateValues()
 }
 
@@ -292,7 +447,6 @@ function peelLime() {
     }
     updateValues()
 }
-
 
 function buyTome() {
     if (gameData.coins >= 10) {
@@ -370,35 +524,51 @@ function hireANutritionist() {
 
 function travelToNextVillage() {
     if (window.prompt("Are you sure? Type 'yes' if you are") == "yes") {
-        megaCoinsNow = gameData.megaCoinsInBank
-        bigGlovesNow = gameData.bigGloves
-        nutritionistsNow = gameData.nutritionists
-        megaCoinsInBankMaxNow = gameData.megaCoinsInBankMax
-        betterTrainingNow = gameData.betterTraining
+		
+		if (gameData.increaseJuicePricePermanance == 1) {
+			saveBeforeWipe('juicePricePrice')
+		    saveBeforeWipe('juicePriceCents')
+		} 
+		
+        saveBeforeWipe('increaseJuicePricePermanance')
 
-        autosaveNow = gameData.autosave
-        showBarPercentNow = gameData.showBarPercent
-        hideCompletedSkillsNow = gameData.hideCompletedSkills
-        hideMaxedPurchasesNow = gameData.hideMaxedPurchases
+		
+        megaCoinsNow = gameData.megaCoinsInBank
+
+        saveBeforeWipe('bigGloves')
+        saveBeforeWipe('desktopMode')
+        saveBeforeWipe('nutritionists')
+        saveBeforeWipe('megaCoinsInBankMax')
+        saveBeforeWipe('betterTraining')
+        saveBeforeWipe('autosave')
+        saveBeforeWipe('showBarPercent')
+        saveBeforeWipe('hideCompletedSkills')
+        saveBeforeWipe('hideMaxedPurchases')
+        saveBeforeWipe('researchers')
+
+
 
 
 
         Object.assign(gameData, gameDataBase)
 
+		if (increaseJuicePricePermananceNow == 1) {
+			saveAfterWipe('juicePricePrice')
+			saveAfterWipe('juicePriceCents')
+			saveAfterWipe('increaseJuicePricePermanance')
+		} 
 
-
-        gameData.megaCoins = megaCoinsNow
-
-        gameData.megaCoinsInBank = megaCoinsNow
-        gameData.bigGloves = bigGlovesNow
-        gameData.nutritionists = nutritionistsNow
-        gameData.megaCoinsInBankMax = megaCoinsInBankMaxNow
-        gameData.betterTraining = betterTrainingNow
-
-        gameData.autosave = autosaveNow
-        gameData.showBarPercent = showBarPercentNow
-        gameData.hideCompletedSkills = hideCompletedSkillsNow
-        gameData.hideMaxedPurchases = hideMaxedPurchasesNow
+        saveAfterWipe('researchers')
+        saveAfterWipe('megaCoins')
+        saveAfterWipe('bigGloves')
+        saveAfterWipe('desktopMode')
+        saveAfterWipe('nutritionists')
+        saveAfterWipe('megaCoinsInBankMax')
+        saveAfterWipe('betterTraining')
+        saveAfterWipe('autosave')
+        saveAfterWipe('showBarPercent')
+        saveAfterWipe('hideCompletedSkills')
+        saveAfterWipe('hideMaxedPurchases')
 
         gameData.villageNumber = 2
         saveGame()
@@ -453,24 +623,6 @@ function buyAMap() {
     updateValues()
 }
 
-
-
-
-function bulkBuyUnlock() {
-    if (gameData.coins >= 1000) {
-        gameData.coins -= 1000
-        gameData.bulkBuyUnlock = 1
-    }
-    updateValues()
-}
-
-function storageUnlock() {
-    if (gameData.coins >= 200) {
-        gameData.coins -= 200
-        gameData.storageUnlock = 1
-    }
-    updateValues()
-}
 
 function storageJuicersUnlock() {
     if (gameData.coins >= 100) {
@@ -551,7 +703,7 @@ function changeLakeAmount(x) {
 
     if (gameData.diseaseControlFinished == 1) {
 
-		if (gameData.limeDiseaseLakes < 16 && x == 1) {
+		if (gameData.limeDiseaseLakes < gameData.numberOfTiles && x == 1) {
 			
 			gameData.limeDiseaseLakes += x
 			

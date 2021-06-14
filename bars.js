@@ -15,7 +15,6 @@ function basket() {
     gameData.basketBar = 0;
     gameData.limes += gameData.limesInBaskets;
     gameData.limesInBaskets = 0;
-    updateValues()
 }
 
 function workingBar() {
@@ -34,21 +33,14 @@ function workingBar() {
             gameData.employeeIsWorking = 0
         }
     }
-    updateValues()
-}
-
-function basketBar() {
-    if (gameData.basketBar < 100) {
-        gameData.basketBar += 0.2;
-    }
-
-    setTimeout(basketBar, 1200)
-    updateValues()
 }
 
 function teach() {
+	
     gameData.employeeCurrentSpeed = -(gameData.employeeHunger * 60)
-    barStartGranular("teach")
+	
+	setTimeout('barStartGranular("teach")', 1000)
+    
 }
 
 function teachBar() {
@@ -56,11 +48,10 @@ function teachBar() {
         gameData.teachBar += 1;
         setTimeout(teachBar, 20)
     }
-    updateValues()
 }
 
 function eat() {
-    if ((gameData.eatBar == 100 || gameData.eatBar == 0) && gameData.eat < 100) {
+    if ((gameData.eatBar >= 100 - (gameData.fork) / 2 || gameData.eatBar == 0) && gameData.eat < 100) {
         if (gameData.foodTypeToggle == 0 && gameData.limes > 0) {
             gameData.limes -= 1
             gameData.foodType = 5
@@ -74,14 +65,77 @@ function eat() {
 }
 
 function eatBar() {
-    basicBarSkill("eat")
+    if (gameData.eatBar < 100) {
+        gameData.eatBar += 0.5 * (gameData.fork + 1) ;
+        setTimeout(eatBar, 10)
+		moveBar("eat")
+        } else {
+            gameData.eat += gameData.foodType * (gameData.nutritionists + 1)
+            if (gameData.eat > 100) {
+                gameData.eat = 100
+            }
+		}
 }
+
+function watertight() {
+    if (gameData.peeledLimesPerJuice > 1) {
+		
+		
+		barStartGranular('watertight')
+	}
+}
+
+function watertightBar() {
+    if (gameData.watertightBar < 100) {
+		if (gameData.watertightResearchers > 0)
+		{
+			if(watertightBarDoMove)
+				gameData.watertightBar += 0.5;
+			
+			watertightBarDoMove = 1
+			
+			setTimeout(watertightBar, (1e4 * Math.pow(10, 5 - gameData.peeledLimesPerJuice)) / gameData.watertightResearchers)
+		}
+		
+		moveBar("watertight")
+        } else {
+			gameData.peeledLimesPerJuice -= 1
+		}
+}
+
+function surveying() {
+    if (gameData.numberOfTiles < 20) {
+
+		barStartGranular('surveying')
+	}
+}
+
+function surveyingBar() {
+    if (gameData.surveyingBar < 100) {
+		if (gameData.surveyingResearchers > 0)
+		{
+			if(surveyingBarDoMove)
+				gameData.surveyingBar += 0.5;
+			
+			surveyingBarDoMove = 1
+			setTimeout(surveyingBar, (1e3 * Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
+		}
+		
+		moveBar("surveying")
+		
+        } else {
+			gameData.numberOfTiles += 1
+			diseaseControlQuit()
+		}
+}
+
 
 
 
 function autoCollecting() {
     if (gameData.autoCollectingBar == (gameData.nourishment + 1) * 100 || gameData.autoCollectingBar == 0) {
         gameData.autoCollectingBar = 0
+		gameData.isAutoCollecting = 1
         autoCollectingBar()
     }
 }
@@ -92,11 +146,10 @@ function autoCollectingBar() {
         setTimeout(autoCollectingBar, 50)
     }
 
-    if (gameData.autoCollectingBar % 10 == 0) {
+    if (gameData.autoCollectingBar % (10 / (gameData.shoes + 1)) == 0) {
         getLimes()
     }
 
-    updateValues()
 }
 
 
@@ -111,13 +164,14 @@ function learnANewSkill() {
 function advertiseBar() {
     if (gameData.advertiseBar <= 99) {
         gameData.advertiseBar += 1;
+		moveBar("advertise")
         setTimeout(advertiseBar, (200 / (gameData.advertisingLevel2 * 2 * gameData.advertisingLevel3 + gameData.advertisingLevel2 + 2 * gameData.advertisingLevel3 + 1) / gameData.tickspeed))
     } else {
         gameData.applicationReady = 1
         gameData.hasAdvertised = 1
         randomizeApplication()
     }
-    updateValues()
+    
 }
 
 function intelligenceBar() {
@@ -136,12 +190,24 @@ function rottenWisdomBar() {
     basicBarSkill("rottenWisdom")
 }
 
+function keenEyeBar() {
+    basicBarSkill("keenEye")
+}
+
 function learnANewSkillBar() {
     if (gameData.learnANewSkillBar < 100) {
         gameData.learnANewSkillBar += 0.1;
         setTimeout(learnANewSkillBar, 10 / gameData.tickspeed)
     } else {
         switch (gameData.learnANewSkill) {
+            case -2:
+                gameData.learnANewSkill = -1
+                update("newInfo", "You unlocked auto collection!")
+                break;
+            case -1:
+                gameData.learnANewSkill = 0
+                update("newInfo", "You learned Keen Eye!")
+                break;
             case 0:
                 gameData.learnANewSkill = 1
                 update("newInfo", "You Learned Rotten Wisdom!")
@@ -159,7 +225,7 @@ function learnANewSkillBar() {
                 update("newInfo", "You Learned Knifebidextrous!")
         }
     }
-    updateValues()
+
 }
 
 function sellYourJuice() {
@@ -172,7 +238,6 @@ function sellYourJuice() {
         sellYourJuiceBar()
     }
 
-    updateValues()
 }
 
 function sellYourJuiceBar() {
@@ -183,12 +248,14 @@ function sellYourJuiceBar() {
             if (gameData.deliveryBar <= 99.9) {
                 gameData.deliveryOngoing = 1
                 gameData.deliveryBar += 0.1;
+			    moveBar("delivery")
                 setTimeout(sellYourJuiceBar, (100 / (gameData.deliveryType * 100 + 1)) / gameData.tickspeed)
             }
         } else if (gameData.deliveryType == 2) {
             if (gameData.deliveryBar <= 99.5) {
                 gameData.deliveryOngoing = 1
                 gameData.deliveryBar += 0.5;
+			    moveBar("delivery")
                 setTimeout(sellYourJuiceBar, (100 / (gameData.deliveryType * 100 + 1)) / gameData.tickspeed)
             }
         }
@@ -196,7 +263,6 @@ function sellYourJuiceBar() {
         gameData.coins += Math.floor(gameData.juiceBulkAmount * (1 + (gameData.juicePriceCents / 100)))
         gameData.deliveryOngoing = 0
     }
-    updateValues()
 }
 
 
@@ -220,7 +286,6 @@ function makeJuice() {
         }
     }
 
-    updateValues()
 }
 
 
@@ -236,7 +301,6 @@ function peelerPeel() {
         }
     }
 
-    updateValues()
 }
 
 
@@ -259,13 +323,13 @@ function peelerPeelMax() {
 
         }
     }
-    updateValues()
 }
 
 
 function makeMaxJuice() {
 
-    if (gameData.juicerBar >= 99 || gameData.juicerBar == 0) {
+    if ((gameData.juicerBar == 100 || gameData.juicerBar == 0) && gameData.isCurrentlyJuicing == 1) {
+
         if (gameData.limeTypeToJuice == 0) {
             gameData.howMuchJuice = Math.floor(gameData.limes / gameData.limesPerJuice)
             if (gameData.howMuchJuice > gameData.juicers) {
@@ -278,36 +342,37 @@ function makeMaxJuice() {
             if (gameData.howMuchJuice > gameData.juicers) {
                 gameData.howMuchJuice = gameData.juicers
             }
+
             gameData.peeledLimes -= gameData.howMuchJuice * gameData.peeledLimesPerJuice
             gameData.limeTypeToJuiceToggle = 1
         }
         if (gameData.howMuchJuice > 0) {
             gameData.juicerBar = 0;
+			gameData.isCurrentlyJuicing = 0
             juicerBar()
         }
     }
-    updateValues()
 }
 
 function juicerBar() {
-    if (gameData.juicerBar <= 99) {
-        gameData.juicerBar += 1;
-        var x = (gameData.limeTypeToJuiceToggle * 99 + 1) * (gameData.tickspeed)
-        setTimeout(juicerBar, 100 / x)
+    if (gameData.juicerBar <= 99.5) {
+        gameData.juicerBar += 0.5;
+		moveBar("juicer")
+        var x = (gameData.limeTypeToJuiceToggle * 3 + 1) * gameData.tickspeed
+        setTimeout(juicerBar, 50 / x)
     } else {
         gameData.juice += gameData.howMuchJuice;
-        gameData.hasGottenJuice = 1
+        gameData.isCurrentlyJuicing = 1
     }
-    updateValues()
 }
 
 function peelerBar() {
-    if (gameData.peelerBar <= 99) {
+    if (gameData.peelerBar <= 99.5) {
 
-        gameData.peelerBar += 1;
-        setTimeout(peelerBar, (100 / ((gameData.sharperPeelers + 1) * 2)) / gameData.tickspeed)
+        gameData.peelerBar += 0.5;
+		moveBar("peeler")
+        setTimeout(peelerBar, (50 / ((gameData.sharperPeelers + 1) * 2)) / gameData.tickspeed)
     } else {
         gameData.peeledLimes += gameData.howManyPeeledLimes;
     }
-    updateValues()
 }

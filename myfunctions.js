@@ -1,3 +1,17 @@
+function loadStuff(savegame) {
+
+
+    if (savegame !== null) {
+        Object.assign(gameData, savegame);
+        backwardsCompatibility(savegame.versionNumber)
+        gameData.versionNumber = 78
+        updateValues()
+        updateAfterLoad()
+    } else {
+        update("newInfo", "Save File Empty.")
+    }
+}
+
 function ifMaxDarkGray(x) {
 
     addS = "gameData." + x + "s"
@@ -22,6 +36,65 @@ function hide(x) {
 
 function showBasicDiv(x) {
     tabs(x, "block")
+}
+
+function pin(x) {
+	
+	if(gameData.pin == x && gameData.pin !== "none")
+	{
+		gameData.pin = "none"
+	}
+	else
+	{
+		gameData.pin = x
+	}
+		
+		normalizeButtons()
+		pinButton()
+		
+		
+		
+
+	updateValues()
+}
+
+function normalizeButtons(){
+	$( ".juiceMarket" ).prepend( document.getElementById("sellYourJuiceButton") )
+	document.getElementById("sellYourJuiceButton").style.width = "120px"
+	document.getElementById("sellYourJuiceButton").style.margin = "5px"
+	
+	$( ".autoCollectingDiv" ).prepend( document.getElementById("autoCollectingButton") )
+	document.getElementById("autoCollectingButton").style.width = "150px"
+	document.getElementById("autoCollectingButton").style.margin = "5px"
+
+}
+
+function pinButton() {
+	if(gameData.pin !== "none")
+	{
+		$( ".navigateButtons" ).append( document.getElementById(gameData.pin) )
+		
+		document.getElementById(gameData.pin).style.width = "120px"
+		document.getElementById(gameData.pin).style.margin = "0px"
+		document.getElementById(gameData.pin).style.padding = "0px";
+	}
+	
+	updateValues()
+}
+
+
+function pickCurrentTask(x) {
+	
+	if(gameData.currentTask == x && gameData.currentTask !== "none")
+	{
+		gameData.currentTask = "none"
+	}
+	else
+	{
+		gameData.currentTask = x
+	}
+	
+	updateValues()
 }
 
 
@@ -73,6 +146,22 @@ function showOrHideClass(input) {
     }
 }
 
+
+function toggleAesthetic(input) {
+
+
+    button = input + "Button"
+
+    if (eval("gameData." + input + " == 1")) {
+        document.getElementById(button).style.backgroundColor = accent3;
+
+    } else {
+        document.getElementById(button).style.backgroundColor = accent2;
+
+
+    }
+
+}
 
 
 function basicToggle(input, type) {
@@ -130,6 +219,45 @@ function basicBuy(x, price) {
     updateValues()
 }
 
+function addResearchers(id, amount) {
+
+	if (amount > 0 && (gameData.researchersAvailable - amount >= 0))
+	{
+		gameData[id + "Researchers"] += amount
+		gameData.researchersAvailable -= amount
+	}
+	else if (amount < 0 && (gameData.researchersAvailable - amount <= gameData.researchers))
+	{
+		gameData[id + "Researchers"]  += amount
+		gameData.researchersAvailable -= amount
+	}
+
+    updateValues()
+}
+
+function hireResearcher(id) {
+	
+    if (id == 'coins') {
+		if (gameData[id] >= 5000) {
+			gameData[id] -= 5000
+			gameData.researchersAvailable += 1
+			gameData.researchers += 1
+
+		}
+    }
+	
+    else if (id == 'megaCoins') {
+		if (gameData[id] >= 1) {
+			gameData[id] -= 1
+			gameData.researchersAvailable += 1
+			gameData.researchers += 1
+
+		}
+    }
+
+    updateValues()
+}
+
 function basicBuyMax(x, price, max) {
 
     if (gameData.coins >= price && eval("gameData." + x) < max) {
@@ -152,18 +280,36 @@ function bulkableBuyMax(x, price) {
 
         }
     } else {
-        if (gameData.coins >= (price * 10)) {
-            if (eval("gameData." + x) <= max - 10) {
-                gameData.coins -= price * 10
-                eval("gameData." + x + "+= 10")
-            } else
+		if (gameData.bulkBuyUnlock2)
+		{
+			if (gameData.coins >= (price * 100)) {
+				if (eval("gameData." + x) <= max - 100) {
+					gameData.coins -= price * 100
+					eval("gameData." + x + "+= 100")
+				} else
 
-            {
-                gameData.coins -= price * (max - eval("gameData." + x))
-                eval("gameData." + x + " = " + max)
-            }
+				{
+					gameData.coins -= price * (max - eval("gameData." + x))
+					eval("gameData." + x + " = " + max)
+				}
 
-        }
+			}
+		}
+		else
+		{
+			if (gameData.coins >= (price * 10)) {
+				if (eval("gameData." + x) <= max - 10) {
+					gameData.coins -= price * 10
+					eval("gameData." + x + "+= 10")
+				} else
+
+				{
+					gameData.coins -= price * (max - eval("gameData." + x))
+					eval("gameData." + x + " = " + max)
+				}
+
+			}
+		}
     }
 
     updateValues()
@@ -179,25 +325,18 @@ function beckyRandom(max) {
 function basicBarSkill(variable) {
     i = eval("gameData." + variable + "Bar")
 
-    if (i <= 99) {
-        eval("gameData." + variable + "Bar += 1");
+    if (i <= 99.5) {
+        eval("gameData." + variable + "Bar += 0.5");
         x = variable + "Bar()"
         if (variable != "eat") {
-            setTimeout(x, (100 / (gameData.intelligenceSkillLevel / gameData.intelligenceSkillLevelMax + 1)) / gameData.tickspeed)
+            setTimeout(x, (50 / (gameData.intelligenceSkillLevel / gameData.intelligenceSkillLevelMax + 1)) / gameData.tickspeed)
         } else {
             setTimeout(x, 10 / gameData.tickspeed)
         }
     } else {
-        if (variable != "eat") {
-            eval("gameData." + variable + "SkillLevel += 1");
-            eval("gameData." + variable + " += 2");
-        } else {
-            gameData.eat += gameData.foodType * (gameData.nutritionists + 1)
-            if (gameData.eat > 100) {
-                gameData.eat = 100
-            }
 
-        }
+        eval("gameData." + variable + "SkillLevel += 1");
+        eval("gameData." + variable + " += 2");
     }
     updateValues()
 }
@@ -230,13 +369,19 @@ function restartBar(x) {
     }
 }
 
+function restartBarNoMovement(x) {
+    y = eval("gameData." + x + "Bar")
+    if (y <= 99 && y != 0) {
+        eval(x + "Bar(0)")
+    }
+}
+
 //Starts a loading bar.
 function barStart(i, functionToCall, variable) {
     if (i >= 99.9 || i == 0) {
         eval(variable)
         eval(functionToCall)
     }
-    updateValues()
 }
 
 //Starts a granular loading bar.
@@ -247,7 +392,6 @@ function barStartGranular(variable) {
         eval("gameData." + variableBar + " = 0")
         eval(variableBar + "()")
     }
-    updateValues()
 }
 
 //Starts a granular loading bar for basic skills.
@@ -262,19 +406,6 @@ function barStartGranularSkillBasic(variable) {
         eval("gameData." + variableBar + " = 0")
         eval(variableBar + "()")
     }
-    updateValues()
-}
-
-//Starts a granular loading bar for skills.
-function barStartGranularSkill(variable, n) {
-    variableBar = variable + "Bar"
-
-    i = eval("gameData." + variableBar)
-    if ((i == 100 || i == 0) && (eval("gameData." + variable) < n)) {
-        eval("gameData." + variableBar + " = 0")
-        eval(variableBar + "()")
-    }
-    updateValues()
 }
 
 //Replaces an element with new text.
@@ -284,27 +415,36 @@ function update(id, content) {
 
 //Replaces a number with new text.
 function updateNumber(id) {
-    Id = jsUcfirst(id)
-    x = "textFor" + Id + "s"
-    if (eval("gameData." + id + "s") == 1) {
-        y = eval("gameData." + id + "s") + " " + Id
-    } else {
-        y = eval("gameData." + id + "s") + " " + Id + "s"
-    }
-    update(x, y)
+  elem = "textFor" + jsUcfirst(id)
+  valRaw = gameData[id]
+  if (valRaw > 1e9)
+       val = valRaw.toExponential(3)
+  else
+       val = valRaw.toLocaleString()
+  if (valRaw)
+  {
+	  if(valRaw > 0){
+		  
+      label = document.getElementById(elem+'Div')
+      if (label)
+          label.style.display = "block"
+	  
+	  label = document.getElementById(elem+'P')
+      if (label)
+          label.style.display = "block"
+	  
+	  label = document.getElementById(elem)
+      if (label)
+          label.style.display = "block"
+	  
+	  label = document.getElementById(elem+'Br')
+      if (label)
+          label.style.display = "block"
+	  }
+  }      
+  update(elem, val)
 }
 
-//Replaces a number with new text.
-function updateNumberSpecial(id, textToShow) {
-    Id = jsUcfirst(id)
-    x = "textFor" + Id + "s"
-    if (eval("gameData." + id + "s") == 1) {
-        y = eval("gameData." + id + "s") + " " + textToShow
-    } else {
-        y = eval("gameData." + id + "s") + " " + textToShow + "s"
-    }
-    update(x, y)
-}
 
 //Capitalises the first letter in a string.
 function jsUcfirst(string) {
@@ -352,6 +492,15 @@ function checkShowNonVariable(i, txt) {
 
 }
 
+function saveBeforeWipe(id) {
+	eval(id + 'Now' + '=' + 'gameData.' + id )
+}
+
+
+function saveAfterWipe(id) {
+	eval('gameData.' + id + '=' + id + 'Now')
+}
+
 function saveGame() {
 
     localStorage.setItem('mathAdventureSave', JSON.stringify(gameData))
@@ -365,10 +514,13 @@ function exportGame() {
 
 function importGame() {
     var savegame = JSON.parse(window.prompt("Import Code: "));
-    Object.assign(gameData, gameDataBase)
-    loadStuff(savegame)
-    saveGame()
-    location.reload();
+	if(savegame !== null)
+	{
+		Object.assign(gameData, gameDataBase)
+		loadStuff(savegame)
+		saveGame()
+		location.reload();
+	}
 
 }
 
@@ -389,20 +541,5 @@ function resetGame() {
         Object.assign(gameData, gameDataBase)
         localStorage.setItem('mathAdventureSave', JSON.stringify(gameData))
         location.reload();
-    }
-}
-
-
-function loadStuff(savegame) {
-
-
-    if (savegame !== null) {
-        Object.assign(gameData, savegame);
-        backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 56
-        updateValues()
-        updateAfterLoad()
-    } else {
-        update("newInfo", "Save File Empty.")
     }
 }

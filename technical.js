@@ -24,7 +24,7 @@ var gameDataBase = {
     rottenWisdomBar: 0,
     rottenWisdom: 0,
     learnANewSkillBar: 0,
-    learnANewSkill: 0,
+    learnANewSkill: -2,
     limebidextrousBar: 0,
     limebidextrous: 0,
     intelligenceBar: 0,
@@ -96,9 +96,8 @@ var gameDataBase = {
     employeeStatsInfoToggle: 0,
 
     bulkBuyUnlock: 0,
-    bulkBuyJuicersUnlock: 0,
-    bulkBuyPeelersUnlock: 0,
-    bulkBuyBasketsUnlock: 0,
+    bulkBuyUnlock2: 0,
+
 
     storageUnlock: 0,
     storageJuicersUnlock: 0,
@@ -142,15 +141,26 @@ var gameDataBase = {
 
     civiliansPlaced: 0,
     civiliansTotal: 2,
+	
+    autoStartTask: 0,
+    autoCheckSimulation: 0,
+
+    diseaseTileSize: 1,
+	
+	autoPlaceACivilian: 0,
+
+	increaseJuicePricePermanance: 0,
 
     silkRobe: 0,
 
     diseaseArray: [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
     ],
+    numberOfTiles: 16,
 
 
     juiceBulkAmountMax: 100,
@@ -163,6 +173,43 @@ var gameDataBase = {
     deliveryManager: 0,
 
     nourishment: 0,
+	
+    fork: 0,
+    shoes: 0,
+	
+	isCurrentlyJuicing: 0,
+
+    pin: "none",
+
+
+    currentTask: "none",
+
+    keenEyeBar: 0,	
+    keenEyeSkillLevel: 1,
+    keenEyeSkillLevelMax: 20,
+
+    desktopMode: 1,
+	
+	isAutoCollecting: 0,
+	
+	watertightBar: 0,
+	watertightResearchers: 0,
+	surveyingBar: 0,
+	surveyingResearchers: 0,
+	researchersAvailable: 0,
+	researchers: 0,
+
+	respectMilestone10: 0,
+	respectMilestone25: 0,
+	respectMilestone50: 0,
+	respectMilestone100: 0,
+	respectMilestone500: 0,
+	respectMilestone1000: 0,
+	respectMilestone2000: 0,
+
+
+
+	
 
     isOptionsOpen: 0,
 
@@ -180,19 +227,34 @@ var gameData = {}
 
 function gameStart() {
 
+	surveyingBarDoMove = 0
+	watertightBarDoMove = 0
+
+
+
     Object.assign(gameData, gameDataBase)
 
     loadGame()
+	
+	gameData.hasGottenJuice = 1
 
-    basketBar()
+    mainGameLoop()
+	
+    mainGameLoopSlow()
+
+	
     updateValues()
     autosave()
+	
+    addAestheticBase()
 
+	tab("null")
     tabStore("plebian")
     tabTasks("earn")
+    tabScience("research")
+
 }
 
-tab("shop")
 
 function tab(tabby) {
 
@@ -206,21 +268,39 @@ function tab(tabby) {
     tabs("tasks", "none")
     tabs("company", "none")
     tabs("forest", "none")
+    tabs("science", "none")
 
-    if (tabby == "options") {
+	
+	colorChanger('scienceButton', '#BBBBBB')
+	colorChanger('optionsButton', '#BBBBBB')
+	colorChanger('marketButton', '#BBBBBB')
+	colorChanger('inventoryButton', '#BBBBBB')
+	colorChanger('achievementsButton', '#BBBBBB')
+	colorChanger('skillsButton', '#BBBBBB')
+	colorChanger('megaCoinUpgradesButton', '#BBBBBB')
+	colorChanger('tasksButton', '#BBBBBB')
+	colorChanger('companyButton', '#BBBBBB')
+	colorChanger('forestButton', '#BBBBBB')
+
+
+
+    if (tabby == "options" && tabby !== "null") {
         if (gameData.isOptionsOpen == 0) {
             gameData.isOptionsOpen = 1
             document.getElementById(tabby).style.display = "inline-block"
+			colorChanger(tabby + "Button", "#898989")
+
 
         } else if (gameData.isOptionsOpen == 1) {
             gameData.isOptionsOpen = 0
         }
 
 
-    } else if (tabby !== "options") {
+    } else if (tabby !== "options" && tabby !== "null") {
 
         gameData.isOptionsOpen = 0
         document.getElementById(tabby).style.display = "inline-block"
+		colorChanger(tabby + "Button", "#898989")
 
     }
 
@@ -244,5 +324,11 @@ function tabTasks(tab) {
 function tabStore(tab) {
     tabs("plebian", "none")
     tabs("patrician", "none")
+    document.getElementById(tab).style.display = "block"
+}
+
+function tabScience(tab) {
+    tabs("research", "none")
+    tabs("researchers", "none")
     document.getElementById(tab).style.display = "block"
 }
