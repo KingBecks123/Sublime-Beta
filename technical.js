@@ -207,6 +207,7 @@ var gameDataBase = {
 	respectMilestone1000: 0,
 	respectMilestone2000: 0,
 
+	diseaseTileSymbols: 0,
 
 
 	

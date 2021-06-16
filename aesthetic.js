@@ -79,6 +79,8 @@ function addAesthetic() {
 			x[i].style['height'] = "40px";
 		}
 		
+        x[i].style.padding = "5px 5px 5px 5px";
+		
 		
         x[i].style['margin'] = "5px 0px 0px 0px";
 		
@@ -92,17 +94,35 @@ function addAesthetic() {
             tileType = (gameData.diseaseArray[x][y])
 
 
-            if (tileType == 0) {
+            if (tileType == 0) {                                //Blank
                 colorChanger(whichButton, accent4)
-            } else if (tileType == 1) {
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, "--")
+            } else if (tileType == 1) {                         //Civillian
                 colorChanger(whichButton, limesRelatedAccent)
-            } else if (tileType == 2) {
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, ":)")
+
+            } else if (tileType == 2) {                         //Disease
                 colorChanger(whichButton, "#FF999A")
-            } else if (tileType == 3) {
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, " ++")
+
+            } else if (tileType == 3) {                         //Dead Civillian
                 colorChanger(whichButton, "#565656")
-            } else if (tileType == 4) {
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, ":(")
+
+            } else if (tileType == 4) {                         //Lake
                 colorChanger(whichButton, "#4DFFFF")
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, "__")
+
             }
+			
+				if (!gameData.diseaseTileSize)
+					update(whichButton, "  ")
+
         }
     }
 

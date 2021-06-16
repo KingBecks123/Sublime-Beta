@@ -475,10 +475,17 @@ function updateValues() {
     }
 	
 	if (gameData.diseaseTileSize == 0) {
-        update("diseaseTileSizeButton", "Disease Tiles Small")
+        update("diseaseTileSizeButton", "Disease Tiles: Small")
     } else {
-        update("diseaseTileSizeButton", "Disease Tiles Large")
+        update("diseaseTileSizeButton", "Disease Tiles: Large")
     }
+	
+	if (gameData.diseaseTileSymbols == 0) {
+        update("diseaseTileSymbolsButton", "Disease Tiles: Blank")
+    } else {
+        update("diseaseTileSymbolsButton", "Disease Tiles: Symbols")
+    }
+
 
 
     if (gameData.deliveryManager == 0) {
