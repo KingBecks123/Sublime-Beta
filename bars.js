@@ -328,7 +328,7 @@ function peelerPeelMax() {
 
 function makeMaxJuice() {
 
-    if ((gameData.juicerBar == 100 || gameData.juicerBar == 0) && gameData.isCurrentlyJuicing == 1) {
+    if ((gameData.juicerBar == 100 || gameData.juicerBar == 0) && gameData.isCurrentlyJuicing == 0) {
 
         if (gameData.limeTypeToJuice == 0) {
             gameData.howMuchJuice = Math.floor(gameData.limes / gameData.limesPerJuice)
@@ -348,7 +348,7 @@ function makeMaxJuice() {
         }
         if (gameData.howMuchJuice > 0) {
             gameData.juicerBar = 0;
-			gameData.isCurrentlyJuicing = 0
+			gameData.isCurrentlyJuicing = 1
             juicerBar()
         }
     }
@@ -362,7 +362,8 @@ function juicerBar() {
         setTimeout(juicerBar, 50 / x)
     } else {
         gameData.juice += gameData.howMuchJuice;
-        gameData.isCurrentlyJuicing = 1
+		gameData.hasGottenJuice = 1
+        gameData.isCurrentlyJuicing = 0
     }
 }
 

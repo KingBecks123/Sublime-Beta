@@ -16,49 +16,8 @@ function mainGameLoopSlow() {
 		checkResults()
 	}
 
-	 if (gameData.currentTask == 'eatFood') {
-		eat()
-	}
-	
-	 else if (gameData.currentTask == 'rottenWisdom') {
-		barStartGranularSkillBasic('rottenWisdom')
-	}
-	
-	 else if (gameData.currentTask == 'intelligence') {
-		barStartGranularSkillBasic('intelligence')
-	}
-
-	 else if (gameData.currentTask == 'knifebidextrous') {
-		barStartGranularSkillBasic('knifebidextrous')
-	}
-	
-	 else if (gameData.currentTask == 'limebidextrous') {
-		barStartGranularSkillBasic('limebidextrous')
-	}
-	
-	 else if (gameData.currentTask == 'sellYourJuice') {
-		sellYourJuice()
-	}
-
-	 else if (gameData.currentTask == 'makeMaxJuice') {
-		makeMaxJuice()
-	}	
-
-	 else if (gameData.currentTask == 'makeJuice') {
-		makeJuice()
-	}	
-
-	 else if (gameData.currentTask == 'usePeelers') {
-		peelerPeel()
-	}	
-
-	 else if (gameData.currentTask == 'useMaxPeelers') {
-		peelerPeelMax()
-	}		
-
-	 else if (gameData.currentTask == 'keenEye') {
-		barStartGranularSkillBasic('keenEye')
-	}			
+	startCurrentTask(gameData.currentTask)	
+		
 	
 	
 	
@@ -95,6 +54,8 @@ function collectingUpgrade() {
         gameData.limes -= gameData.nourishmentPrice
         gameData.nourishment += 1
         gameData.autoCollectingBar = 0
+		gameData.isAutoCollecting = 1
+
 
     }
 

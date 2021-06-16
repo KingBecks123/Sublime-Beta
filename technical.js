@@ -1,6 +1,8 @@
 //Should be 0 if ur not cheating, 1 if you want to :)
 var cheatNum = 0;
 
+var researchersAvailable;
+
 var gameDataBase = {
     limes: 1,
     coins: 0,
@@ -180,6 +182,13 @@ var gameDataBase = {
 	isCurrentlyJuicing: 0,
 
     pin: "none",
+    pinUnlock: 0,
+	
+	hideRottenLimes: 0,
+	hideKnife: 0,
+	manuscripts: 0,
+
+
 
 
     currentTask: "none",
@@ -196,7 +205,6 @@ var gameDataBase = {
 	watertightResearchers: 0,
 	surveyingBar: 0,
 	surveyingResearchers: 0,
-	researchersAvailable: 0,
 	researchers: 0,
 
 	respectMilestone10: 0,
@@ -207,7 +215,7 @@ var gameDataBase = {
 	respectMilestone1000: 0,
 	respectMilestone2000: 0,
 
-	diseaseTileSymbols: 0,
+	diseaseTileSymbols: 1,
 
 
 	
@@ -237,8 +245,6 @@ function gameStart() {
 
     loadGame()
 	
-	gameData.hasGottenJuice = 1
-
     mainGameLoop()
 	
     mainGameLoopSlow()
@@ -272,14 +278,14 @@ function tab(tabby) {
     tabs("science", "none")
 
 	
-	colorChanger('scienceButton', '#BBBBBB')
+	colorChanger('scienceButton', '#9ABBFF')
 	colorChanger('optionsButton', '#BBBBBB')
 	colorChanger('marketButton', '#BBBBBB')
 	colorChanger('inventoryButton', '#BBBBBB')
 	colorChanger('achievementsButton', '#BBBBBB')
 	colorChanger('skillsButton', '#BBBBBB')
-	colorChanger('megaCoinUpgradesButton', '#BBBBBB')
-	colorChanger('tasksButton', '#BBBBBB')
+	colorChanger('megaCoinUpgradesButton', "#FF999A")
+	colorChanger('tasksButton', '#FF98DD')
 	colorChanger('companyButton', '#BBBBBB')
 	colorChanger('forestButton', '#BBBBBB')
 
@@ -302,6 +308,13 @@ function tab(tabby) {
         gameData.isOptionsOpen = 0
         document.getElementById(tabby).style.display = "inline-block"
 		colorChanger(tabby + "Button", "#898989")
+		
+		if(tabby == 'science')
+			colorChanger(tabby + "Button", "#4D88FE")
+		if(tabby == 'tasks')
+			colorChanger(tabby + "Button", "#FF4DFF")
+		if(tabby == 'megaCoinUpgrades')
+			colorChanger(tabby + "Button", "#FF4D4D")
 
     }
 

@@ -4,7 +4,7 @@ function loadStuff(savegame) {
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 79
+        gameData.versionNumber = 81
         updateValues()
         updateAfterLoad()
     } else {
@@ -84,15 +84,54 @@ function pinButton() {
 
 
 function pickCurrentTask(x) {
+	if (!event.shiftKey){
+		if(gameData.currentTask == x && gameData.currentTask !== "none")
+		{
+			gameData.currentTask = "none"
+		}
+		else
+		{
+			gameData.currentTask = x
+		}
+		
+		 if (gameData.currentTask == 'eatFood') {
+			eat()
+		}
+	}
 	
-	if(gameData.currentTask == x && gameData.currentTask !== "none")
-	{
-		gameData.currentTask = "none"
+	
+	else {
+		startCurrentTask(x)	
 	}
-	else
-	{
-		gameData.currentTask = x
+	
+	updateValues()
+}
+
+function startCurrentTask(x) {
+		
+	 if (x == 'eatFood') {
+		eat()
 	}
+	
+	 else if (x == 'sellYourJuice') {
+		sellYourJuice()
+	}
+
+	 else if (x == 'makeMaxJuice') {
+		makeMaxJuice()
+	}	
+
+	 else if (x == 'makeJuice') {
+		makeJuice()
+	}	
+
+	 else if (x == 'usePeelers') {
+		peelerPeel()
+	}	
+
+	 else if (x == 'useMaxPeelers') {
+		peelerPeelMax()
+	}		
 	
 	updateValues()
 }
@@ -221,15 +260,15 @@ function basicBuy(x, price) {
 
 function addResearchers(id, amount) {
 
-	if (amount > 0 && (gameData.researchersAvailable - amount >= 0))
+	if (amount > 0 && (researchersAvailable - amount >= 0))
 	{
 		gameData[id + "Researchers"] += amount
-		gameData.researchersAvailable -= amount
+		researchersAvailable -= amount
 	}
-	else if (amount < 0 && (gameData.researchersAvailable - amount <= gameData.researchers))
+	else if (amount < 0 && (researchersAvailable - amount <= gameData.researchers))
 	{
 		gameData[id + "Researchers"]  += amount
-		gameData.researchersAvailable -= amount
+		researchersAvailable -= amount
 	}
 
     updateValues()
@@ -240,7 +279,6 @@ function hireResearcher(id) {
     if (id == 'coins') {
 		if (gameData[id] >= 5000) {
 			gameData[id] -= 5000
-			gameData.researchersAvailable += 1
 			gameData.researchers += 1
 
 		}
@@ -249,7 +287,6 @@ function hireResearcher(id) {
     else if (id == 'megaCoins') {
 		if (gameData[id] >= 1) {
 			gameData[id] -= 1
-			gameData.researchersAvailable += 1
 			gameData.researchers += 1
 
 		}

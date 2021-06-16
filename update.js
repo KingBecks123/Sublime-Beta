@@ -142,12 +142,12 @@ function updateValues() {
     updateNumber("peeledLimes")
 
 
-
+	researchersAvailable = gameData.researchers - gameData.watertightResearchers - gameData.surveyingResearchers
 	
     update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
     update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
 
-    update("textForResearchers", gameData.researchersAvailable + " Available Researchers")
+    update("textForResearchers", researchersAvailable + " Available Researchers")
     update("textForWatertightResearchers", gameData.watertightResearchers + " Researchers")
     update("textForSurveyingResearchers", gameData.surveyingResearchers + " Researchers")
 
@@ -198,7 +198,6 @@ function updateValues() {
 	if (gameData.watertightResearchers == 0)
 	{
 		update("watertightTime", "Estimated Time: Infinite Seconds")
-		gameData.researchersAvailable = gameData.researchers
 	}
 	
 	else if (watertightResearchTime <= 600)
@@ -216,7 +215,6 @@ function updateValues() {
 	if (gameData.surveyingResearchers  == 0)
 	{
 		update("surveyingTime", "Estimated Time: Infinite Seconds")
-		gameData.researchersAvailable = gameData.researchers
 	}
 	
 	else if (surveyingResearchTime <= 600)
@@ -229,9 +227,23 @@ function updateValues() {
 		update("surveyingTime", "Estimated Time: " + surveyingResearchTimeShown.toLocaleString() + " Minutes")
 	}
 	
-
+	if (gameData.hideRottenLimes == 0)
+	{
+		showBasicDiv("rottenLimesHide")
+	}
+	else
+	{
+		hide("rottenLimesHide")
+	}
 	
-
+	if (gameData.rottemWisdomSkillLevel == gameData.rottemWisdomSkillLevelMax)
+	{
+		showBasicDiv("hideRottenLimesButton")
+	}
+	else
+	{
+		hide("hideRottenLimesButton")
+	}
 	
     update("textForMegaCoinsInBank", gameData.megaCoinsInBank.toLocaleString() + " / " + gameData.megaCoinsInBankMax.toLocaleString() + " Mega Coins In Bank")
 
@@ -368,6 +380,16 @@ function updateValues() {
         gameData.juiceBulkAmountMax = 100
     }
 	
+    if (gameData.pinUnlock == 1) {
+        hide("pinUnlockDiv")
+		var x = document.getElementsByClassName("pinButton");
+		for (i = 0; i < x.length; i++) {
+			x[i].style.display = "inline-block";
+		}
+
+    } else {
+        showBasicDiv("pinUnlockDiv")
+    }
 	
 
 
@@ -413,7 +435,7 @@ function updateValues() {
 		
     } else {
         hide("increaseJuicePricePermanance")
-		tabs("upgradeJuicePricePermanance", "inline-block")
+		showBasicDiv("upgradeJuicePricePermanance")
 	}
 	
 	
@@ -424,10 +446,20 @@ function updateValues() {
         hide("autoPlaceACivilianButton")
 	}
 	
-    if (gameData.respectMilestone1000 || gameData.researchers > 0) {
+    if (gameData.manuscripts == 0) {
+        showBasicDiv("buyManuscriptsDiv")
+    } else {
+        hide("buyManuscriptsDiv")	}
+	
+	
+    if (gameData.respectMilestone1000) {
         tabs("scienceButton", "inline-block")
+
+		
     } else {
         hide("scienceButton")
+
+		
 	}
 
 
