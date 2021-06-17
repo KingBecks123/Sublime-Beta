@@ -146,6 +146,8 @@ var gameDataBase = {
 	
     autoStartTask: 0,
     autoCheckSimulation: 0,
+    autoStartSimulation: 0,
+
 
     diseaseTileSize: 1,
 	
@@ -239,6 +241,7 @@ function gameStart() {
 	surveyingBarDoMove = 0
 	watertightBarDoMove = 0
 
+    addAestheticBase()
 
 
     Object.assign(gameData, gameDataBase)
@@ -253,9 +256,8 @@ function gameStart() {
     updateValues()
     autosave()
 	
-    addAestheticBase()
-
 	tab("null")
+    tabMarket("marketMain")
     tabStore("plebian")
     tabTasks("earn")
     tabScience("research")
@@ -321,12 +323,22 @@ function tab(tabby) {
 }
 
 
-function tabMarket(tab) {
+function tabMarket(tabby) {
     tabs("marketStore", "none")
     tabs("marketMain", "none")
     tabs("hiringArea", "none")
     tabs("travel", "none")
-    document.getElementById(tab).style.display = "block"
+	
+	
+	colorChanger('marketStoreButton', "#BBBBBB")
+	colorChanger('marketMainButton', '#BBBBBB')
+	colorChanger('hiringAreaButton', '#BBBBBB')
+	colorChanger('travelButton', '#BBBBBB')
+	
+	
+	
+	colorChanger(tabby + "Button", "#898989")
+    document.getElementById(tabby).style.display = "block"
 }
 
 function tabTasks(tab) {

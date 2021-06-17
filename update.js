@@ -236,7 +236,7 @@ function updateValues() {
 		hide("rottenLimesHide")
 	}
 	
-	if (gameData.rottemWisdomSkillLevel == gameData.rottemWisdomSkillLevelMax)
+	if (gameData.rottenWisdomSkillLevel == gameData.rottenWisdomSkillLevelMax)
 	{
 		showBasicDiv("hideRottenLimesButton")
 	}
@@ -262,7 +262,7 @@ function updateValues() {
 
     update("textForJuicePricePrice", "Price: " + gameData.juicePricePrice.toLocaleString() + " Coins")
 
-    update("textForNourishmentPrice", "You need " + gameData.nourishmentPrice.toLocaleString() + " Limes")
+    update("textForNourishmentPrice", "You Need: " + gameData.nourishmentPrice.toLocaleString() + " Limes")
 
 
 

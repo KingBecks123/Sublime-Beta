@@ -4,7 +4,7 @@ function loadStuff(savegame) {
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 81
+        gameData.versionNumber = 82
         updateValues()
         updateAfterLoad()
     } else {
@@ -265,7 +265,7 @@ function addResearchers(id, amount) {
 		gameData[id + "Researchers"] += amount
 		researchersAvailable -= amount
 	}
-	else if (amount < 0 && (researchersAvailable - amount <= gameData.researchers))
+	else if (amount < 0 && (researchersAvailable - amount <= gameData.researchers) && gameData[id + "Researchers"] > 0)
 	{
 		gameData[id + "Researchers"]  += amount
 		researchersAvailable -= amount

@@ -160,10 +160,10 @@
     <div id="market" style="padding:0px;margin:0px;">
 
         <div class="basicDiv" id="marketMainButtonsDiv" style="display:none;">
-            <button class="basicButtonSize" id="marketMainButton" , style="background-color:lightgray;" , onclick="tabMarket('marketMain')">Main Square</button>
-            <button class="basicButtonSize" id="marketStoreButton" , style="background-color:lightgray;display:none;" , onclick="tabMarket('marketStore')">General Store</button>
-            <button class="basicButtonSize" id="hiringAreaButton" , style="background-color:lightgray;display:none;" , onclick="tabMarket('hiringArea')">Hiring Area</button>
-            <button class="basicButtonSize" id="travelButton" , style="background-color:lightgray;display:none;" , onclick="tabMarket('travel')">Travel</button>
+            <button class="basicButtonSize" id="marketMainButton"  onclick="tabMarket('marketMain')">Main Square</button>
+            <button class="basicButtonSize" id="marketStoreButton" , style="display:none;" , onclick="tabMarket('marketStore')">General Store</button>
+            <button class="basicButtonSize" id="hiringAreaButton" , style="display:none;" , onclick="tabMarket('hiringArea')">Hiring Area</button>
+            <button class="basicButtonSize" id="travelButton" , style="display:none;" , onclick="tabMarket('travel')">Travel</button>
         </div>
 
         <div id="marketMain">
@@ -181,8 +181,10 @@
 
 						<button class="specialButton" , id="collectingUpgradeButton" onclick="collectingUpgrade()">Nourishment</button>
 
-						<p class="basicText" id="textForNourishmentPrice">You Need 10 Limes</p>
-						<p class="basicText">Double collection time</p>
+						<p class="basicText">Increase auto collect duration</p>
+						<p class="basicText" id="textForNourishmentPrice">You Need: 10 Limes</p>
+
+
 					</div>
                 </div>
 
@@ -194,7 +196,7 @@
 				
                 <div class="basicDiv" , id="buyShoesDiv">
                     <button class="specialButton" onclick="basicBuy('shoes', 1)">Buy Shoes</button>
-                    <p class="basicText">Double auto collection limes per second</p>
+                    <p class="basicText">Double auto collect rate</p>
                     <p class="basicText">Price: 1 Coin</p>
                 </div>
 				
@@ -214,7 +216,7 @@
                     <p class="basicText">Price: 2 Coins</p>
                 </div>
                 <div class="basicDiv juiceMarket" , id="juiceMarket" , style="display:none;">
-                    <button id="sellYourJuiceButton" , onclick="pickCurrentTask('sellYourJuice')">Sell Juice</button>
+                    <button class="basicButtonSizeRound" id="sellYourJuiceButton" , onclick="pickCurrentTask('sellYourJuice')">Sell Juice</button>
                     <button class="pinButton" onclick="pin('sellYourJuiceButton')" style="display:none">+</button>
 
                     <p class="basicText" , id="sellYourJuicePrice">You Need 2 Coins For Delivery</p>
@@ -579,11 +581,11 @@
 
     <div id="inventory">
         <div class="basicDiv pin" id="useJuicersDiv">
-            <p class="basicText" style="display:inline-block;width:300px;" id="juicersAmount">1 Juicers</p>
+            <p class="basicText" id="juicersAmount">1 Juicers</p>
 			
             <br>	
-            <button class="basicButtonSize" id="makeJuiceButton" style="width:150px;" , onclick="pickCurrentTask('makeJuice')">Use Juicer</button>
-            <button class="basicButtonSize" id="makeMaxJuiceButton" , onclick="pickCurrentTask('makeMaxJuice')" , style="visibility: hidden;width:150px;">Use Max Juicers</button>
+            <button class="basicButtonSizeRound" id="makeJuiceButton" style="width:150px;" , onclick="pickCurrentTask('makeJuice')">Use Juicer</button>
+            <button class="basicButtonSizeRound" id="makeMaxJuiceButton" , onclick="pickCurrentTask('makeMaxJuice')" , style="visibility: hidden;width:150px;">Max Juicers</button>
 			
 
             <br>
@@ -597,8 +599,8 @@
 
         <div class="basicDiv" id="peelerDiv" style="display:none">
             <p class="basicText" id="peelersAmount">1 Peeler</p>
-            <button class="basicButtonSize" id="usePeelersButton" style="width:150px;" , onclick="pickCurrentTask('usePeelers')">Use Peeler</button>
-            <button class="basicButtonSize" id="useMaxPeelersButton" onclick="pickCurrentTask('useMaxPeelers')" , style="display:none;width:150px;">Use Max Peelers</button>
+            <button class="basicButtonSizeRound" id="usePeelersButton" style="width:150px;" , onclick="pickCurrentTask('usePeelers')">Use Peeler</button>
+            <button class="basicButtonSizeRound" id="useMaxPeelersButton" onclick="pickCurrentTask('useMaxPeelers')" , style="display:none;width:150px;">Max Peelers</button>
             <br>
             <div class="skillProgress" id="peelerProgress">
                 <div class="skillBar" id="peelerBar">0%</div>
@@ -886,8 +888,10 @@
 			<div id="researchers">
 	
                 <div class="basicDiv" id="buyManuscriptsDiv" >
-                    <button class="specialButtonTravel" onclick="basicBuy('manuscripts, 10000')">Buy Manuscripts</button>
+                    <button class="specialButtonTravel" onclick="basicBuy('manuscripts', 10000)">Buy Manuscripts</button>
                     <p class="basicText" id="hireResearcherMegaCoins" >Keep 1000 Respect Milestone after travel</p>
+                    <p class="basicText" >Price: 20,000 Coins</p>
+
                 </div>	
 				
 				
@@ -913,7 +917,8 @@
 		
 		
         <div class="basicDiv" id="eatFoodDiv" style="display:none" >
-            <button class="basicButtonSize" id="eatFoodButton" onclick="pickCurrentTask('eatFood')">Eat Food</button>
+            <button class="basicButtonSizeRound" id="eatFoodButton" onclick="pickCurrentTask('eatFood')">   Eat Food   </button>
+
             <button class="basicButtonSize" id="foodToggleLimesButton" onclick="foodToggleLimes()">Limes</button>
             <button class="basicButtonSize" id="foodToggleRottenLimesButton" onclick="foodToggleRottenLimes()">Rotten Limes</button>
             <div class="skillInfo">
@@ -928,7 +933,7 @@
 
 
         <div class="basicDiv autoCollectingDiv" id="autoCollectingDiv" style="display:none" >
-            <button id="autoCollectingButton" onclick="autoCollecting()">Start Collecting</button>
+            <button id="autoCollectingButton" onclick="autoCollecting()">Auto Collect</button>
             <button class="pinButton" onclick="pin('autoCollectingButton')" style="display:none" >+</button>
 
             <div class="skillInfo">
@@ -962,7 +967,7 @@
 	
         <div class="basicDiv" id="keenEyeDiv" style="display:none" >
 
-            <button class="basicButtonSize" , id="keenEyeButton" , onclick="barStartGranularSkillBasic('keenEye')">Keen Eye</button>
+            <button class="specialButton" , id="keenEyeButton" , onclick="barStartGranularSkillBasic('keenEye')">Keen Eye</button>
             <div class="skillInfo">
                 <p class="basicText">Get better at finding limes / rotten limes.</p>
             </div>
@@ -979,7 +984,7 @@
 
         <div class="basicDiv" , id="rottenWisdomDiv" , style="display:none;">
 
-            <button class="basicButtonSize" , id="rottenWisdomButton" , onclick="barStartGranularSkillBasic('rottenWisdom')">Rotten Wisdom</button>
+            <button class="specialButton" , id="rottenWisdomButton" , onclick="barStartGranularSkillBasic('rottenWisdom')">Rotten Wisdom</button>
             <div class="skillInfo">
                 <p class="basicText">Pick up limes rather than rotten limes: +2% Chance.</p>
             </div>
@@ -997,7 +1002,7 @@
 
 
 
-            <button class="basicButtonSize" , id="limebidextrousButton" , onclick="barStartGranularSkillBasic('limebidextrous')">Limebidextrous</button>
+            <button class="specialButton" , id="limebidextrousButton" , onclick="barStartGranularSkillBasic('limebidextrous')">Limebidextrous</button>
             <div class="skillInfo">
                 <p class="basicText" , id="limebidextrousInfo">Pick up 2 limes rather than 1: +2% Chance.</p>
             </div>
@@ -1011,7 +1016,7 @@
         <div class="basicDiv" , id="intelligenceDiv" , style="display:none;">
 
 
-            <button class="basicButtonSize" , id="intelligenceButton" , onclick="barStartGranularSkillBasic('intelligence')">Intelligence</button>
+            <button class="specialButton" , id="intelligenceButton" , onclick="barStartGranularSkillBasic('intelligence')">Intelligence</button>
             <div class="skillInfo">
                 <p class="basicText" , id="intelligenceInfo">Skilling speed: +10%.</p>
             </div>
@@ -1026,7 +1031,7 @@
         <div class="basicDiv" , id="knifebidextrousDiv" , style="display:none;">
 
 
-            <button class="basicButtonSize" , id="knifebidextrousButton" , onclick="barStartGranularSkillBasic('knifebidextrous')">Knifebidextrous</button>
+            <button class="specialButton" , id="knifebidextrousButton" , onclick="barStartGranularSkillBasic('knifebidextrous')">Knifebidextrous</button>
             <div class="skillInfo">
                 <p class="basicText" , id="knifebidextrousInfo">Chance to peel 2 limes rather than 1: +5%.</p>
                 <p class="basicText" , id="knifebidextrousInfo">Unlock something special for completing this!</p>
@@ -1042,13 +1047,13 @@
     </div>
     </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="aesthetic.js?v=      81" charset="utf-8" type="text/javascript"></script>
-    <script src="myfunctions.js?v=    81" charset="utf-8" type="text/javascript"></script>
-    <script src="main.js?v=           81" charset="utf-8" type="text/javascript"></script>
-    <script src="technical.js?v=      81" charset="utf-8" type="text/javascript"></script>
-    <script src="bars.js?v=           81" charset="utf-8" type="text/javascript"></script>
-    <script src="update.js?v=         81" charset="utf-8" type="text/javascript"></script>
-    <script src="oldupdatefixes.js?v= 81" charset="utf-8" type="text/javascript"></script>
+    <script src="aesthetic.js?v=      82" charset="utf-8" type="text/javascript"></script>
+    <script src="myfunctions.js?v=    82" charset="utf-8" type="text/javascript"></script>
+    <script src="main.js?v=           82" charset="utf-8" type="text/javascript"></script>
+    <script src="technical.js?v=      82" charset="utf-8" type="text/javascript"></script>
+    <script src="bars.js?v=           82" charset="utf-8" type="text/javascript"></script>
+    <script src="update.js?v=         82" charset="utf-8" type="text/javascript"></script>
+    <script src="oldupdatefixes.js?v= 82" charset="utf-8" type="text/javascript"></script>
 
 </body>
 

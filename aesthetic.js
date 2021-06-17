@@ -1,20 +1,19 @@
+background = "#3C3C3C"; //Background Color
+
+
+accent0 = "#222222"; //Main Color
+accent1 = "#4DFE89"; //Accent Color
+accent2 = "gray"; //When buttons are toggled off
+accent3 = "#4DFE89"; //When buttons are toggled on
+accent4 = "#FFBB9A"; //Special Buttons
+accent4Dark = "#FF894C"; //Special Buttons Dark
+
+grayAccent = "#50514F";
+grayAccentLight = "#BBBBBB";
+limesRelatedAccent = "#4DFE89";
+yellowAccent = "#FCFF4E";
+
 function addAesthetic() {
-
-
-    background = "#3C3C3C"; //Background Color
-
-
-    accent0 = "#222222"; //Main Color
-    accent1 = "#4DFE89"; //Accent Color
-    accent2 = "gray"; //When buttons are toggled off
-    accent3 = "#4DFE89"; //When buttons are toggled on
-    accent4 = "#FFBB9A"; //Special Buttons
-    accent4Dark = "#FF894C"; //Special Buttons Dark
-
-    grayAccent = "#50514F";
-    grayAccentLight = "#BBBBBB";
-    limesRelatedAccent = "#4DFE89";
-    yellowAccent = "#FCFF4E";
 
     twoToggleButtons('deliveryToggleExpressButton', 'deliveryToggleStandardButton', gameData.deliveryTypeToggle)
     twoToggleButtons('foodToggleRottenLimesButton', 'foodToggleLimesButton', gameData.foodTypeToggle)
@@ -204,13 +203,9 @@ function addAesthetic() {
 	
 	currentTaskAesthetic('makeJuice')		
 	currentTaskAesthetic('makeMaxJuice')
-
-	currentTaskAesthetic('keenEye')		
+	
 	currentTaskAesthetic('eatFood')	
-	currentTaskAesthetic('intelligence')
-	currentTaskAesthetic('knifebidextrous')
-	currentTaskAesthetic('limebidextrous')
-	currentTaskAesthetic('rottenWisdom')
+
 
 	if (gameData.currentTask == 'sellYourJuice') {
 		colorChanger('sellYourJuiceButton', accent4Dark)
@@ -331,6 +326,16 @@ function addAestheticBase(){
     var x = document.getElementsByClassName("basicButtonSize");
     for (i = 0; i < x.length; i++) {
         x[i].style['margin'] = "5px 5px 5px 5px";
+    }
+
+    //Basic Button Size Round
+    var x = document.getElementsByClassName("basicButtonSizeRound");
+    for (i = 0; i < x.length; i++) {
+        x[i].style['margin'] = "5px";
+        x[i].style['padding'] = "1px 10px 1px 10px";
+        x[i].style['border-radius'] = "12px";
+
+
     }
 
     //Special Button
