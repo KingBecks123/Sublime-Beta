@@ -341,20 +341,37 @@ function tabMarket(tabby) {
     document.getElementById(tabby).style.display = "block"
 }
 
-function tabTasks(tab) {
+function tabTasks(tabby) {
     tabs("earn", "none")
     tabs("milestones", "none")
-    document.getElementById(tab).style.display = "block"
+	
+	colorChanger('earnButton', '#BBBBBB')
+	colorChanger('milestonesButton', '#BBBBBB')	
+	
+	colorChanger(tabby + "Button", "#898989")
+    document.getElementById(tabby).style.display = "block"
 }
 
-function tabStore(tab) {
+function tabStore(tabby) {
     tabs("plebian", "none")
     tabs("patrician", "none")
-    document.getElementById(tab).style.display = "block"
+	
+	colorChanger('plebianButton', '#BBBBBB')
+	colorChanger('patricianButton', '#BBBBBB')
+	
+    document.getElementById(tabby).style.display = "block"
+	colorChanger(tabby + "Button", "#898989")
+
 }
 
-function tabScience(tab) {
+function tabScience(tabby) {
     tabs("research", "none")
     tabs("researchers", "none")
-    document.getElementById(tab).style.display = "block"
+	
+	colorChanger('researchButton', '#BBBBBB')
+	colorChanger('researchersButton', '#BBBBBB')		
+	
+	colorChanger(tabby + "Button", "#898989")
+	
+    document.getElementById(tabby).style.display = "block"
 }

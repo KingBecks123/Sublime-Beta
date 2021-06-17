@@ -4,7 +4,7 @@ function loadStuff(savegame) {
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 83
+        gameData.versionNumber = 84
         updateValues()
         updateAfterLoad()
     } else {

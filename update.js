@@ -173,7 +173,7 @@ function updateValues() {
 	watertightResearchTime = Math.floor((2000 * Math.pow(10, 5 - gameData.peeledLimesPerJuice))/ gameData.watertightResearchers)
 	surveyingResearchTime = Math.floor(200 * (Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
 	
-	if(watertightResearchTime > 600)
+	if(watertightResearchTime > 200)
 	{
 		watertightResearchTimeShown = Math.floor(watertightResearchTime / 60)
 	}
@@ -183,7 +183,7 @@ function updateValues() {
 
 	}
 	
-	if(surveyingResearchTime > 600)
+	if(surveyingResearchTime > 200)
 	{
 		surveyingResearchTimeShown = Math.floor(surveyingResearchTime / 60)
 	}
@@ -200,7 +200,7 @@ function updateValues() {
 		update("watertightTime", "Estimated Time: Infinite Seconds")
 	}
 	
-	else if (watertightResearchTime <= 600)
+	else if (watertightResearchTime <= 200)
 	{
 		update("watertightTime", "Estimated Time: " + watertightResearchTimeShown.toLocaleString() + " Seconds")
 	}
@@ -217,7 +217,7 @@ function updateValues() {
 		update("surveyingTime", "Estimated Time: Infinite Seconds")
 	}
 	
-	else if (surveyingResearchTime <= 600)
+	else if (surveyingResearchTime <= 200)
 	{
 		update("surveyingTime", "Estimated Time: " + surveyingResearchTimeShown.toLocaleString() + " Seconds")
 	}
