@@ -491,6 +491,12 @@ function travelToNextVillage() {
 		    saveBeforeWipe('juicePriceCents')
 		} 
 		
+		if (gameData.manuscripts > 0) {
+			saveBeforeWipe('respectMilestone1000')
+		} 
+        saveBeforeWipe('manuscripts')
+
+		
         saveBeforeWipe('increaseJuicePricePermanance')
 
 		
@@ -509,14 +515,19 @@ function travelToNextVillage() {
 
 
 
-
-
         Object.assign(gameData, gameDataBase)
+
+
 
 		if (increaseJuicePricePermananceNow == 1) {
 			saveAfterWipe('juicePricePrice')
 			saveAfterWipe('juicePriceCents')
 			saveAfterWipe('increaseJuicePricePermanance')
+		} 
+		
+        saveAfterWipe('manuscripts')
+		if (gameData.manuscripts > 0) {
+			saveAfterWipe('respectMilestone1000')
 		} 
 
         saveAfterWipe('researchers')
