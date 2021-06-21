@@ -87,7 +87,7 @@ function randomizeApplication() {
 		gameData.applicationType = 0
 	}
 	else{
-		gameData.currencyApplicantFee = beckyRandomMinMax(gameData.minBrokerApplicantFee, gameData.maxBrokerApplicantFee)
+		gameData.currencyApplicantFee = beckyRandomMinMax(gameData.minBrokerApplicantFee, gameData.maxBrokerApplicantFee) * 10
 		gameData.currencyApplicantSpeed = beckyRandomMinMax(gameData.minBrokerApplicantSpeed, gameData.maxBrokerApplicantSpeed)
 		gameData.currencyApplicantPrice = (Math.floor(Math.random() * 20) + 1) * 10000
 		gameData.currencyApplicantTransferAmount = beckyRandomMinMax(gameData.minBrokerApplicantAmount, gameData.maxBrokerApplicantAmount)
@@ -413,6 +413,7 @@ function travelToNextVillage() {
 		
         megaCoinsNow = gameData.megaCoinsInBank
 
+		saveBeforeWipe('respectMilestone10000')
         saveBeforeWipe('unlockBenevolence')
         saveBeforeWipe('nationalTradeCert')
         saveBeforeWipe('bigGloves')
@@ -442,7 +443,8 @@ function travelToNextVillage() {
 		if (gameData.manuscripts > 0) {
 			saveAfterWipe('respectMilestone1000')
 		} 
-
+		
+		saveAfterWipe('respectMilestone10000')
         saveAfterWipe('unlockBenevolence')
         saveAfterWipe('nationalTradeCert')
         saveAfterWipe('researchers')

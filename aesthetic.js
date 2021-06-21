@@ -168,18 +168,18 @@ function addAesthetic() {
     }
 	
 
-	checkRespectMilestone(10)
-	checkRespectMilestone(25)
-	checkRespectMilestone(50)
-	checkRespectMilestone(100)
-	checkRespectMilestone(500)
-	checkRespectMilestone(1000)
-	checkRespectMilestone(2000)
+	checkRespectMilestone(10, 'lime')
+	checkRespectMilestone(25, 'lime')
+	checkRespectMilestone(50, 'lime')
+	checkRespectMilestone(100, 'lime')
+	checkRespectMilestone(500, 'lime')
+	checkRespectMilestone(1000, 'lime')
+	checkRespectMilestone(10000, 'red')
 
 
 
 
-	function checkRespectMilestone(number){
+	function checkRespectMilestone(number, color){
 		
 		i = 'respectMilestone' + number
 
@@ -189,7 +189,10 @@ function addAesthetic() {
 		}
 		
 		if (gameData[i]) {
-			colorChanger(number + 'RespectMilestone', limesRelatedAccent)
+			if(color == 'lime')
+				colorChanger(number + 'RespectMilestone', limesRelatedAccent)
+			if(color == 'red')
+				colorChanger(number + 'RespectMilestone', '#FF999A')
 		} else {
 
 			colorChanger(number + 'RespectMilestone', grayAccentLight)

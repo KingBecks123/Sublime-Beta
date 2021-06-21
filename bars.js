@@ -21,7 +21,14 @@ function working() {
 }
 
 function coinsToAlphaStart() {
-    barStartGranular("coinsToAlpha")
+
+	if (gameData.coins >= gameData.alphaCoinsExchangeRate * gameData.currencyBrokerTransferAmount && (gameData.coinsToAlphaBar == 100 || gameData.coinsToAlphaBar == 0)) {
+		gameData.coins -= gameData.alphaCoinsExchangeRate * gameData.currencyBrokerTransferAmount + gameData.currencyBrokerFee * gameData.currencyBrokerTransferAmount
+        gameData.coinsToAlphaBar = 0
+        coinsToAlphaBar()
+	}
+
+
 }
 
 function coinsToAlphaBar() {
@@ -34,7 +41,8 @@ function coinsToAlphaBar() {
 		else
 			setTimeout(coinsToAlphaBar, 100 / gameData.tickspeed)
     } else {
-        currencyConvert('alpha')
+		gameData.alphaCoins += gameData.currencyBrokerTransferAmount
+		
     }
 }
 
@@ -139,12 +147,8 @@ function surveying() {
 	}
 }
 
-function benevolence() {
-    if (gameData.benevolence < 3) {
 
-		barStartGranular('benevolence')
-	}
-}
+
 
 function surveyingBar() {
     if (gameData.surveyingBar < 100) {
@@ -173,7 +177,7 @@ function benevolenceBar() {
 				gameData.benevolenceBar += 0.5;
 			
 			benevolenceBarDoMove = 1
-			setTimeout(benevolenceBar, (1e3 * Math.pow(2, gameData.benevolence)) / gameData.benevolenceResearchers)
+			setTimeout(benevolenceBar, (1e3 * Math.pow(2, gameData.benevolence * 2)) / gameData.benevolenceResearchers)
 		}
 		
 		moveBar("benevolence")

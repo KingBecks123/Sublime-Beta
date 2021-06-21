@@ -148,7 +148,6 @@ var gameDataBase = {
     autoCheckSimulation: 0,
     autoStartSimulation: 0,
 	
-	nationalTradeCert: 0,
     bachelorsDegreeFinance: 0,
     benevolence: 0,
     benevolenceBar: 0,
@@ -224,14 +223,14 @@ var gameDataBase = {
 	respectMilestone100: 0,
 	respectMilestone500: 0,
 	respectMilestone1000: 0,
-	respectMilestone2000: 0,
+	respectMilestone10000: 0,
 
 	diseaseTileSymbols: 1,
 
 	alphaCoins: 0,
 	alphaCoinsExchangeRate: 100,
 	creditScore2: 0,
-	upgradeMoreStoragePrice: 5,
+	upgradeMoreStoragePrice: 50,
 	coinsToAlphaBar: 0,
 	currencyBrokerHireBar: 0,
 	
@@ -254,22 +253,22 @@ var gameDataBase = {
 	currencyApplicantPrice: 0,
 	currencyApplicantTransferAmount: 0,
 	
-	currencyBrokerFee: 0,
-	currencyBrokerSpeed: 0,
+	currencyBrokerFee: 10000,
+	currencyBrokerSpeed: 20,
 	currencyBrokerPrice: 0,
-	currencyBrokerTransferAmount: 0,
+	currencyBrokerTransferAmount: 1,
 	
 	minBrokerApplicantSpeed: 20,
 	maxBrokerApplicantSpeed: 60,
-	brokerApplicantSpeedPrice: 5,
+	brokerApplicantSpeedPrice: 0,
 
-	minBrokerApplicantFee: 50,
-	maxBrokerApplicantFee: 100,
-	brokerApplicantFeePrice: 5,
+	minBrokerApplicantFee: 500,
+	maxBrokerApplicantFee: 1000,
+	brokerApplicantFeePrice: 0,
 	
 	minBrokerApplicantAmount: 1,
 	maxBrokerApplicantAmount: 5,
-	brokerApplicantAmountPrice: 5,
+	brokerApplicantAmountPrice: 0,
 
     isOptionsOpen: 0,
 

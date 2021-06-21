@@ -148,7 +148,7 @@ function updateValues() {
 	
     update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
     update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
-    update("benevolenceText", "Currently: Level " + gameData.benevolence + " / 3")
+    update("benevolenceText", "Currently: Level " + gameData.benevolence)
 
 
     update("textForResearchers", researchersAvailable + " Available Researchers")
@@ -174,12 +174,18 @@ function updateValues() {
 	{
 		tabs('mapTile-4-3', 'inline-block')
 	}
+	if(gameData.numberOfTiles >= 21)
+	{
+		gameData.numberOfTiles = 20
+	}
+	
+	
 	
 	if (gameData.limeDiseaseLakes < 10)
 		benevolenceRespectIncrease = 0
 	else 
-		benevolenceRespectIncrease = Math.pow(gameData.benevolence, gameData.limeDiseaseLakes - 10)
-		
+		benevolenceRespectIncrease = (Math.pow(2, gameData.limeDiseaseLakes - 10)) * gameData.benevolence
+
 	watertightResearchTime = Math.floor((2000 * Math.pow(10, 5 - gameData.peeledLimesPerJuice))/ gameData.watertightResearchers)
 	surveyingResearchTime = Math.floor(200 * (Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
 	benevolenceResearchTime = Math.floor(200 * (Math.pow(2, gameData.benevolence * 2)) / gameData.benevolenceResearchers)
@@ -264,8 +270,8 @@ function updateValues() {
 
 
 
-	var minBrokerApplicantFee = gameData.minBrokerApplicantFee * 1000
-	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee * 1000
+	var minBrokerApplicantFee = gameData.minBrokerApplicantFee * 10
+	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee * 10
 
     update("textForBrokerApplicantFee", "Currently " + minBrokerApplicantFee.toLocaleString() + " - " + maxBrokerApplicantFee.toLocaleString() + " Coins")
 
@@ -380,17 +386,10 @@ function updateValues() {
 	
     update("upgradeMoreStoragePrice", "Price: " + gameData.upgradeMoreStoragePrice.toLocaleString() + " Mega Coins")
 	
-	if(gameData.doesHaveCurrencyBroker){
-		update("currencyConvertAlphaCoinsButton", "Convert Coins to " + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
-		update("alphaCoinTransactionFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + " Coins")
+	update("currencyConvertAlphaCoinsButton", "Convert Coins to " + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
+	update("alphaCoinTransactionFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + " Coins Per Alpha Coin")
 
-	}
 	
-	else{
-		update("currencyConvertAlphaCoinsButton", "Convert Coins to 1 Alpha Coin")
-		update("alphaCoinTransactionFee", "Transfer Fee: 10,000 Coins")
-
-	}
 
 
 
@@ -660,22 +659,15 @@ function updateValues() {
     if (gameData.maps >= 5) {
 		
 		hide('buyFifthMapDiv')
-		
-		
-		if(!gameData.nationalTradeCert)
-			showBasicDiv('buyANTC')
-		else
-			hide('buyANTC')
 
 
     } else {
         showBasicDiv('buyFifthMapDiv')
 		
-		hide('buyANTC')
 
     }	
 	
-    if (gameData.nationalTradeCert) {
+    if (gameData.respectMilestone10000) {
 		
         showBasicDiv('upgradeMoreStorage')
 		

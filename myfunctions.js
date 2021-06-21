@@ -1,3 +1,17 @@
+function loadStuff(savegame) {
+
+
+    if (savegame !== null) {
+        Object.assign(gameData, savegame);
+        backwardsCompatibility(savegame.versionNumber)
+        gameData.versionNumber = 86
+        updateValues()
+        updateAfterLoad()
+    } else {
+        update("newInfo", "Save File Empty.")
+    }
+}
+
 function timeToShowScience(id){
 	
 	var researchTime = eval(id + 'ResearchTime')
@@ -17,20 +31,6 @@ function timeToShowScience(id){
 	{
 		update(time, "Estimated Time: " + Math.floor(researchTime / 60).toLocaleString() + " Minutes")
 	}
-}
-
-function loadStuff(savegame) {
-
-
-    if (savegame !== null) {
-        Object.assign(gameData, savegame);
-        backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 85
-        updateValues()
-        updateAfterLoad()
-    } else {
-        update("newInfo", "Save File Empty.")
-    }
 }
 
 function ifMaxDarkGray(x) {
@@ -286,27 +286,6 @@ function basicBuyMegaCoins(x, price) {
         eval("gameData." + x + "+= 1")
     }
 
-    updateValues()
-}
-
-function currencyConvert(id) {
-
-	coin = id + 'Coins'
-	
-	if(gameData.doesHaveCurrencyBroker){
-		if (gameData.coins >= gameData[coin + 'ExchangeRate'] * gameData.currencyBrokerTransferAmount) {
-			gameData.coins -= gameData[coin + 'ExchangeRate'] * gameData.currencyBrokerTransferAmount + gameData.currencyBrokerFee
-			gameData[coin] += gameData.currencyBrokerTransferAmount
-		}
-	}
-	
-	else{
-		if (gameData.coins >= gameData[coin + 'ExchangeRate']) {
-			gameData.coins -= gameData[coin + 'ExchangeRate'] + 10000
-			gameData[coin] += 1
-		}
-	}
-	
     updateValues()
 }
 
