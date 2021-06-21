@@ -18,6 +18,8 @@ function addAesthetic() {
     twoToggleButtons('deliveryToggleExpressButton', 'deliveryToggleStandardButton', gameData.deliveryTypeToggle)
     twoToggleButtons('foodToggleRottenLimesButton', 'foodToggleLimesButton', gameData.foodTypeToggle)
     twoToggleButtons('juicePeeledLimesToggleButton', 'juiceLimesToggleButton', gameData.limeTypeToJuice)
+    twoToggleButtons('hireBrokerToggleButton', 'hireEmployeeToggleButton', gameData.typeToHireToggle)
+
 
     showOrHideClass("unlockDiseaseAreaSwamp")
 
@@ -37,6 +39,8 @@ function addAesthetic() {
     toggleAesthetic("autoStartSimulation")
     toggleAesthetic("autoCheckSimulation")
     toggleAesthetic("autoPlaceACivilian")
+    toggleAesthetic("benevolenceToggle")
+
 
 
 
@@ -244,6 +248,9 @@ function addAesthetic() {
     } else {
         colorChanger('decreaseJuiceSoldButton', grayAccentLight)
     }
+	
+	
+	
 
 
     colorChanger('lookAroundButton', grayAccentLight)
@@ -272,7 +279,8 @@ function addAestheticBase(){
     colorChanger('sellMaxJuiceButton', grayAccentLight)
 
     colorChanger('pickUpLimes', limesRelatedAccent)
-    colorChanger('application', accent4)
+    colorChanger('application', accent4)    
+
 
     colorChanger('mainBody', background)
     colorChanger('inventoryKnifeLime', accent3)
@@ -297,6 +305,14 @@ function addAestheticBase(){
     var x = document.getElementsByClassName("basicText");
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = grayAccentLight;
+        x[i].style.padding = "5px";
+        x[i].style['margin'] = "5px 5px 5px 5px";
+    }
+	
+    //Basic Text Yellow
+    var x = document.getElementsByClassName("basicTextYellow");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.backgroundColor = '#FDFF9A';
         x[i].style.padding = "5px";
         x[i].style['margin'] = "5px 5px 5px 5px";
     }

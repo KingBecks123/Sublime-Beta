@@ -1,10 +1,31 @@
+function timeToShowScience(id){
+	
+	var researchTime = eval(id + 'ResearchTime')
+	var time = id + 'Time'
+	
+	if (gameData[id + 'Researchers'] == 0)
+	{
+		update(time, "Estimated Time: Infinite Seconds")
+	}
+	
+	else if (researchTime <= 200)
+	{
+		update(time, "Estimated Time: " + researchTime.toLocaleString() + " Seconds")
+	}
+	
+	else
+	{
+		update(time, "Estimated Time: " + Math.floor(researchTime / 60).toLocaleString() + " Minutes")
+	}
+}
+
 function loadStuff(savegame) {
 
 
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 84
+        gameData.versionNumber = 85
         updateValues()
         updateAfterLoad()
     } else {
@@ -258,6 +279,37 @@ function basicBuy(x, price) {
     updateValues()
 }
 
+function basicBuyMegaCoins(x, price) {
+
+    if (gameData.megaCoins >= price) {
+        gameData.megaCoins -= price
+        eval("gameData." + x + "+= 1")
+    }
+
+    updateValues()
+}
+
+function currencyConvert(id) {
+
+	coin = id + 'Coins'
+	
+	if(gameData.doesHaveCurrencyBroker){
+		if (gameData.coins >= gameData[coin + 'ExchangeRate'] * gameData.currencyBrokerTransferAmount) {
+			gameData.coins -= gameData[coin + 'ExchangeRate'] * gameData.currencyBrokerTransferAmount + gameData.currencyBrokerFee
+			gameData[coin] += gameData.currencyBrokerTransferAmount
+		}
+	}
+	
+	else{
+		if (gameData.coins >= gameData[coin + 'ExchangeRate']) {
+			gameData.coins -= gameData[coin + 'ExchangeRate'] + 10000
+			gameData[coin] += 1
+		}
+	}
+	
+    updateValues()
+}
+
 function addResearchers(id, amount) {
 
 	if (amount > 0 && (researchersAvailable - amount >= 0))
@@ -277,8 +329,8 @@ function addResearchers(id, amount) {
 function hireResearcher(id) {
 	
     if (id == 'coins') {
-		if (gameData[id] >= 5000) {
-			gameData[id] -= 5000
+		if (gameData[id] >= 20000) {
+			gameData[id] -= 20000
 			gameData.researchers += 1
 
 		}
@@ -356,6 +408,11 @@ function bulkableBuyMax(x, price) {
 // returns a random integer from 1 to X	
 function beckyRandom(max) {
     return Math.floor(Math.random() * max) + 1;
+}
+
+// returns a random integer from X to Y
+function beckyRandomMinMax(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
 }
 
 //Recurring function for continuing a loading bar.
@@ -515,6 +572,29 @@ function checkShow(i, n, txt) {
 function checkShow(i, txt) {
     if (i >= 1) {
         tabs(txt, "block")
+    }
+
+}
+
+function increaseValue(id) {
+
+    if (gameData[id] < gameData[id + 'Max']) {
+        gameData[id] += 1
+    }
+    updateValues()
+}
+
+function decreaseValue(id){
+    if (gameData[id] >= 1) {
+        gameData[id] -= 1
+    }
+updateValues()
+}
+
+//Checks if a value is higher than 0, and shows an element if so.
+function checkHide(i, txt) {
+    if (i) {
+        hide(txt)
     }
 
 }

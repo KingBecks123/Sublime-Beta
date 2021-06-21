@@ -147,6 +147,15 @@ var gameDataBase = {
     autoStartTask: 0,
     autoCheckSimulation: 0,
     autoStartSimulation: 0,
+	
+	nationalTradeCert: 0,
+    bachelorsDegreeFinance: 0,
+    benevolence: 0,
+    benevolenceBar: 0,
+    benevolenceResearchers: 0,
+    unlockBenevolence: 0,
+	benevolenceToggle: 0,
+
 
 
     diseaseTileSize: 1,
@@ -219,8 +228,48 @@ var gameDataBase = {
 
 	diseaseTileSymbols: 1,
 
-
+	alphaCoins: 0,
+	alphaCoinsExchangeRate: 100,
+	creditScore2: 0,
+	upgradeMoreStoragePrice: 5,
+	coinsToAlphaBar: 0,
+	currencyBrokerHireBar: 0,
 	
+	amountCoinsToAlpha: 0,
+	amountCoinsToAlphaMax: 10,
+
+	currencyApplicationReady: 0,
+	applicationType: 0,
+	unlockCurrencyBrokers: 0,
+	typeToHire: 0,
+	typeToHireToggle: 0,
+	doesHaveCurrencyBroker: 0,
+
+	currencyApplicantFeeMaximum: 20,
+	currencyApplicantSpeedMinimum: 20,
+	currencyApplicantTransferAmountMinimum: 0,
+
+	currencyApplicantFee: 0,
+	currencyApplicantSpeed: 0,
+	currencyApplicantPrice: 0,
+	currencyApplicantTransferAmount: 0,
+	
+	currencyBrokerFee: 0,
+	currencyBrokerSpeed: 0,
+	currencyBrokerPrice: 0,
+	currencyBrokerTransferAmount: 0,
+	
+	minBrokerApplicantSpeed: 20,
+	maxBrokerApplicantSpeed: 60,
+	brokerApplicantSpeedPrice: 5,
+
+	minBrokerApplicantFee: 50,
+	maxBrokerApplicantFee: 100,
+	brokerApplicantFeePrice: 5,
+	
+	minBrokerApplicantAmount: 1,
+	maxBrokerApplicantAmount: 5,
+	brokerApplicantAmountPrice: 5,
 
     isOptionsOpen: 0,
 
@@ -239,6 +288,7 @@ var gameData = {}
 function gameStart() {
 
 	surveyingBarDoMove = 0
+	benevolenceBarDoMove = 0
 	watertightBarDoMove = 0
 
     addAestheticBase()
@@ -322,23 +372,27 @@ function tab(tabby) {
 
 }
 
+function tabManager(id){
+	hide(id)
+	colorChanger(id + "Button", "#BBBBBB")
+}
 
 function tabMarket(tabby) {
-    tabs("marketStore", "none")
-    tabs("marketMain", "none")
-    tabs("hiringArea", "none")
-    tabs("travel", "none")
 	
-	
-	colorChanger('marketStoreButton', "#BBBBBB")
-	colorChanger('marketMainButton', '#BBBBBB')
-	colorChanger('hiringAreaButton', '#BBBBBB')
-	colorChanger('travelButton', '#BBBBBB')
-	
-	
+	tabManager('marketStore')	
+	tabManager('marketMain')	
+	tabManager('hiringArea')	
+	tabManager('travel')	
+
+	hide('trade')
+	colorChanger("tradeButton", "#FDFF9A")
 	
 	colorChanger(tabby + "Button", "#898989")
-    document.getElementById(tabby).style.display = "block"
+	document.getElementById(tabby).style.display = "block"
+		
+	if(tabby == 'trade')
+		colorChanger(tabby + "Button", "#FCFF4E")
+		
 }
 
 function tabTasks(tabby) {

@@ -13,6 +13,8 @@ function updateAfterLoad() {
     restartBar("teach")
     restartBar("watertight")
     restartBar("surveying")
+    restartBar("benevolence")
+    restartBar("coinsToAlpha")
 
 
 
@@ -142,14 +144,18 @@ function updateValues() {
     updateNumber("peeledLimes")
 
 
-	researchersAvailable = gameData.researchers - gameData.watertightResearchers - gameData.surveyingResearchers
+	researchersAvailable = gameData.researchers - gameData.watertightResearchers - gameData.surveyingResearchers - gameData.benevolenceResearchers
 	
     update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
     update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
+    update("benevolenceText", "Currently: Level " + gameData.benevolence)
+
 
     update("textForResearchers", researchersAvailable + " Available Researchers")
+	
     update("textForWatertightResearchers", gameData.watertightResearchers + " Researchers")
     update("textForSurveyingResearchers", gameData.surveyingResearchers + " Researchers")
+    update("textForBenevolenceResearchers", gameData.benevolenceResearchers + " Researchers")
 
 
 	if(gameData.numberOfTiles >= 17)
@@ -169,62 +175,29 @@ function updateValues() {
 		tabs('mapTile-4-3', 'inline-block')
 	}
 	
-	
+	if (gameData.limeDiseaseLakes < 10)
+		benevolenceRespectIncrease = 0
+	else 
+		benevolenceRespectIncrease = Math.pow(gameData.benevolence, gameData.limeDiseaseLakes - 10)
+		
 	watertightResearchTime = Math.floor((2000 * Math.pow(10, 5 - gameData.peeledLimesPerJuice))/ gameData.watertightResearchers)
 	surveyingResearchTime = Math.floor(200 * (Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
+	benevolenceResearchTime = Math.floor(200 * (Math.pow(2, gameData.benevolence * 2)) / gameData.benevolenceResearchers)
 	
-	if(watertightResearchTime > 200)
-	{
-		watertightResearchTimeShown = Math.floor(watertightResearchTime / 60)
-	}
-	else
-	{
-		watertightResearchTimeShown = watertightResearchTime
+    update("benevolenceRespectIncrease", "Respect increase:  " + benevolenceRespectIncrease.toLocaleString())
 
-	}
 	
-	if(surveyingResearchTime > 200)
-	{
-		surveyingResearchTimeShown = Math.floor(surveyingResearchTime / 60)
-	}
-	else
-	{
-		surveyingResearchTimeShown = surveyingResearchTime
+	timeToShowScience('watertight')
+	timeToShowScience('surveying')
+	timeToShowScience('benevolence')
 
-	}
-	
-	
-	
-	if (gameData.watertightResearchers == 0)
+	if (gameData.benevolence > 0)
 	{
-		update("watertightTime", "Estimated Time: Infinite Seconds")
+		showBasicDiv("benevolence")
 	}
-	
-	else if (watertightResearchTime <= 200)
-	{
-		update("watertightTime", "Estimated Time: " + watertightResearchTimeShown.toLocaleString() + " Seconds")
-	}
-	
 	else
 	{
-		update("watertightTime", "Estimated Time: " + watertightResearchTimeShown.toLocaleString() + " Minutes")
-	}
-	
-	
-	
-	if (gameData.surveyingResearchers  == 0)
-	{
-		update("surveyingTime", "Estimated Time: Infinite Seconds")
-	}
-	
-	else if (surveyingResearchTime <= 200)
-	{
-		update("surveyingTime", "Estimated Time: " + surveyingResearchTimeShown.toLocaleString() + " Seconds")
-	}
-	
-	else
-	{
-		update("surveyingTime", "Estimated Time: " + surveyingResearchTimeShown.toLocaleString() + " Minutes")
+		hide("benevolence")
 	}
 	
 	if (gameData.hideRottenLimes == 0)
@@ -234,6 +207,24 @@ function updateValues() {
 	else
 	{
 		hide("rottenLimesHide")
+	}
+	
+	if (!gameData.unlockBenevolence && gameData.respectMilestone1000)
+	{
+		showBasicDiv("unlockBenevolence")	
+	}
+	else
+	{
+		hide("unlockBenevolence")
+	}
+	
+	if (gameData.unlockBenevolence)
+	{
+		showBasicDiv("benevolenceDiv")	
+	}
+	else
+	{
+		hide("benevolenceDiv")
 	}
 	
 	if (gameData.rottenWisdomSkillLevel == gameData.rottenWisdomSkillLevelMax)
@@ -256,6 +247,10 @@ function updateValues() {
     update("limesInBaskets", gameData.limesInBaskets.toLocaleString() + " Limes")
 
     update("textForRespect", gameData.respect.toLocaleString() + " Respect")
+    update("textForAlphaCoins", gameData.alphaCoins.toLocaleString() + " Alpha Coins")
+    update("textForAlphaCoins2", gameData.alphaCoins.toLocaleString() + " Alpha Coins")
+
+
     update("textForLakes", gameData.limeDiseaseLakes.toLocaleString() + " Lakes")
 
     update("currentSpeedEmployee", "Current speed: " + gameData.employeeCurrentSpeed.toLocaleString() + " limes per minute.")
@@ -263,6 +258,24 @@ function updateValues() {
     update("textForJuicePricePrice", "Price: " + gameData.juicePricePrice.toLocaleString() + " Coins")
 
     update("textForNourishmentPrice", "You Need: " + gameData.nourishmentPrice.toLocaleString() + " Limes")
+
+    update("textForBrokerApplicantSpeed", "Currently " + gameData.minBrokerApplicantSpeed.toLocaleString() + " - " + gameData.maxBrokerApplicantSpeed.toLocaleString() + " Seconds")
+    update("textForBrokerApplicantAmount", "Currently " + gameData.minBrokerApplicantAmount.toLocaleString() + " - " + gameData.maxBrokerApplicantAmount.toLocaleString() + " Coins")
+
+
+
+	var minBrokerApplicantFee = gameData.minBrokerApplicantFee * 1000
+	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee * 1000
+
+    update("textForBrokerApplicantFee", "Currently " + minBrokerApplicantFee.toLocaleString() + " - " + maxBrokerApplicantFee.toLocaleString() + " Coins")
+
+
+
+
+
+    update("brokerApplicantSpeedPrice", "Price: " + gameData.brokerApplicantSpeedPrice.toLocaleString() + " Alpha Coins")
+    update("brokerApplicantFeePrice", "Price: " + gameData.brokerApplicantFeePrice.toLocaleString() + " Alpha Coins")
+    update("brokerApplicantAmountPrice", "Price: " + gameData.brokerApplicantAmountPrice.toLocaleString() + " Alpha Coins")
 
 
 
@@ -289,6 +302,54 @@ function updateValues() {
         hide("applicationInfo")
     }
 	
+	
+    if (gameData.applicationReady == 1) {
+		
+		if(gameData.applicationType == 0)
+		{
+			update("application",
+				"<br>" +
+				"Skills: Can Collect Limes." + "<br>" +
+				"Speed: " + gameData.applicantSpeed.toLocaleString() + "% Of What I'm Taught." + "<br>" +
+				"Price: " + gameData.applicantPrice.toLocaleString() + " Coins." + "<br>" +
+				"Wages: " + gameData.applicantWage.toLocaleString() + " Coins Per Minute." + "<br>" +
+				"Hunger: " + gameData.applicantHunger.toLocaleString() + " Limes Per Second." + "<br>" +
+				"<br>"
+			)
+			showBasicDiv("applicationInfo")
+		}
+		else{
+
+			update("application",
+				"<br>" +
+				"Speed: " + gameData.currencyApplicantSpeed.toLocaleString() + " Seconds." + "<br>" +
+				"Transfer Fee: " + gameData.currencyApplicantFee.toLocaleString() + " Coins." + "<br>" +
+				"Alpha Coins Per Transfer: " + gameData.currencyApplicantTransferAmount.toLocaleString() + "." + "<br>" +
+				"Hire Price: " + gameData.currencyApplicantPrice.toLocaleString() + " Coins." + "<br>" +
+		
+
+
+
+				"<br>"
+			)
+
+		}
+		
+		
+		
+		
+    } else {
+        update("application", "Pin applications here")
+        hide("applicationInfo")
+    }
+	
+    update("currencyBrokerTransferAmount", "Speed: " + gameData.currencyBrokerSpeed.toLocaleString() + " Seconds.")
+    update("currencyBrokerFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + ".")
+    update("currencyBrokerSpeed", "Alpha Coins Per Transfer: " + gameData.currencyBrokerTransferAmount.toLocaleString() + ".")
+
+
+	
+	
     update("textForAutomaticallyCollectsLimes", "Automatically collects limes at " + (gameData.shoes + 1) + "/s")
 
 
@@ -301,12 +362,14 @@ function updateValues() {
 
 
     update("textForCurrentEmployees", "Current Employees: " + gameData.employees.toLocaleString() + " / " + gameData.maxEmployees.toLocaleString())
-    update("textForCurrentEmployees2", "Current Employees: " + gameData.employees.toLocaleString() + " / " + gameData.maxEmployees.toLocaleString())
 
 
     update("numberOfCivilians", "Number Of Civilians: " + gameData.civiliansTotal.toLocaleString())
 
     update("betterTrainingPrice", "Price: " + gameData.betterTraining.toLocaleString() + " Mega Coins")
+	
+    update("alphaCoinExhangeRate", "Exchange Rate: " + gameData.alphaCoinsExchangeRate.toLocaleString() + " Coins -> 1 Alpha Coin")
+
 
 
 
@@ -314,6 +377,20 @@ function updateValues() {
 
 
     update("sellYourJuiceReward", "You Will Get " + gameData.juiceSellReward.toLocaleString() + " Coins")
+	
+    update("upgradeMoreStoragePrice", "Price: " + gameData.upgradeMoreStoragePrice.toLocaleString() + " Mega Coins")
+	
+	if(gameData.doesHaveCurrencyBroker){
+		update("currencyConvertAlphaCoinsButton", "Convert Coins to " + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
+		update("alphaCoinTransactionFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + " Coins")
+
+	}
+	
+	else{
+		update("currencyConvertAlphaCoinsButton", "Convert Coins to 1 Alpha Coin")
+		update("alphaCoinTransactionFee", "Transfer Fee: 10,000 Coins")
+
+	}
 
 
 
@@ -360,17 +437,8 @@ function updateValues() {
 
     if (gameData.limeTypeToJuice == 0) {
         update("juicerInfo", gameData.limesPerJuice + " Limes -> 1 Juice")
-    } else if (gameData.limeTypeToJuice == 1) {
+    } else	{
         update("juicerInfo", gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
-    }
-
-
-
-
-    if (gameData.entrepreneurialCertificates == 0) {
-        hide("entrepreneurialCertificates1")
-    } else if (gameData.entrepreneurialCertificates == 1) {
-        tabs("entrepreneurialCertificates1", "block")
     }
 
 
@@ -461,8 +529,33 @@ function updateValues() {
 
 		
 	}
+	
+    if (gameData.doesHaveCurrencyBroker) {
+        showBasicDiv("currencyBroker")
+    } else {
+        hide("currencyBroker")	
+	}
+	
+	
+	if (gameData.creditScore2) {
+        hide("increaseCreditScore2")
+    } else {
+        tabs("increaseCreditScore2", "inline-block")
+	}
 
+	if (gameData.unlockCurrencyBrokers) {
+        hide("unlockCurrencyBrokers")
+        showBasicDiv("hireToggleButtons")
+        showBasicDiv("brokerApplicantUpgrades")
 
+		
+    } else {
+		
+        showBasicDiv("unlockCurrencyBrokers")
+        hide("hireToggleButtons")
+        hide("brokerApplicantUpgrades")
+
+	}
 
 
     if (gameData.diseaseControlFinished == 1) {
@@ -563,6 +656,67 @@ function updateValues() {
         hide("travellingArea")
         hide("fasterTransportDiv")
     }
+	
+    if (gameData.maps >= 5) {
+		
+		hide('buyFifthMapDiv')
+		
+		
+		if(!gameData.nationalTradeCert)
+			showBasicDiv('buyANTC')
+		else
+			hide('buyANTC')
+
+
+    } else {
+        showBasicDiv('buyFifthMapDiv')
+		
+		hide('buyANTC')
+
+    }	
+	
+    if (gameData.nationalTradeCert) {
+		
+        showBasicDiv('upgradeMoreStorage')
+		
+		if (!gameData.bachelorsDegreeFinance)
+			showBasicDiv('earnBachelorFinance')
+		else
+			hide('earnBachelorFinance')
+
+		
+		if (!gameData.creditScore2)
+			showBasicDiv('increaseCreditScore2')
+
+    } else {
+		
+		hide('upgradeMoreStorage')
+        hide('earnBachelorFinance')
+        hide('increaseCreditScore2')
+
+    }	
+	
+	
+	if (gameData.bachelorsDegreeFinance) {
+	
+		tabs('tradeButton', 'inline-block')
+		showBasicDiv('alphaCoinToMegaCoinDiv')
+		showBasicDiv('textForAlphaCoinsDiv')
+		showBasicDiv('textForAlphaCoinsDiv2')
+
+
+
+    } else {
+		
+		hide('tradeButton')
+		hide('alphaCoinToMegaCoinDiv')
+		hide('textForAlphaCoinsDiv')
+		hide('textForAlphaCoinsDiv2')
+
+
+    }	
+	
+	
 
     if (gameData.fork == 0 && gameData.learnANewSkill > -1) {
         showBasicDiv('buyAForkDiv')

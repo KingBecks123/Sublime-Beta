@@ -1,7 +1,16 @@
 function advertise() {
-    if (gameData.coins >= 10) {
-        gameData.coins -= 10
-        barStartGranular("advertise")
+    if ((gameData.advertiseBar == 100 || gameData.advertiseBar == 0) && (gameData.coins >= 10)) {
+        gameData.coins -= 10	
+		gameData.typeToHire = gameData.typeToHireToggle
+        gameData.advertiseBar = 0
+        advertiseBar()
+    }
+}
+
+function searchForACurrencyBroker() {
+    if (gameData.alphaCoins >= 10) {
+        gameData.alphaCoins -= 10
+        barStartGranular("currencyBrokerHire")
     }
 }
 
@@ -10,6 +19,26 @@ function working() {
     barStartGranular("working")
 
 }
+
+function coinsToAlphaStart() {
+    barStartGranular("coinsToAlpha")
+}
+
+function coinsToAlphaBar() {
+    if (gameData.coinsToAlphaBar <= 99.5) {
+
+        gameData.coinsToAlphaBar += 0.5;
+		moveBar("coinsToAlpha")
+		if(gameData.doesHaveCurrencyBroker)
+			setTimeout(coinsToAlphaBar, 5 * gameData.currencyBrokerSpeed / gameData.tickspeed)
+		else
+			setTimeout(coinsToAlphaBar, 100 / gameData.tickspeed)
+    } else {
+        currencyConvert('alpha')
+    }
+}
+
+
 
 function basket() {
     gameData.basketBar = 0;
@@ -129,7 +158,23 @@ function surveyingBar() {
 		}
 }
 
-
+function benevolenceBar() {
+    if (gameData.benevolenceBar < 100) {
+		if (gameData.benevolenceResearchers > 0)
+		{
+			if(benevolenceBarDoMove)
+				gameData.benevolenceBar += 0.5;
+			
+			benevolenceBarDoMove = 1
+			setTimeout(benevolenceBar, (1e3 * Math.pow(2, gameData.benevolence)) / gameData.benevolenceResearchers)
+		}
+		
+		moveBar("benevolence")
+		
+        } else {
+			gameData.benevolence += 1
+		}
+}
 
 
 function autoCollecting() {
@@ -173,6 +218,20 @@ function advertiseBar() {
     }
     
 }
+
+
+function currencyBrokerHireBar() {
+    if (gameData.currencyBrokerHireBar < 100) {
+        gameData.currencyBrokerHireBar += 0.5;
+		moveBar("currencyBrokerHire")
+        setTimeout(currencyBrokerHireBar, (20 / gameData.tickspeed))
+    } else {
+		gameData.currencyApplicationReady = 1
+        randomizeApplicationCurrencyBroker()
+    }
+    
+}
+
 
 function intelligenceBar() {
     basicBarSkill("intelligence")
