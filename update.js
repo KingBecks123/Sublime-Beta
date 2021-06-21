@@ -69,6 +69,10 @@ function updateValues() {
         gameData.coins = 1e6
     }
 
+    if (gameData.coins < 0) {
+        gameData.coins = 0
+    }
+
     if (gameData.deliveryBar > 99.9999) {
         gameData.deliveryBar = 100
     }

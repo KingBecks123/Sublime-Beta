@@ -21,9 +21,9 @@ function working() {
 }
 
 function coinsToAlphaStart() {
-
-	if (gameData.coins >= gameData.alphaCoinsExchangeRate * gameData.currencyBrokerTransferAmount && (gameData.coinsToAlphaBar == 100 || gameData.coinsToAlphaBar == 0)) {
-		gameData.coins -= gameData.alphaCoinsExchangeRate * gameData.currencyBrokerTransferAmount + gameData.currencyBrokerFee * gameData.currencyBrokerTransferAmount
+	price = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
+	if (gameData.coins >= price && (gameData.coinsToAlphaBar == 100 || gameData.coinsToAlphaBar == 0)) {
+		gameData.coins -= price
         gameData.coinsToAlphaBar = 0
         coinsToAlphaBar()
 	}
