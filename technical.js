@@ -199,13 +199,14 @@ var gameDataBase = {
 	hideKnife: 0,
 	manuscripts: 0,
 
+	collectLimesAtBeginning: 0,
 
 
 
     currentTask: "none",
 
     keenEyeBar: 0,	
-    keenEyeSkillLevel: 1,
+    keenEyeSkillLevel: 0,
     keenEyeSkillLevelMax: 20,
 
     desktopMode: 1,

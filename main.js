@@ -86,7 +86,7 @@ function randomizeApplication() {
 		gameData.applicationType = 0
 	}
 	else{
-		gameData.currencyApplicantFee = beckyRandomMinMax(gameData.minBrokerApplicantFee, gameData.maxBrokerApplicantFee) * 100
+		gameData.currencyApplicantFee = beckyRandomMinMax(gameData.minBrokerApplicantFee, gameData.maxBrokerApplicantFee)
 		gameData.currencyApplicantSpeed = beckyRandomMinMax(gameData.minBrokerApplicantSpeed, gameData.maxBrokerApplicantSpeed)
 		gameData.currencyApplicantPrice = (Math.floor(Math.random() * 20) + 1) * 10000
 		gameData.currencyApplicantTransferAmount = beckyRandomMinMax(gameData.minBrokerApplicantAmount, gameData.maxBrokerApplicantAmount)
@@ -179,7 +179,11 @@ function hireApplicant() {
 }
 
 function getLimesButton() {
+	if (gameData.lookAround < 1)
+		gameData.collectLimesAtBeginning += 1
+	
 
+	
     if (gameData.autoCollectingBar == 0 || gameData.autoCollectingBar == (gameData.nourishment + 1) * 100) {
         getLimes()
     }
@@ -295,6 +299,20 @@ function brokerApplicant(id, type) {
 				brokerApplicantPrice(id)
 
 				gameData['minBrokerApplicant' + id] += 1
+			}
+		}
+		else if(type == 'max100')
+		{
+			brokerApplicantPrice(id)
+			gameData['maxBrokerApplicant' + id] -= 100
+		}
+		else if(type == 'min100')
+		{
+			if (gameData['maxBrokerApplicant' + id] > gameData['minBrokerApplicant' + id]) {
+				
+				brokerApplicantPrice(id)
+
+				gameData['minBrokerApplicant' + id] -= 100
 			}
 		}
 		else

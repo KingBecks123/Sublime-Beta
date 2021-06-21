@@ -285,8 +285,8 @@ function updateValues() {
     update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
 
 
-	var minBrokerApplicantFee = gameData.minBrokerApplicantFee * 100
-	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee * 100
+	var minBrokerApplicantFee = gameData.minBrokerApplicantFee
+	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee
 
     update("textForBrokerApplicantFee", "Currently " + minBrokerApplicantFee.toLocaleString() + " - " + maxBrokerApplicantFee.toLocaleString() + " Coins")
 
@@ -685,9 +685,12 @@ function updateValues() {
         }
         if (gameData.maps < 4) {
             tabs("buyFourthMapDiv", "block")
+
         } else {
             hide("buyFourthMapDiv")
             tabs("tasksButton", "block")
+
+
         }
     } else {
         hide("buyFourthMapDiv")
@@ -716,6 +719,16 @@ function updateValues() {
         hide('increaseCreditScore2')
 
     }	
+	
+	if (gameData.maps < 4) {
+		hide("diseaseTileSizeButton")
+		hide("diseaseTileSymbolsButton")
+	} else {
+
+		tabs("diseaseTileSizeButton", "inline-block")
+		tabs("diseaseTileSymbolsButton", "inline-block")
+
+	}
 	
 	
 	if (gameData.bachelorsDegreeFinance) {
