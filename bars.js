@@ -139,6 +139,13 @@ function surveying() {
 	}
 }
 
+function benevolence() {
+    if (gameData.benevolence < 3) {
+
+		barStartGranular('benevolence')
+	}
+}
+
 function surveyingBar() {
     if (gameData.surveyingBar < 100) {
 		if (gameData.surveyingResearchers > 0)

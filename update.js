@@ -148,7 +148,7 @@ function updateValues() {
 	
     update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
     update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
-    update("benevolenceText", "Currently: Level " + gameData.benevolence)
+    update("benevolenceText", "Currently: Level " + gameData.benevolence + " / 3")
 
 
     update("textForResearchers", researchersAvailable + " Available Researchers")
