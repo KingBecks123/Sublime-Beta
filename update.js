@@ -65,8 +65,8 @@ function updateValues() {
     }
 
 
-    if (gameData.coins > 1e6) {
-        gameData.coins = 1e6
+    if (gameData.coins > gameData.coinsMax) {
+        gameData.coins = gameData.coinsMax
     }
 
     if (gameData.coins < 0) {
@@ -219,6 +219,15 @@ function updateValues() {
 		hide("rottenLimesHide")
 	}
 	
+	if (gameData.typeToHireToggle)
+	{
+		gameData.advertisePrice = 1000
+	}
+	else
+	{
+		gameData.advertisePrice = 10
+	}
+	
 	if (!gameData.unlockBenevolence && gameData.respectMilestone1000)
 	{
 		showBasicDiv("unlockBenevolence")	
@@ -272,10 +281,12 @@ function updateValues() {
     update("textForBrokerApplicantSpeed", "Currently " + gameData.minBrokerApplicantSpeed.toLocaleString() + " - " + gameData.maxBrokerApplicantSpeed.toLocaleString() + " Seconds")
     update("textForBrokerApplicantAmount", "Currently " + gameData.minBrokerApplicantAmount.toLocaleString() + " - " + gameData.maxBrokerApplicantAmount.toLocaleString() + " Coins")
 
+    update("textForAdvertisingBrokerRule", "Auto advertise if speed is over " + gameData.autoAdvertiseSpeedValue.toLocaleString() + " seconds")
+    update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
 
 
-	var minBrokerApplicantFee = gameData.minBrokerApplicantFee * 10
-	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee * 10
+	var minBrokerApplicantFee = gameData.minBrokerApplicantFee * 100
+	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee * 100
 
     update("textForBrokerApplicantFee", "Currently " + minBrokerApplicantFee.toLocaleString() + " - " + maxBrokerApplicantFee.toLocaleString() + " Coins")
 
@@ -364,6 +375,8 @@ function updateValues() {
 
 
     update("textForBetterTraining", "Current maximum: " + (gameData.betterTraining + 10).toLocaleString() + "00%")
+    update("textForCoinsMax", "Current maximum: " + gameData.coinsMax.toLocaleString() + " Coins")
+
 
 
     update("speedEmployee", "Speed: " + gameData.employeeSpeed.toLocaleString() + "% of what I'm taught.")
@@ -392,6 +405,9 @@ function updateValues() {
 	
 	update("currencyConvertAlphaCoinsButton", "Convert Coins to " + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
 	update("alphaCoinTransactionFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + " Coins Per Alpha Coin")
+	
+	alphaCoinTotalPrice = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
+	update("alphaCoinTotalPrice", "Total Price: " + alphaCoinTotalPrice.toLocaleString() + " Coins")
 
 	
 
@@ -480,6 +496,13 @@ function updateValues() {
     } else {
         hide("upgradeBetterTraining")
     }
+	
+    if (gameData.coinsMax > 1e6) {
+        showBasicDiv("upgradeWallet")
+    } else {
+        hide("upgradeWallet")
+    }
+
 
     if (gameData.respectMilestone10) {
         tabs("autoStartTaskButton", "inline-block")
@@ -545,11 +568,21 @@ function updateValues() {
     } else {
         tabs("increaseCreditScore2", "inline-block")
 	}
+	
+	if (gameData.advertisingManagerBroker) {
+        tabs("autoAdvertiseBrokerDiv", "inline-block")
+    } else {
+        hide("autoAdvertiseBrokerDiv")
+	}
 
 	if (gameData.unlockCurrencyBrokers) {
         hide("unlockCurrencyBrokers")
         showBasicDiv("hireToggleButtons")
         showBasicDiv("brokerApplicantUpgrades")
+		if (gameData.advertisingManagerBroker)
+			hide("autoBrokerAdvertiser")
+		else
+			showBasicDiv("autoBrokerAdvertiser")
 
 		
     } else {
@@ -557,6 +590,8 @@ function updateValues() {
         showBasicDiv("unlockCurrencyBrokers")
         hide("hireToggleButtons")
         hide("brokerApplicantUpgrades")
+        hide("autoBrokerAdvertiser")
+
 
 	}
 
@@ -660,16 +695,6 @@ function updateValues() {
         hide("fasterTransportDiv")
     }
 	
-    if (gameData.maps >= 5) {
-		
-		hide('buyFifthMapDiv')
-
-
-    } else {
-        showBasicDiv('buyFifthMapDiv')
-		
-
-    }	
 	
     if (gameData.respectMilestone10000) {
 		

@@ -6,6 +6,7 @@ var researchersAvailable;
 var gameDataBase = {
     limes: 1,
     coins: 0,
+	coinsMax: 1e6,
     juicers: 0,
     juice: 0,
     juiceBulkAmount: 1,
@@ -262,13 +263,20 @@ var gameDataBase = {
 	maxBrokerApplicantSpeed: 60,
 	brokerApplicantSpeedPrice: 0,
 
-	minBrokerApplicantFee: 500,
-	maxBrokerApplicantFee: 1000,
+	minBrokerApplicantFee: 50,
+	maxBrokerApplicantFee: 100,
 	brokerApplicantFeePrice: 0,
 	
 	minBrokerApplicantAmount: 1,
 	maxBrokerApplicantAmount: 5,
 	brokerApplicantAmountPrice: 0,
+	
+	advertisingManagerBroker: 0,
+	autoAdvertiseBroker: 0,
+	autoAdvertiseSpeedValue: 30,
+	autoAdvertiseSpeedValueMax: 60,
+	advertisePrice: 10,
+
 
     isOptionsOpen: 0,
 

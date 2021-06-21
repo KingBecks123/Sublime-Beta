@@ -390,12 +390,6 @@
                     <p class="basicText">Price: 10,000 Coins</p>
 
                 </div>
-				
-                <div class="basicDiv" , id="buyFifthMapDiv">
-                    <button class="specialButton" onclick="buyAMap()">Buy A Map</button>
-                    <p class="basicText">The cartographer realised that they can charge whatever they want for these maps and you'll still buy them</p>
-                    <p class="basicText">Price: 200,000 Coins</p>
-                </div>
 
                 <div class="basicDiv" , id="unlockBenevolence">
                     <button class="specialButtonTravel" onclick="basicBuy('unlockBenevolence', 1e5)">Buy a conscience</button>
@@ -410,7 +404,7 @@
         </div>
 
         <div id="hiringArea" , style="display:none;">
-            <div style="display:inline-block;">
+            <div style="display:inline-block;width:380px;">
                 <div class="basicDiv">
 				
 					<div id="hireToggleButtons">
@@ -420,8 +414,21 @@
 					
 					</div>
 				
-                    <button class="specialButton" , id="advertiseButton" , onclick="advertise()">Advertise your lime business</button>
-                    <div class="skillProgress" id="advertiseProgress">
+                    <button class="specialButton" , id="advertiseButton" , style="display:block" onclick="advertise()">Advertise your lime business</button>
+
+					<div id="autoAdvertiseBrokerDiv">
+					
+					    <button class="basicButtonSize" id="autoAdvertiseBrokerButton" style="display:inline-block" onclick="switchValue('autoAdvertiseBroker')">Auto</button>
+						<p class="basicText" style="display:block;">Rule:</p>
+						<p class="basicText" id="textForAdvertisingBrokerRule" , style="display:block;">Auto advertise unless speed is under 30 seconds.</p>
+						<button class="specialButton" onclick="decreaseValue('autoAdvertiseSpeedValue')" style="width:168px">Decrease</button>
+						<button class="specialButton" onclick="increaseValue('autoAdvertiseSpeedValue')" style="width:168px">Increase</button>
+					
+					</div>
+					
+
+
+					<div class="skillProgress" id="advertiseProgress">
                         <div class="skillBar" , id="advertiseBar">0%</div>
                     </div>
 
@@ -430,6 +437,16 @@
                     <p class="basicText" id="applicationInfo" , style="display:block;">Click the application to accept.</p>
                     <p class="basicText" id="textForCurrentEmployees" , style="display:block;">Current Employees: 0/1</p>
                 </div>
+				
+				
+                <div id="autoBrokerAdvertiser" class="basicDiv">
+
+                    <button class="specialButton" onclick="buyAdvertisingManager()">Advertising Manager</button>
+                    <p class="basicText">Take on a manager to help you advertise for brokers</p>
+                    <p class="basicText">Price: 10 Alpha Coins</p>
+
+                </div>
+
 
                 <div class="basicDiv" id="researchBetterAdvertising">
                     <button class="specialButton" onclick="basicBuy('advertisingLevel1', 10)">Research Better Advertising Methods</button>
@@ -555,6 +572,12 @@
 
                 <p class="basicText" style="display:block;">Price: 50 Mega Coins</p>
             </div>
+			
+            <div class="basicDiv" id="buyABiggerWallet">
+                <button class="specialButtonTravel" onclick="buyABiggerWallet()">Buy a bigger wallet</button>
+                <p class="basicText" style="display:block;">Store up to +1,000,000 coins</p>
+                <p class="basicText" style="display:block;">Price: 50 Mega Coins</p>
+            </div>
 
 
 
@@ -583,6 +606,8 @@
 
                 <p class="basicText" id="alphaCoinExhangeRate" >Exchange Rate: 100 Coins -> 1 Alpha Coin</p>
                 <p class="basicText" id="alphaCoinTransactionFee" >Transfer Fee: 1,000 Coins</p>
+                <p class="basicText" id="alphaCoinTotalPrice" >Total Price: 1,100 Coins</p>
+
 
 
             </div>
@@ -773,6 +798,13 @@
             <p class="basicTextSize" style="background-color:#FF999A;" >Better Training</p>
             <p class="basicText">Increases maximum applicant speed by 100%</p>
             <p class="basicText" id="textForBetterTraining">Current increase: 100%</p>
+
+        </div>
+		
+        <div class="basicDiv" id="upgradeWallet">
+            <p class="basicTextSize" style="background-color:#FF999A;" >Wallet</p>
+            <p class="basicText">Increases maximum coin storage by 1,000,000</p>
+            <p class="basicText" id="textForCoinsMax">Current maximum: 1,000,000 Coins</p>
 
         </div>
 
@@ -1187,14 +1219,14 @@
     </div>
     </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="aesthetic.js?v=               87" charset="utf-8" type="text/javascript"></script>
-    <script src="myfunctions.js?v=             87" charset="utf-8" type="text/javascript"></script>
-    <script src="main.js?v=                    87" charset="utf-8" type="text/javascript"></script>
-    <script src="diseasetask.js?v=             87" charset="utf-8" type="text/javascript"></script>
-    <script src="technical.js?v=               87" charset="utf-8" type="text/javascript"></script>
-    <script src="bars.js?v=                    87" charset="utf-8" type="text/javascript"></script>
-    <script src="update.js?v=                  87" charset="utf-8" type="text/javascript"></script>
-    <script src="oldupdatefixes.js?v=          87" charset="utf-8" type="text/javascript"></script>
+    <script src="aesthetic.js?v=               88" charset="utf-8" type="text/javascript"></script>
+    <script src="myfunctions.js?v=             88" charset="utf-8" type="text/javascript"></script>
+    <script src="main.js?v=                    88" charset="utf-8" type="text/javascript"></script>
+    <script src="diseasetask.js?v=             88" charset="utf-8" type="text/javascript"></script>
+    <script src="technical.js?v=               88" charset="utf-8" type="text/javascript"></script>
+    <script src="bars.js?v=                    88" charset="utf-8" type="text/javascript"></script>
+    <script src="update.js?v=                  88" charset="utf-8" type="text/javascript"></script>
+    <script src="oldupdatefixes.js?v=          88" charset="utf-8" type="text/javascript"></script>
 
 </body>
 

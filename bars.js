@@ -1,6 +1,6 @@
 function advertise() {
-    if ((gameData.advertiseBar == 100 || gameData.advertiseBar == 0) && (gameData.coins >= 10)) {
-        gameData.coins -= 10	
+    if ((gameData.advertiseBar == 100 || gameData.advertiseBar == 0) && (gameData.coins >= gameData.advertisePrice)) {
+        gameData.coins -= gameData.advertisePrice
 		gameData.typeToHire = gameData.typeToHireToggle
         gameData.advertiseBar = 0
         advertiseBar()

@@ -3,18 +3,17 @@ var loopNumbercurrentTask = 0;
 
 function mainGameLoopSlow() {
 	
-	 if (gameData.autoStartSimulation == 1) {
+	 if (gameData.autoStartSimulation)
 		startSimulation()
-	}
 	
-	 if (gameData.autoStartTask == 1) {
+	 if (gameData.autoStartTask) 
 		diseaseControlTask()
-	}
 	
-	
-	 if (gameData.autoCheckSimulation == 1) {
+	 if (gameData.autoCheckSimulation)
 		checkResults()
-	}
+
+	 if (gameData.autoAdvertiseBroker && gameData.currencyApplicantSpeed > gameData.autoAdvertiseSpeedValue)
+		advertise()
 
 	startCurrentTask(gameData.currentTask)	
 		
@@ -87,7 +86,7 @@ function randomizeApplication() {
 		gameData.applicationType = 0
 	}
 	else{
-		gameData.currencyApplicantFee = beckyRandomMinMax(gameData.minBrokerApplicantFee, gameData.maxBrokerApplicantFee) * 10
+		gameData.currencyApplicantFee = beckyRandomMinMax(gameData.minBrokerApplicantFee, gameData.maxBrokerApplicantFee) * 100
 		gameData.currencyApplicantSpeed = beckyRandomMinMax(gameData.minBrokerApplicantSpeed, gameData.maxBrokerApplicantSpeed)
 		gameData.currencyApplicantPrice = (Math.floor(Math.random() * 20) + 1) * 10000
 		gameData.currencyApplicantTransferAmount = beckyRandomMinMax(gameData.minBrokerApplicantAmount, gameData.maxBrokerApplicantAmount)
@@ -316,6 +315,14 @@ function brokerApplicantPrice(id){
 	gameData['brokerApplicant'+ id + 'Price'] += 5
 }
 
+function buyAdvertisingManager(){
+    if (gameData.alphaCoins >= 10) {
+        gameData.alphaCoins -= 10
+        gameData.advertisingManagerBroker = 1
+    }
+    updateValues()
+}
+
 function buyEntrepreneurialCertificate() {
     if (gameData.megaCoins >= 10) {
         gameData.megaCoins -= 10
@@ -337,6 +344,15 @@ function increaseCreditScore2() {
         gameData.megaCoins -= 50
         gameData.megaCoinsInBankMax += 450
         gameData.creditScore2 = 1
+
+    }
+    updateValues()
+}
+
+function buyABiggerWallet() {
+    if (gameData.megaCoins >= 50) {
+        gameData.megaCoins -= 50
+        gameData.coinsMax += 1e6
 
     }
     updateValues()
@@ -412,7 +428,8 @@ function travelToNextVillage() {
 
 		
         megaCoinsNow = gameData.megaCoinsInBank
-
+		
+		saveBeforeWipe('coinsMax')
 		saveBeforeWipe('respectMilestone10000')
         saveBeforeWipe('unlockBenevolence')
         saveBeforeWipe('nationalTradeCert')
@@ -443,7 +460,8 @@ function travelToNextVillage() {
 		if (gameData.manuscripts > 0) {
 			saveAfterWipe('respectMilestone1000')
 		} 
-		
+
+		saveAfterWipe('coinsMax')		
 		saveAfterWipe('respectMilestone10000')
         saveAfterWipe('unlockBenevolence')
         saveAfterWipe('nationalTradeCert')

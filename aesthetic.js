@@ -40,6 +40,7 @@ function addAesthetic() {
     toggleAesthetic("autoCheckSimulation")
     toggleAesthetic("autoPlaceACivilian")
     toggleAesthetic("benevolenceToggle")
+    toggleAesthetic("autoAdvertiseBroker")
 
 
 
