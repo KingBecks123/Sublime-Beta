@@ -165,6 +165,28 @@ function surveyingBar() {
 		
         } else {
 			gameData.numberOfTiles += 1
+			
+			if(gameData.numberOfTiles >= 17)
+			{
+				tabs('mapTile-4-0', 'inline-block')
+			}
+			if(gameData.numberOfTiles >= 18)
+			{
+				tabs('mapTile-4-1', 'inline-block')
+			}
+			if(gameData.numberOfTiles >= 19)
+			{
+				tabs('mapTile-4-2', 'inline-block')
+			}
+			if(gameData.numberOfTiles >= 20)
+			{
+				tabs('mapTile-4-3', 'inline-block')
+			}
+			if(gameData.numberOfTiles >= 21)
+			{
+				gameData.numberOfTiles = 20
+			}
+			
 			diseaseControlQuit()
 		}
 }

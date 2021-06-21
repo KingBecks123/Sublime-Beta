@@ -156,7 +156,7 @@ function mapTile(x, y) {
             gameData.civiliansPlaced -= 1
         }
     }
-
+	updateMapTileAesthetic()
     updateValues()
 }
 
@@ -239,4 +239,68 @@ function changeLakeAmount(x) {
     }
 
     updateValues()
+}
+
+function updateMapTileAesthetic(){
+    //Map Tile
+    var x = document.getElementsByClassName("mapTile");
+    for (i = 0; i < x.length; i++) {
+		
+		if(gameData.diseaseTileSize == 0) 
+		{
+			x[i].style['width'] = "20px";
+			x[i].style['height'] = "20px";
+		}
+		else
+		{
+			x[i].style['width'] = "40px";
+			x[i].style['height'] = "40px";
+		}
+		
+        x[i].style.padding = "5px 5px 5px 5px";
+		
+		
+        x[i].style['margin'] = "5px 0px 0px 0px";
+		
+		
+    }
+
+    for (x = 0; x < 5; x++) {
+        for (y = 0; y < 5; y++) {
+
+            whichButton = "mapTile-" + x + "-" + y
+            tileType = (gameData.diseaseArray[x][y])
+
+
+            if (tileType == 0) {                                //Blank
+                colorChanger(whichButton, accent4)
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, "‏‏‎ ‎‏‏‎ ‎‎")
+            } else if (tileType == 1) {                         //Civillian
+                colorChanger(whichButton, limesRelatedAccent)
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, ":)")
+
+            } else if (tileType == 2) {                         //Disease
+                colorChanger(whichButton, "#FF999A")
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, " +")
+
+            } else if (tileType == 3) {                         //Dead Civillian
+                colorChanger(whichButton, "#565656")
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, ":(")
+
+            } else if (tileType == 4) {                         //Lake
+                colorChanger(whichButton, "#4DFFFF")
+				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+					update(whichButton, "_")
+
+            }
+			
+				if (!gameData.diseaseTileSize || !gameData.diseaseTileSymbols)
+					update(whichButton, "‎‎‎‏‏‎")
+
+        }
+    }
 }

@@ -15,16 +15,18 @@ function mainGameLoopSlow() {
 	 if (gameData.autoAdvertiseBroker && gameData.currencyApplicantSpeed > gameData.autoAdvertiseSpeedValue)
 		advertise()
 
+
 	startCurrentTask(gameData.currentTask)	
 		
-	
-	if(beckyRandom(2) == 1 && gameData.alphaCoinsExchangeRate < 200)
-		gameData.alphaCoinsExchangeRate += 1
-	else if (gameData.alphaCoinsExchangeRate > 50)
-		gameData.alphaCoinsExchangeRate -= 1
+	if(gameData.bachelorsDegreeFinance)
+	{
+		if(beckyRandom(2) == 1 && gameData.alphaCoinsExchangeRate < 200)
+			gameData.alphaCoinsExchangeRate += 1
+		else if (gameData.alphaCoinsExchangeRate > 50)
+			gameData.alphaCoinsExchangeRate -= 1
+	}
 
-
-	
+	updateMapTileAesthetic()
 	setTimeout(mainGameLoopSlow, 500)
 }
 
@@ -160,6 +162,10 @@ function hireApplicant() {
 
 			gameData.employeeIsWorking = 0
 			gameData.workingBar = 0
+			
+			update("speedEmployee", "Speed: " + gameData.employeeSpeed.toLocaleString() + "% of what I'm taught.")
+			update("wageEmployee", "Wages: " + gameData.employeeWage.toLocaleString() + " Coins per minute.")
+			update("hungerEmployee", "Hunger: " + gameData.employeeHunger.toLocaleString() + " Limes per second.")
 		}
 	}
 	else{

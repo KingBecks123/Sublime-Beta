@@ -39,7 +39,7 @@ function updateAfterLoad() {
 
 function updateValues() {
 
-
+	//Takes 8 - 13 ms.
 
 
     addAesthetic()
@@ -147,68 +147,49 @@ function updateValues() {
     updateNumber("megaCoins")
     updateNumber("peeledLimes")
 
-
-	researchersAvailable = gameData.researchers - gameData.watertightResearchers - gameData.surveyingResearchers - gameData.benevolenceResearchers
-	
-    update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
-    update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
-    update("benevolenceText", "Currently: Level " + gameData.benevolence)
-
-
-    update("textForResearchers", researchersAvailable + " Available Researchers")
-	
-    update("textForWatertightResearchers", gameData.watertightResearchers + " Researchers")
-    update("textForSurveyingResearchers", gameData.surveyingResearchers + " Researchers")
-    update("textForBenevolenceResearchers", gameData.benevolenceResearchers + " Researchers")
+	if (gameData.respectMilestone1000) {
+		
+		researchersAvailable = gameData.researchers - gameData.watertightResearchers - gameData.surveyingResearchers - gameData.benevolenceResearchers
+		
+		update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
+		update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
+		update("benevolenceText", "Currently: Level " + gameData.benevolence)
 
 
-	if(gameData.numberOfTiles >= 17)
-	{
-		tabs('mapTile-4-0', 'inline-block')
+		update("textForResearchers", researchersAvailable + " Available Researchers")
+		
+		update("textForWatertightResearchers", gameData.watertightResearchers + " Researchers")
+		update("textForSurveyingResearchers", gameData.surveyingResearchers + " Researchers")
+		update("textForBenevolenceResearchers", gameData.benevolenceResearchers + " Researchers")
+		
+		if (gameData.limeDiseaseLakes < 10)
+			benevolenceRespectIncrease = 0
+		else 
+			benevolenceRespectIncrease = (Math.pow(2, gameData.limeDiseaseLakes - 10)) * gameData.benevolence
+
+		watertightResearchTime = Math.floor((2000 * Math.pow(10, 5 - gameData.peeledLimesPerJuice))/ gameData.watertightResearchers)
+		surveyingResearchTime = Math.floor(200 * (Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
+		benevolenceResearchTime = Math.floor(200 * (Math.pow(2, gameData.benevolence * 2)) / gameData.benevolenceResearchers)
+		
+		update("benevolenceRespectIncrease", "Respect increase:  " + benevolenceRespectIncrease.toLocaleString())
+
+		
+		timeToShowScience('watertight')
+		timeToShowScience('surveying')
+		timeToShowScience('benevolence')
+
+		if (gameData.benevolence > 0)
+		{
+			showBasicDiv("benevolence")
+		}
+		else
+		{
+			hide("benevolence")
+		}
+		
 	}
-	if(gameData.numberOfTiles >= 18)
-	{
-		tabs('mapTile-4-1', 'inline-block')
-	}
-	if(gameData.numberOfTiles >= 19)
-	{
-		tabs('mapTile-4-2', 'inline-block')
-	}
-	if(gameData.numberOfTiles >= 20)
-	{
-		tabs('mapTile-4-3', 'inline-block')
-	}
-	if(gameData.numberOfTiles >= 21)
-	{
-		gameData.numberOfTiles = 20
-	}
 	
 	
-	
-	if (gameData.limeDiseaseLakes < 10)
-		benevolenceRespectIncrease = 0
-	else 
-		benevolenceRespectIncrease = (Math.pow(2, gameData.limeDiseaseLakes - 10)) * gameData.benevolence
-
-	watertightResearchTime = Math.floor((2000 * Math.pow(10, 5 - gameData.peeledLimesPerJuice))/ gameData.watertightResearchers)
-	surveyingResearchTime = Math.floor(200 * (Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
-	benevolenceResearchTime = Math.floor(200 * (Math.pow(2, gameData.benevolence * 2)) / gameData.benevolenceResearchers)
-	
-    update("benevolenceRespectIncrease", "Respect increase:  " + benevolenceRespectIncrease.toLocaleString())
-
-	
-	timeToShowScience('watertight')
-	timeToShowScience('surveying')
-	timeToShowScience('benevolence')
-
-	if (gameData.benevolence > 0)
-	{
-		showBasicDiv("benevolence")
-	}
-	else
-	{
-		hide("benevolence")
-	}
 	
 	if (gameData.hideRottenLimes == 0)
 	{
@@ -364,9 +345,19 @@ function updateValues() {
         hide("applicationInfo")
     }
 	
-    update("currencyBrokerTransferAmount", "Speed: " + gameData.currencyBrokerSpeed.toLocaleString() + " Seconds.")
-    update("currencyBrokerFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + ".")
-    update("currencyBrokerSpeed", "Alpha Coins Per Transfer: " + gameData.currencyBrokerTransferAmount.toLocaleString() + ".")
+	if (gameData.bachelorsDegreeFinance){
+		update("currencyBrokerTransferAmount", "Speed: " + gameData.currencyBrokerSpeed.toLocaleString() + " Seconds.")
+		update("currencyBrokerFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + ".")
+		update("currencyBrokerSpeed", "Alpha Coins Per Transfer: " + gameData.currencyBrokerTransferAmount.toLocaleString() + ".")
+		update("alphaCoinExhangeRate", "Exchange Rate: " + gameData.alphaCoinsExchangeRate.toLocaleString() + " Coins -> 1 Alpha Coin")
+		update("currencyConvertAlphaCoinsButton", "Convert Coins to " + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
+		update("alphaCoinTransactionFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + " Coins Per Alpha Coin")
+		
+		alphaCoinTotalPrice = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
+		update("alphaCoinTotalPrice", "Total Price: " + alphaCoinTotalPrice.toLocaleString() + " Coins")
+
+	}
+	
 
 
 	
@@ -379,11 +370,6 @@ function updateValues() {
 
 
 
-    update("speedEmployee", "Speed: " + gameData.employeeSpeed.toLocaleString() + "% of what I'm taught.")
-    update("wageEmployee", "Wages: " + gameData.employeeWage.toLocaleString() + " Coins per minute.")
-    update("hungerEmployee", "Hunger: " + gameData.employeeHunger.toLocaleString() + " Limes per second.")
-
-
     update("textForCurrentEmployees", "Current Employees: " + gameData.employees.toLocaleString() + " / " + gameData.maxEmployees.toLocaleString())
 
 
@@ -391,30 +377,20 @@ function updateValues() {
 
     update("betterTrainingPrice", "Price: " + gameData.betterTraining.toLocaleString() + " Mega Coins")
 	
-    update("alphaCoinExhangeRate", "Exchange Rate: " + gameData.alphaCoinsExchangeRate.toLocaleString() + " Coins -> 1 Alpha Coin")
-
-
 
 
     update("sellYourJuiceAmount", "You Will Deliver " + gameData.juiceBulkAmountToggle.toLocaleString() + " / " + gameData.juiceBulkAmountMax.toLocaleString() + " Juice")
-
-
     update("sellYourJuiceReward", "You Will Get " + gameData.juiceSellReward.toLocaleString() + " Coins")
+    update("sellYourJuicePrice", "You Need " + gameData.deliveryPrice.toLocaleString() + " Coins For Delivery")
+
 	
     update("upgradeMoreStoragePrice", "Price: " + gameData.upgradeMoreStoragePrice.toLocaleString() + " Mega Coins")
 	
-	update("currencyConvertAlphaCoinsButton", "Convert Coins to " + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
-	update("alphaCoinTransactionFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + " Coins Per Alpha Coin")
-	
-	alphaCoinTotalPrice = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
-	update("alphaCoinTotalPrice", "Total Price: " + alphaCoinTotalPrice.toLocaleString() + " Coins")
 
 	
 
 
 
-
-    update("sellYourJuicePrice", "You Need " + gameData.deliveryPrice.toLocaleString() + " Coins For Delivery")
 
     checkShowNonVariable(gameData.juicers, "inventoryButton")
     checkShowNonVariable(gameData.employees, "companyButton")

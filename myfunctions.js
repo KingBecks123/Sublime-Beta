@@ -4,7 +4,7 @@ function loadStuff(savegame) {
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 89
+        gameData.versionNumber = 90
         updateValues()
         updateAfterLoad()
     } else {
@@ -411,7 +411,7 @@ function basicBarSkill(variable) {
         eval("gameData." + variable + "SkillLevel += 1");
         eval("gameData." + variable + " += 2");
     }
-    updateValues()
+    moveBar(variable)
 }
 
 function toggle(i) {
