@@ -17,6 +17,10 @@ function mainGameLoopSlow() {
 
 
 	startCurrentTask(gameData.currentTask)	
+	
+	if(gameData.currentSkill !== 'none')
+		barStartGranularSkillBasic(gameData.currentSkill)
+
 		
 	if(gameData.bachelorsDegreeFinance)
 	{
@@ -60,8 +64,6 @@ function collectingUpgrade() {
         gameData.limes -= gameData.nourishmentPrice
         gameData.nourishment += 1
         gameData.autoCollectingBar = 0
-		gameData.isAutoCollecting = 1
-
 
     }
 
@@ -188,7 +190,47 @@ function getLimesButton() {
 	if (gameData.lookAround < 1)
 		gameData.collectLimesAtBeginning += 1
 	
+	switch (gameData.collectLimesAtBeginning) {
+	  case 10:
+        update("newInfo", "Maybe you should try looking around!")
+		break;
+	  case 20:
+        update("newInfo", "Seriously you aren't going to find anything.")
+		break;
+	  case 30:
+        update("newInfo", "Do you see the Look Around button?")
+		break;
+	  case 40:
+        update("newInfo", "There doesn't seem to be any limes here.")
+		break;
+	  case 50:
+        update("newInfo", "Is that a lime?")
+		break;
+	  case 60:
+        update("newInfo", "Nope, it's dirt.")
+		break;
+	  case 70:
+        update("newInfo", "I would suggest looking around more.")
+		break;
+	  case 80:
+        update("newInfo", "You aren't getting a secret achievement.")
+		break;
+	  case 90:
+        update("newInfo", "This is literally just a waste of time.")
+		break;
+	  case 100:
+        update("newInfo", "Can you please play the game correctly?")
+		break;
+	  case 110:
+        update("newInfo", "Is that something priceless in the distance?")
+		break;
+	  case 120:
+        update("newInfo", "Nope, it's dirt.")
+		break;
+	  case 130:
+        update("newInfo", "I'm leaving.")
 
+	}
 	
     if (gameData.autoCollectingBar == 0 || gameData.autoCollectingBar == (gameData.nourishment + 1) * 100) {
         getLimes()
@@ -223,7 +265,8 @@ function getLimes() {
 	}
 	else
 	{
-		update("newInfo", "Couldn't find any limes...")
+		if ((gameData.lookAround < 1 && gameData.collectLimesAtBeginning < 10) || gameData.lookAround >= 1)
+			update("newInfo", "Couldn't find any limes...")
 	}
 		
     updateValues()
@@ -383,9 +426,9 @@ function buyABiggerWallet() {
 }
 
 function buyMegaCoins() {
-    if (gameData.coins >= 1000 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
-        gameData.coins -= 1000
-        gameData.megaCoinsInBank += 1
+    if (gameData.coins >= 10000 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
+        gameData.coins -= 10000
+        gameData.megaCoinsInBank += 5
     }
     updateValues()
 }
@@ -417,8 +460,8 @@ function buyBetterTraining() {
 function upgradeMoreStorage() {
     if (gameData.megaCoins >= gameData.upgradeMoreStoragePrice) {
         gameData.megaCoins -= gameData.upgradeMoreStoragePrice
-        gameData.juicersMax += 1000
-        gameData.peelersMax += 1000
+        gameData.juicersMax += 500
+        gameData.peelersMax += 2500
         gameData.upgradeMoreStoragePrice += 5
 
 
@@ -453,6 +496,7 @@ function travelToNextVillage() {
 		
         megaCoinsNow = gameData.megaCoinsInBank
 		
+		saveBeforeWipe('nationalJuiceMarketing')
 		saveBeforeWipe('coinsMax')
 		saveBeforeWipe('respectMilestone10000')
         saveBeforeWipe('unlockBenevolence')
@@ -485,6 +529,7 @@ function travelToNextVillage() {
 			saveAfterWipe('respectMilestone1000')
 		} 
 
+		saveAfterWipe('nationalJuiceMarketing')
 		saveAfterWipe('coinsMax')		
 		saveAfterWipe('respectMilestone10000')
         saveAfterWipe('unlockBenevolence')
@@ -547,8 +592,8 @@ function buyAMap() {
     } else if (gameData.coins >= 2000 && gameData.maps == 2) {
         gameData.coins -= 2000
         gameData.maps = 3
-    } else if (gameData.coins >= 20000 && gameData.maps == 3) {
-        gameData.coins -= 20000
+    } else if (gameData.coins >= 2e5 && gameData.maps == 3) {
+        gameData.coins -= 2e5
         gameData.maps = 4
     } else if (gameData.coins >= 2e5 && gameData.maps == 4) {
         gameData.coins -= 2e5
@@ -601,14 +646,27 @@ function sellYourLimes() {
 }
 
 function increaseJuicePrice() {
-    if (gameData.coins >= gameData.juicePricePrice) {
-        gameData.coins -= gameData.juicePricePrice
+	if(gameData.increaseJuicePricex10){
+		for (i = 0; i < 11; i++) {
+			if (gameData.coins >= gameData.juicePricePrice) {
+				gameData.coins -= gameData.juicePricePrice
 
 
 
-        gameData.juicePriceCents += 1
-    }
+				gameData.juicePriceCents += 1
+			}
+		}
+	}
+	else
+	{
+		if (gameData.coins >= gameData.juicePricePrice) {
+			gameData.coins -= gameData.juicePricePrice
 
+
+
+			gameData.juicePriceCents += 1
+		}
+	}
     updateValues()
 }
 

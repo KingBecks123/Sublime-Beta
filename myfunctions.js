@@ -4,7 +4,7 @@ function loadStuff(savegame) {
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 90
+        gameData.versionNumber = 91
         updateValues()
         updateAfterLoad()
     } else {
@@ -128,6 +128,28 @@ function pickCurrentTask(x) {
 	updateValues()
 }
 
+function pickCurrentSkill(x) {
+	if (!event.shiftKey && gameData.multitasking){
+		if(gameData.currentSkill == x && gameData.currentSkill !== "none")
+		{
+			gameData.currentSkill = "none"
+		}
+		else
+		{
+			gameData.currentSkill = x
+		}
+	}
+	
+	
+	else {
+		barStartGranularSkillBasic(x)
+	}
+	
+	updateValues()
+}
+
+
+
 function startCurrentTask(x) {
 		
 	 if (x == 'eatFood') {
@@ -152,7 +174,7 @@ function startCurrentTask(x) {
 
 	 else if (x == 'useMaxPeelers') {
 		peelerPeelMax()
-	}		
+	}	
 	
 	updateValues()
 }

@@ -41,6 +41,7 @@ function addAesthetic() {
     toggleAesthetic("autoPlaceACivilian")
     toggleAesthetic("benevolenceToggle")
     toggleAesthetic("autoAdvertiseBroker")
+    toggleAesthetic("increaseJuicePricex10")
 
 
 
@@ -161,6 +162,16 @@ function addAesthetic() {
 		
 	}
 
+	function currentSkillAesthetic(x){
+		
+		button = x + "Button"
+		if (gameData.currentSkill == x) {
+			colorChanger(button, accent4Dark)
+		} else {
+			colorChanger(button, accent4)
+		}
+		
+	}
 
     if (gameData.lookAround == 3) {
         hide('lookAroundButton')
@@ -183,7 +194,26 @@ function addAesthetic() {
     }
 	
 	
-	
+    //Skill Button
+    var x = document.getElementsByClassName("skillButton");
+	if(gameData.multitasking){
+			for (i = 0; i < x.length; i++) {
+				x[i].style['margin'] = "5px";
+				x[i].style['padding'] = "1px 10px 1px 10px";
+				x[i].style['border-radius'] = "12px";
+			}
+			currentSkillAesthetic('keenEye')		
+			currentSkillAesthetic('rottenWisdom')	
+			currentSkillAesthetic('limebidextrous')		
+			currentSkillAesthetic('intelligence')
+			currentSkillAesthetic('knifebidextrous')	
+		}
+		else{
+			for (i = 0; i < x.length; i++) {
+				x[i].style.backgroundColor = accent4;
+				x[i].style['margin'] = "5px 5px 5px 5px";
+			}
+	}
 
 
     colorChanger('lookAroundButton', grayAccentLight)
@@ -293,7 +323,8 @@ function addAestheticBase(){
         x[i].style.backgroundColor = accent4;
         x[i].style['margin'] = "5px 5px 5px 5px";
     }
-
+	
+	
     //Special Button Travel
     var x = document.getElementsByClassName("specialButtonTravel");
     for (i = 0; i < x.length; i++) {

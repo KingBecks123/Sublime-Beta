@@ -135,7 +135,7 @@ function updateValues() {
 
     }
 
-    gameData.juiceSellReward = Math.floor(gameData.juiceBulkAmountToggle * (1 + (gameData.juicePriceCents / 100)))
+    gameData.juiceSellReward = (gameData.nationalJuiceMarketing + 1) * Math.floor(gameData.juiceBulkAmountToggle * (1 + (gameData.juicePriceCents / 100)))
 
 
     gameData.limesInBaskets = Math.floor(gameData.baskets * (gameData.basketBar / 4))
@@ -146,6 +146,8 @@ function updateValues() {
     updateNumber("juice")
     updateNumber("megaCoins")
     updateNumber("peeledLimes")
+	
+	
 
 	if (gameData.respectMilestone1000) {
 		
@@ -207,6 +209,17 @@ function updateValues() {
 	else
 	{
 		gameData.advertisePrice = 10
+	}
+	
+	if (gameData.nationalJuiceMarketing)
+	{
+		hide('juiceMarketing')
+		showBasicDiv('upgradeJuiceMarketing')
+	}
+	else
+	{
+		hide('upgradeJuiceMarketing')
+		showBasicDiv('juiceMarketing')
 	}
 	
 	if (!gameData.unlockBenevolence && gameData.respectMilestone1000)
@@ -516,10 +529,15 @@ function updateValues() {
         hide("autoPlaceACivilianButton")
 	}
 	
-    if (gameData.manuscripts == 0) {
-        showBasicDiv("buyManuscriptsDiv")
+    if (gameData.manuscripts) {
+        hide("buyManuscriptsDiv")
+        showBasicDiv("upgradeManuscripts")
     } else {
-        hide("buyManuscriptsDiv")	}
+        hide("upgradeManuscripts")
+        showBasicDiv("buyManuscriptsDiv")
+
+		
+		}
 	
 	
     if (gameData.respectMilestone1000) {
@@ -570,7 +588,14 @@ function updateValues() {
 
 
 	}
+	
+    if (gameData.multitasking) {
+        hide("buySkillToggler")
+    } else {
 
+        showBasicDiv("buySkillToggler")
+
+    }
 
     if (gameData.diseaseControlFinished == 1) {
         hide("diseaseControlStart")
@@ -601,6 +626,19 @@ function updateValues() {
 
     if (gameData.villageNumber > 1 || gameData.betterTraining > 0 || gameData.increaseJuicePricePermanance == 1) {
         tabs("megaCoinUpgradesButton", "block")
+		  elem = 'textForMegaCoins'
+		  label = document.getElementById(elem+'Div')
+			  label.style.display = "block"
+		  
+		  label = document.getElementById(elem+'P')
+			  label.style.display = "block"
+		  
+		  label = document.getElementById(elem)
+			  label.style.display = "block"
+		  
+		  label = document.getElementById(elem+'Br')
+			  label.style.display = "block"
+
     } else {
         hide("megaCoinUpgradesButton")
     }
@@ -640,7 +678,7 @@ function updateValues() {
 
 
 
-    if (gameData.deliveryManager == 0 && gameData.maps >= 2) {
+    if (gameData.deliveryManager == 0 && gameData.maps >= 3) {
         showBasicDiv("buyADeliveryManager")
     } else {
         hide("buyADeliveryManager")
@@ -693,6 +731,8 @@ function updateValues() {
 		hide('upgradeMoreStorage')
         hide('earnBachelorFinance')
         hide('increaseCreditScore2')
+        hide('buyABiggerWallet')
+
 
     }	
 	
@@ -931,6 +971,10 @@ function updateValues() {
     if (gameData.autoCollectingBar == (gameData.nourishment + 1) * 100 || gameData.autoCollectingBar == 0) {
 		gameData.isAutoCollecting = 0
     }
+	else{
+		gameData.isAutoCollecting = 1
+    }
+		
 	
 
     if (gameData.learnANewSkill >= 3) {

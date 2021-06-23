@@ -113,6 +113,12 @@ var gameDataBase = {
     advertisingLevel1: 0,
     advertisingLevel2: 0,
     advertisingLevel3: 0,
+	
+	nationalJuiceMarketing: 0,
+	multitasking: 0,
+	currentSkill: 'none',
+	increaseJuicePricex10: 0,
+
 
     versionNumber: 0,
 

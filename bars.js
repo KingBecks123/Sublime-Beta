@@ -321,7 +321,7 @@ function learnANewSkillBar() {
 }
 
 function sellYourJuice() {
-    if ((gameData.deliveryBar >= 99.9 || gameData.deliveryBar == 0) && gameData.coins >= gameData.deliveryPrice && gameData.juice >= gameData.juiceBulkAmountToggle) {
+    if (!gameData.deliveryOngoing && (gameData.deliveryBar >= 99.9 || gameData.deliveryBar == 0) && gameData.coins >= gameData.deliveryPrice && gameData.juice >= gameData.juiceBulkAmountToggle) {
         gameData.deliveryType = gameData.deliveryTypeToggle
         gameData.juiceBulkAmount = gameData.juiceBulkAmountToggle
         gameData.coins -= gameData.deliveryPrice
@@ -352,7 +352,7 @@ function sellYourJuiceBar() {
             }
         }
     } else {
-        gameData.coins += Math.floor(gameData.juiceBulkAmount * (1 + (gameData.juicePriceCents / 100)))
+        gameData.coins += (gameData.nationalJuiceMarketing + 1) * Math.floor(gameData.juiceBulkAmount * (1 + (gameData.juicePriceCents / 100)))
         gameData.deliveryOngoing = 0
     }
 }
