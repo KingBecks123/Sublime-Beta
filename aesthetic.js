@@ -99,18 +99,18 @@ function addAesthetic() {
     }
 	
 
-	checkRespectMilestone(10, 'lime')
-	checkRespectMilestone(25, 'lime')
-	checkRespectMilestone(50, 'lime')
-	checkRespectMilestone(100, 'lime')
-	checkRespectMilestone(500, 'lime')
-	checkRespectMilestone(1000, 'lime')
-	checkRespectMilestone(10000, 'red')
+	checkRespectMilestone(10,    'lime',  'Automatically start tasks')
+	checkRespectMilestone(25,    'lime',  'Automatically start simulation')
+	checkRespectMilestone(50,    'lime',  'Allow entrance to the Special Shopping District')
+	checkRespectMilestone(100,   'lime',  'Automatically check simulation')
+	checkRespectMilestone(500,   'lime',  'Automatically situate a civilian')
+	checkRespectMilestone(1000,  'lime',  'Unlock scientific research')
+	checkRespectMilestone(10000, 'red' ,  'Unlock more mega coin upgrades')
 
 
 
 
-	function checkRespectMilestone(number, color){
+	function checkRespectMilestone(number, color, text){
 		
 		i = 'respectMilestone' + number
 
@@ -120,6 +120,9 @@ function addAesthetic() {
 		}
 		
 		if (gameData[i]) {
+			
+			update(number + 'RespectMilestone', number + ' Respect: ' + text)
+			
 			if(color == 'lime')
 				colorChanger(number + 'RespectMilestone', limesRelatedAccent)
 			if(color == 'red')

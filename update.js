@@ -179,19 +179,17 @@ function updateValues() {
 		timeToShowScience('watertight')
 		timeToShowScience('surveying')
 		timeToShowScience('benevolence')
-
-		if (gameData.benevolence > 0)
-		{
-			showBasicDiv("benevolence")
-		}
-		else
-		{
-			hide("benevolence")
-		}
 		
 	}
 	
-	
+	if (gameData.benevolence > 0)
+	{
+		showBasicDiv("benevolence")
+	}
+	else
+	{
+		hide("benevolence")
+	}
 	
 	if (gameData.hideRottenLimes == 0)
 	{

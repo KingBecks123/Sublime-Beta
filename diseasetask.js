@@ -36,9 +36,11 @@ function startSimulation() {
         }
 
     }
-
+	 if (gameData.autoCheckSimulation)
+		checkResults()
+	
     gameData.simulationTime = 1
-
+	updateMapTileAesthetic()
     updateValues()
 
 }
@@ -134,7 +136,8 @@ if (gameData.civiliansPlaced == gameData.civiliansTotal)
 		}
 
 	}
-
+	
+	updateMapTileAesthetic()
     updateValues()
 
 }
@@ -156,6 +159,8 @@ function mapTile(x, y) {
             gameData.civiliansPlaced -= 1
         }
     }
+	 if (gameData.autoStartSimulation)
+		startSimulation()
 	updateMapTileAesthetic()
     updateValues()
 }

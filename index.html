@@ -378,23 +378,23 @@
                     <button class="specialButton" , id="robeButton" , onclick="buyARobe()">Buy A Robe</button>
                     <p class="basicText">Guaranteed to make you look rich!</p>
                     <p class="basicText">Respect +50</p>
-                    <p class="basicText">Price: 1,000 Coins</p>
+                    <p class="basicText">Price: 100,000 Coins</p>
 
                 </div>
 				
                 <div id="increaseJuicePricePermanance" class="basicDiv">
 
-                    <button class="basicButtonSize", style="background-color:#FF999A;" onclick="basicBuy('increaseJuicePricePermanance', 10000)">Unlock Permanance</button>
+                    <button class="basicButtonSize", style="background-color:#FF999A;" onclick="basicBuy('increaseJuicePricePermanance', 5e5)">Unlock Permanance</button>
                     <p class="basicText">Make 'Increase juice price' stay after travelling!</p>
-                    <p class="basicText">Price: 10,000 Coins</p>
+                    <p class="basicText">Price: 500,000 Coins</p>
 
                 </div>
 
                 <div id="unlockDiseaseAreaSwamp" class="basicDiv">
 
-                    <button class="specialButton" , id="unlockDiseaseAreaSwampButton" , onclick="unlockDiseaseAreaSwamp()">Unlock Swamp Area</button>
+                    <button class="specialButton" , id="unlockDiseaseAreaSwampButton" , onclick="basicBuy('unlockDiseaseAreaSwamp', 1e5)">Unlock Swamp Area</button>
                     <p class="basicText">The civilians in the swamp have lime disease too!</p>
-                    <p class="basicText">Price: 10,000 Coins</p>
+                    <p class="basicText">Price: 100,000 Coins</p>
 
                 </div>
 
@@ -494,9 +494,16 @@
                 <div class="basicDiv">
 
                     <button class="specialButton" onclick="buyMegaCoins()">Transfer Coins</button>
-                    <p class="basicText" style="display:block;">10,000 Coins -> 5 Mega Coins</p>
+                    <p class="basicText" style="display:block;">10,000 Coins -> 5 Mega Coins in the bank</p>
+					
                     <p class="basicText" style="display:block;">Transfer money to a bank account in the next town</p>
                     <p class="basicText" style="display:block;">You can only spend this money once you arrive</p>
+					
+                    <button class="specialButton" onclick="buyMegaCoinsNow()">Convert Coins</button>
+                    <p class="basicText" style="display:block;">100,000 Coins -> 1 Mega Coin now</p>
+			        <p class="basicText" style="display:block;">Get instant access to mega coins</p>
+		
+
                     <p class="basicText" id="textForMegaCoinsInBank" style="display:block;">0 Mega Coins In Bank</p>
 
 					<div id="alphaCoinToMegaCoinDiv">
@@ -959,13 +966,13 @@
 
             <div class="basicDiv">
 
-                <p class="basicTextSize" id="10RespectMilestone"    >10 Respect: Automatically start tasks</p>
-                <p class="basicTextSize" id="25RespectMilestone"    >25 Respect: Automatically start simulation</p>
-                <p class="basicTextSize" id="50RespectMilestone"    >50 Respect: Allow entrance to the Special Shopping District</p>
-                <p class="basicTextSize" id="100RespectMilestone"   >100 Respect: Automatically check simulation</p>
-                <p class="basicTextSize" id="500RespectMilestone"   >500 Respect: Automatically situate a civilian</p>
-                <p class="basicTextSize" id="1000RespectMilestone"  >1,000 Respect: Unlock scientific research</p>
-                <p class="basicTextSize" id="10000RespectMilestone" >10,000 Respect: Unlock more mega coin upgrades</p>
+                <p class="basicTextSize" id="10RespectMilestone"    >10 Respect: ???</p>
+                <p class="basicTextSize" id="25RespectMilestone"    >25 Respect: ???</p>
+                <p class="basicTextSize" id="50RespectMilestone"    >50 Respect: ???</p>
+                <p class="basicTextSize" id="100RespectMilestone"   >100 Respect: ???</p>
+                <p class="basicTextSize" id="500RespectMilestone"   >500 Respect: ???</p>
+                <p class="basicTextSize" id="1000RespectMilestone"  >1,000 Respect: ???</p>
+                <p class="basicTextSize" id="10000RespectMilestone" >10,000 Respect: ???</p>
 
 
             </div>
@@ -1067,9 +1074,9 @@
 			<div id="researchers">
 	
                 <div class="basicDiv" id="buyManuscriptsDiv" >
-                    <button class="specialButtonTravel" onclick="basicBuy('manuscripts', 10000)">Buy Manuscripts</button>
+                    <button class="specialButtonTravel" onclick="basicBuy('manuscripts', 5e5)">Buy Manuscripts</button>
                     <p class="basicText" id="hireResearcherMegaCoins" >Keep 1,000 respect milestone after travelling</p>
-                    <p class="basicText" >Price: 20,000 Coins</p>
+                    <p class="basicText" >Price: 500,000 Coins</p>
 
                 </div>	
 				
@@ -1078,11 +1085,6 @@
                     <button class="specialButtonTravel" onclick="hireResearcher('megaCoins')">Pay with mega coins</button>
                     <p class="basicText" id="hireResearcherMegaCoins" >Price: 1 Mega Coin</p>
                 </div>	
-
-                <div class="basicDiv">
-                    <button class="specialButtonTravel" onclick="hireResearcher('coins')">Pay with coins</button>
-                    <p class="basicText" id="hireResearcherCoins" >Price: 20,000 Coins</p>
-                </div>
 
 			</div>
 			
@@ -1226,14 +1228,14 @@
     </div>
     </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="aesthetic.js?v=               91" charset="utf-8" type="text/javascript"></script>
-    <script src="myfunctions.js?v=             91" charset="utf-8" type="text/javascript"></script>
-    <script src="main.js?v=                    91" charset="utf-8" type="text/javascript"></script>
-    <script src="diseasetask.js?v=             91" charset="utf-8" type="text/javascript"></script>
-    <script src="technical.js?v=               91" charset="utf-8" type="text/javascript"></script>
-    <script src="bars.js?v=                    91" charset="utf-8" type="text/javascript"></script>
-    <script src="update.js?v=                  91" charset="utf-8" type="text/javascript"></script>
-    <script src="oldupdatefixes.js?v=          91" charset="utf-8" type="text/javascript"></script>
+    <script src="aesthetic.js?v=               92" charset="utf-8" type="text/javascript"></script>
+    <script src="myfunctions.js?v=             92" charset="utf-8" type="text/javascript"></script>
+    <script src="main.js?v=                    92" charset="utf-8" type="text/javascript"></script>
+    <script src="diseasetask.js?v=             92" charset="utf-8" type="text/javascript"></script>
+    <script src="technical.js?v=               92" charset="utf-8" type="text/javascript"></script>
+    <script src="bars.js?v=                    92" charset="utf-8" type="text/javascript"></script>
+    <script src="update.js?v=                  92" charset="utf-8" type="text/javascript"></script>
+    <script src="oldupdatefixes.js?v=          92" charset="utf-8" type="text/javascript"></script>
 
 </body>
 

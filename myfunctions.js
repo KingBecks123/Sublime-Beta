@@ -4,7 +4,7 @@ function loadStuff(savegame) {
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 91
+        gameData.versionNumber = 92
         updateValues()
         updateAfterLoad()
     } else {
@@ -330,8 +330,8 @@ function addResearchers(id, amount) {
 function hireResearcher(id) {
 	
     if (id == 'coins') {
-		if (gameData[id] >= 20000) {
-			gameData[id] -= 20000
+		if (gameData[id] >= 1e5) {
+			gameData[id] -= 1e5
 			gameData.researchers += 1
 
 		}

@@ -306,18 +306,10 @@ function unlockCurrencyBrokers() {
 }
 
 function buyARobe() {
-    if (gameData.coins >= 1000) {
-        gameData.coins -= 1000
+    if (gameData.coins >= 1e5) {
+        gameData.coins -= 1e5
         gameData.silkRobe = 1
         gameData.respect += 50
-    }
-    updateValues()
-}
-
-function unlockDiseaseAreaSwamp() {
-    if (gameData.coins >= 10000) {
-        gameData.coins -= 10000
-        gameData.unlockDiseaseAreaSwamp = 1
     }
     updateValues()
 }
@@ -433,6 +425,14 @@ function buyMegaCoins() {
     updateValues()
 }
 
+function buyMegaCoinsNow() {
+    if (gameData.coins >= 1e5 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
+        gameData.coins -= 1e5
+        gameData.megaCoins += 1
+    }
+    updateValues()
+}
+
 function buyMegaCoinsWithAlphaCoins() {
     if (gameData.alphaCoins >= 10 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
         gameData.alphaCoins -= 10
@@ -496,6 +496,8 @@ function travelToNextVillage() {
 		
         megaCoinsNow = gameData.megaCoinsInBank
 		
+		saveBeforeWipe('alphaCoins')
+		
 		saveBeforeWipe('nationalJuiceMarketing')
 		saveBeforeWipe('coinsMax')
 		saveBeforeWipe('respectMilestone10000')
@@ -528,6 +530,8 @@ function travelToNextVillage() {
 		if (gameData.manuscripts > 0) {
 			saveAfterWipe('respectMilestone1000')
 		} 
+		
+		saveAfterWipe('alphaCoins')
 
 		saveAfterWipe('nationalJuiceMarketing')
 		saveAfterWipe('coinsMax')		
