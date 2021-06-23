@@ -492,6 +492,9 @@ function upgradeMoreStorage() {
 		
         gameData.megaCoins -= upgradeMoreStoragePrice
 
+		juicersMax +=  500
+		peelersMax +=  2500
+		
 		gameData.upgradeMoreStorage += 1
 
 
@@ -584,7 +587,7 @@ function travelToNextVillage() {
         saveAfterWipe('hideMaxedPurchases')
 
 		juicersMax = 100 + gameData.upgradeMoreStorage * 500
-		juicersMax = 100 + gameData.upgradeMoreStorage * 2500
+		peelersMax = 500 + gameData.upgradeMoreStorage * 2500
 
 
         gameData.villageNumber = 2
