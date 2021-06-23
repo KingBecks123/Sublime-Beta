@@ -462,7 +462,7 @@ function upgradeMoreStorage() {
         gameData.megaCoins -= gameData.upgradeMoreStoragePrice
         gameData.juicersMax += 500
         gameData.peelersMax += 2500
-        gameData.upgradeMoreStoragePrice += 5
+        gameData.upgradeMoreStoragePrice *= 2
 
 
     }
@@ -651,7 +651,7 @@ function sellYourLimes() {
 
 function increaseJuicePrice() {
 	if(gameData.increaseJuicePricex10){
-		for (i = 0; i < 11; i++) {
+		for (i = 0; i < 10; i++) {
 			if (gameData.coins >= gameData.juicePricePrice) {
 				gameData.coins -= gameData.juicePricePrice
 

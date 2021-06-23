@@ -121,7 +121,7 @@ function addAesthetic() {
 		
 		if (gameData[i]) {
 			
-			update(number + 'RespectMilestone', number + ' Respect: ' + text)
+			update(number + 'RespectMilestone', number.toLocaleString() + ' Respect: ' + text)
 			
 			if(color == 'lime')
 				colorChanger(number + 'RespectMilestone', limesRelatedAccent)
