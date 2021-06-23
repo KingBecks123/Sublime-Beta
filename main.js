@@ -426,7 +426,7 @@ function buyMegaCoins() {
 }
 
 function buyMegaCoinsNow() {
-    if (gameData.coins >= 1e5 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
+    if (gameData.coins >= 1e5) {
         gameData.coins -= 1e5
         gameData.megaCoins += 1
     }
