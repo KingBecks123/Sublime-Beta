@@ -154,6 +154,7 @@ var gameDataBase = {
     autoStartTask: 0,
     autoCheckSimulation: 0,
     autoStartSimulation: 0,
+	upgradeMoreStorage: 0,
 	
     bachelorsDegreeFinance: 0,
     benevolence: 0,
@@ -238,7 +239,7 @@ var gameDataBase = {
 	alphaCoins: 0,
 	alphaCoinsExchangeRate: 100,
 	creditScore2: 0,
-	upgradeMoreStoragePrice: 50,
+	creditScore3: 0,
 	coinsToAlphaBar: 0,
 	currencyBrokerHireBar: 0,
 	

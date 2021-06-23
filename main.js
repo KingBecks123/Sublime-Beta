@@ -15,6 +15,26 @@ function mainGameLoopSlow() {
 	 if (gameData.autoAdvertiseBroker && gameData.currencyApplicantSpeed > gameData.autoAdvertiseSpeedValue)
 		advertise()
 
+	if(gameData.numberOfTiles >= 17)
+	{
+		tabs('mapTile-4-0', 'inline-block')
+	}
+	if(gameData.numberOfTiles >= 18)
+	{
+		tabs('mapTile-4-1', 'inline-block')
+	}
+	if(gameData.numberOfTiles >= 19)
+	{
+		tabs('mapTile-4-2', 'inline-block')
+	}
+	if(gameData.numberOfTiles >= 20)
+	{
+		tabs('mapTile-4-3', 'inline-block')
+	}
+	if(gameData.numberOfTiles >= 21)
+	{
+		gameData.numberOfTiles = 20
+	}
 
 	startCurrentTask(gameData.currentTask)	
 	
@@ -399,10 +419,20 @@ function increaseCreditScore() {
 }
 
 function increaseCreditScore2() {
+    if (gameData.megaCoins >= 5) {
+        gameData.megaCoins -= 5
+        gameData.megaCoinsInBankMax += 150
+        gameData.creditScore2 = 1
+
+    }
+    updateValues()
+}
+
+function increaseCreditScore3() {
     if (gameData.megaCoins >= 50) {
         gameData.megaCoins -= 50
-        gameData.megaCoinsInBankMax += 450
-        gameData.creditScore2 = 1
+        gameData.megaCoinsInBankMax += 700
+        gameData.creditScore3 = 1
 
     }
     updateValues()
@@ -458,11 +488,11 @@ function buyBetterTraining() {
 }
 
 function upgradeMoreStorage() {
-    if (gameData.megaCoins >= gameData.upgradeMoreStoragePrice) {
-        gameData.megaCoins -= gameData.upgradeMoreStoragePrice
-        gameData.juicersMax += 500
-        gameData.peelersMax += 2500
-        gameData.upgradeMoreStoragePrice *= 2
+    if (gameData.megaCoins >= upgradeMoreStoragePrice) {
+		
+        gameData.megaCoins -= upgradeMoreStoragePrice
+
+		gameData.upgradeMoreStorage += 1
 
 
     }
@@ -497,8 +527,9 @@ function travelToNextVillage() {
         megaCoinsNow = gameData.megaCoinsInBank
 		
 		saveBeforeWipe('alphaCoins')
-		
 		saveBeforeWipe('nationalJuiceMarketing')
+		saveBeforeWipe('creditScore2')
+		saveBeforeWipe('creditScore3')
 		saveBeforeWipe('coinsMax')
 		saveBeforeWipe('respectMilestone10000')
         saveBeforeWipe('unlockBenevolence')
@@ -513,7 +544,7 @@ function travelToNextVillage() {
         saveBeforeWipe('hideCompletedSkills')
         saveBeforeWipe('hideMaxedPurchases')
         saveBeforeWipe('researchers')
-
+        saveBeforeWipe('upgradeMoreStorage')
 
 
         Object.assign(gameData, gameDataBase)
@@ -530,9 +561,11 @@ function travelToNextVillage() {
 		if (gameData.manuscripts > 0) {
 			saveAfterWipe('respectMilestone1000')
 		} 
-		
+	
+	    saveAfterWipe('upgradeMoreStorage')
 		saveAfterWipe('alphaCoins')
-
+		saveAfterWipe('creditScore2')
+		saveAfterWipe('creditScore3')
 		saveAfterWipe('nationalJuiceMarketing')
 		saveAfterWipe('coinsMax')		
 		saveAfterWipe('respectMilestone10000')
@@ -549,6 +582,10 @@ function travelToNextVillage() {
         saveAfterWipe('showBarPercent')
         saveAfterWipe('hideCompletedSkills')
         saveAfterWipe('hideMaxedPurchases')
+
+		juicersMax = 100 + gameData.upgradeMoreStorage * 500
+		juicersMax = 100 + gameData.upgradeMoreStorage * 2500
+
 
         gameData.villageNumber = 2
         saveGame()

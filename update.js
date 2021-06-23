@@ -68,7 +68,11 @@ function updateValues() {
     if (gameData.coins > gameData.coinsMax) {
         gameData.coins = gameData.coinsMax
     }
-
+	
+    if (gameData.megaCoinsInBank > gameData.megaCoinsInBankMax) {
+        gameData.megaCoinsInBank = gameData.megaCoinsInBankMax
+    }
+	
     if (gameData.coins < 0) {
         gameData.coins = 0
     }
@@ -246,6 +250,9 @@ function updateValues() {
 	{
 		hide("hideRottenLimesButton")
 	}
+
+	
+	upgradeMoreStoragePrice = Math.pow(2, gameData.upgradeMoreStorage) * 50
 	
     update("textForMegaCoinsInBank", gameData.megaCoinsInBank.toLocaleString() + " / " + gameData.megaCoinsInBankMax.toLocaleString() + " Mega Coins In Bank")
 
@@ -395,7 +402,7 @@ function updateValues() {
     update("sellYourJuicePrice", "You Need " + gameData.deliveryPrice.toLocaleString() + " Coins For Delivery")
 
 	
-    update("upgradeMoreStoragePrice", "Price: " + gameData.upgradeMoreStoragePrice.toLocaleString() + " Mega Coins")
+    update("upgradeMoreStoragePrice", "Price: " + upgradeMoreStoragePrice.toLocaleString() + " Mega Coins")
 	
 
 	
@@ -557,8 +564,16 @@ function updateValues() {
 	
 	if (gameData.creditScore2) {
         hide("increaseCreditScore2")
+		if (!gameData.creditScore3)
+			showBasicDiv("increaseCreditScore3")
+		else
+			hide("increaseCreditScore3")
+
+
     } else {
         tabs("increaseCreditScore2", "inline-block")
+        hide("increaseCreditScore3")
+
 	}
 	
 	if (gameData.advertisingManagerBroker) {
@@ -587,11 +602,12 @@ function updateValues() {
 
 	}
 	
-    if (gameData.multitasking) {
-        hide("buySkillToggler")
+    if (!gameData.multitasking && gameData.learnANewSkill > 0) {
+        showBasicDiv("buySkillToggler")
+
     } else {
 
-        showBasicDiv("buySkillToggler")
+        hide("buySkillToggler")
 
     }
 
@@ -751,6 +767,7 @@ function updateValues() {
 		showBasicDiv('alphaCoinToMegaCoinDiv')
 		showBasicDiv('textForAlphaCoinsDiv')
 		showBasicDiv('textForAlphaCoinsDiv2')
+		showBasicDiv('upgradeBroker')
 
 
 
@@ -760,6 +777,7 @@ function updateValues() {
 		hide('alphaCoinToMegaCoinDiv')
 		hide('textForAlphaCoinsDiv')
 		hide('textForAlphaCoinsDiv2')
+		hide('upgradeBroker')
 
 
     }	
@@ -777,6 +795,13 @@ function updateValues() {
     } else {
         hide('buyShoesDiv')
     }
+	
+    if (gameData.upgradeMoreStorage > 0) {
+        showBasicDiv('upgradeMoreLand')
+    } else {
+        hide('upgradeMoreLand')
+    }
+	
 
 
     if (gameData.hideCompletedSkills == 0) {
