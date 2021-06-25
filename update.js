@@ -15,6 +15,7 @@ function updateAfterLoad() {
     restartBar("surveying")
     restartBar("benevolence")
     restartBar("coinsToAlpha")
+    restartBar("convertCoinsNow")
 
 
 
@@ -149,9 +150,16 @@ function updateValues() {
     updateNumber("coins")
     updateNumber("juice")
     updateNumber("megaCoins")
+    updateNumber("alphaCoins")
     updateNumber("peeledLimes")
 	
+	if (gameData.coins > 0){
+		gameData.showAchievements = 1
+	}
 	
+	if (gameData.showAchievements){
+		tabs('achievementsButton', 'inline-block')
+	}
 
 	if (gameData.respectMilestone1000) {
 		
@@ -160,7 +168,6 @@ function updateValues() {
 		update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
 		update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
 		update("benevolenceText", "Currently: Level " + gameData.benevolence)
-
 
 		update("textForResearchers", researchersAvailable + " Available Researchers")
 		
@@ -195,6 +202,7 @@ function updateValues() {
 		hide("benevolence")
 	}
 	
+	
 	if (gameData.hideRottenLimes == 0)
 	{
 		showBasicDiv("rottenLimesHide")
@@ -206,7 +214,7 @@ function updateValues() {
 	
 	if (gameData.typeToHireToggle)
 	{
-		gameData.advertisePrice = 1000
+		gameData.advertisePrice = 10000
 	}
 	else
 	{
@@ -265,13 +273,14 @@ function updateValues() {
     update("limesInBaskets", gameData.limesInBaskets.toLocaleString() + " Limes")
 
     update("textForRespect", gameData.respect.toLocaleString() + " Respect")
-    update("textForAlphaCoins", gameData.alphaCoins.toLocaleString() + " Alpha Coins")
-    update("textForAlphaCoins2", gameData.alphaCoins.toLocaleString() + " Alpha Coins")
+
 
 
     update("textForLakes", gameData.limeDiseaseLakes.toLocaleString() + " Lakes")
 
     update("currentSpeedEmployee", "Current speed: " + gameData.employeeCurrentSpeed.toLocaleString() + " limes per minute.")
+    update("speedEmployee", "Speed: " + gameData.employeeSpeed.toLocaleString() + "% Of What I'm Taught.")
+
 
     update("textForJuicePricePrice", "Price: " + gameData.juicePricePrice.toLocaleString() + " Coins")
 
@@ -281,13 +290,15 @@ function updateValues() {
     update("textForBrokerApplicantAmount", "Currently " + gameData.minBrokerApplicantAmount.toLocaleString() + " - " + gameData.maxBrokerApplicantAmount.toLocaleString() + " Coins")
 
     update("textForAdvertisingBrokerRule", "Auto advertise if speed is over " + gameData.autoAdvertiseSpeedValue.toLocaleString() + " seconds")
-    update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
+    update("textForSmarterAdvertisingBrokerRule", "And if transfer amount is under " + gameData.autoAdvertiseAmountValue.toLocaleString())
+	update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
 
 
-	var minBrokerApplicantFee = gameData.minBrokerApplicantFee
-	var maxBrokerApplicantFee = gameData.maxBrokerApplicantFee
+	//gameData.minBrokerApplicantFee = 5000
+	//gameData.maxBrokerApplicantFee = 10000
+	//gameData.brokerApplicantFeePrice = 0
 
-    update("textForBrokerApplicantFee", "Currently " + minBrokerApplicantFee.toLocaleString() + " - " + maxBrokerApplicantFee.toLocaleString() + " Coins")
+    update("textForBrokerApplicantFee", "Currently " + gameData.minBrokerApplicantFee.toLocaleString() + " - " + gameData.maxBrokerApplicantFee.toLocaleString() + " Coins")
 
 
 
@@ -376,6 +387,7 @@ function updateValues() {
 
 	}
 	
+	update("buyMegaCoinsTimes", "Transfer times: " + gameData.buyMegaCoinsTimes + " / " + gameData.buyMegaCoinsTimesMax)
 
 
 	
@@ -420,6 +432,9 @@ function updateValues() {
     moveBar("working")
     moveBasket()
     moveAutoCollecting()
+
+    moveBar("ambidextrous")
+    update("ambidextrousSkillLevel", gameData.ambidextrousSkillLevel + " / " + gameData.ambidextrousSkillLevelMax)
 
     moveBar("rottenWisdom")
     update("rottenWisdom", gameData.rottenWisdom + "% Chance")
@@ -496,7 +511,18 @@ function updateValues() {
     } else {
         hide("upgradeWallet")
     }
+	
+    if (gameData.advertisingManagerBroker && !gameData.smarterAdvertisingManagerBroker) {
+        showBasicDiv("smarterAutoBrokerAdvertiser")
+    } else {
+        hide("smarterAutoBrokerAdvertiser")
+    }
 
+    if (gameData.smarterAdvertisingManagerBroker) {
+        showBasicDiv("smarterAdvertisingBrokerRule")
+    } else {
+        hide("smarterAdvertisingBrokerRule")
+    }
 
     if (gameData.respectMilestone10) {
         tabs("autoStartTaskButton", "inline-block")
@@ -526,7 +552,11 @@ function updateValues() {
 		showBasicDiv("upgradeJuicePricePermanance")
 	}
 	
-	
+	if (gameData.ambidextrousSkillLevel == gameData.ambidextrousSkillLevelMax) {
+		tabs("stopActionsButton", "inline-block")
+    } else {
+        hide("stopActionsButton")
+	}
 	
     if (gameData.respectMilestone500) {
         tabs("autoPlaceACivilianButton", "inline-block")
@@ -576,7 +606,7 @@ function updateValues() {
 
 	}
 	
-	if (gameData.advertisingManagerBroker) {
+	if (gameData.advertisingManagerBroker && gameData.typeToHireToggle) {
         tabs("autoAdvertiseBrokerDiv", "inline-block")
     } else {
         hide("autoAdvertiseBrokerDiv")
@@ -608,6 +638,15 @@ function updateValues() {
     } else {
 
         hide("buySkillToggler")
+
+    }
+	
+    if (gameData.autoCurrencyConversionBuy) {
+        hide("autoCurrencyConversion")
+
+    } else {
+
+        showBasicDiv("autoCurrencyConversion")
 
     }
 
@@ -765,8 +804,6 @@ function updateValues() {
 	
 		tabs('tradeButton', 'inline-block')
 		showBasicDiv('alphaCoinToMegaCoinDiv')
-		showBasicDiv('textForAlphaCoinsDiv')
-		showBasicDiv('textForAlphaCoinsDiv2')
 		showBasicDiv('upgradeBroker')
 
 
@@ -775,8 +812,6 @@ function updateValues() {
 		
 		hide('tradeButton')
 		hide('alphaCoinToMegaCoinDiv')
-		hide('textForAlphaCoinsDiv')
-		hide('textForAlphaCoinsDiv2')
 		hide('upgradeBroker')
 
 
@@ -809,6 +844,21 @@ function updateValues() {
     } else {
         update("hideCompletedSkillsButton", "Completed Skills Hidden")
     }
+	
+	
+    if (gameData.confirmStorage) {
+        update("confirmStorageButton", "Do Confirm x5 Storage")
+    } else {
+        update("confirmStorageButton", "Don't Confirm x5 Storage")
+    }
+	
+    if (gameData.villageNumber > 1) {
+		tabs('confirmStorageButton', 'inline-block')
+    } else {
+		hide('confirmStorageButton')
+    }	
+	
+	
 
 	tabs('skillsSection1', 'inline-block')
 	tabs('skillsSection2', 'inline-block')
@@ -987,8 +1037,11 @@ function updateValues() {
         showOrHideSkill("limebidextrous")
     }
 
-    if (gameData.tomes >= 1) {
+    if (gameData.tomes > 0) {
         hide("tomeDiv")
+    }
+    if (gameData.tomes > 1) {
+        hide("tomeDiv2")
     }
 	
     if (gameData.autoCollectingBar == (gameData.nourishment + 1) * 100 || gameData.autoCollectingBar == 0) {
@@ -1014,9 +1067,23 @@ function updateValues() {
     if (gameData.learnANewSkill >= 4) {
         showOrHideSkill("knifebidextrous")
 
+        if (gameData.tomes == 1) {
+            document.getElementById('learnANewSkillButton').style.backgroundColor = 'darkgray';
+            gameData.learnANewSkillBar = 100;
+        } else if (gameData.tomes == 2) {
+            document.getElementById('learnANewSkillButton').style.backgroundColor = '#FFBB9A';
+        }
+    }
+	
+    if (gameData.learnANewSkill >= 5) {
+        showOrHideSkill("ambidextrous")
+
         gameData.learnANewSkillBar = 100;
         document.getElementById('learnANewSkillButton').style.backgroundColor = 'darkgray';
     }
+	
+	
+	
 
     if (gameData.villageNumber > 0) {
         tabs("marketMainButtonsDiv", "block")
@@ -1110,19 +1177,15 @@ function updateValues() {
         hide("advertisingBillboard")
         hide("advertisingLeaflets")
     }
+	
 
-    if (gameData.coins >= 10) {
-        gameData.achievement1 = 1
-    }
-    if (gameData.coins >= 100) {
-        gameData.achievement2 = 1
-    }
-    if (gameData.coins >= 1000) {
-        gameData.achievement3 = 1
-    }
-    if (gameData.coins >= 10000) {
-        gameData.achievement4 = 1
-    }
+	
+    for (i = 1; i < 7; i++) {
+		
+		if (gameData.coins >= Math.pow(10, i)) {
+			gameData['achievement' + i] = 1
+		}
+	}
 
     moveBar("learnANewSkill")
 

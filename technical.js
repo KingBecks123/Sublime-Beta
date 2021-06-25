@@ -14,9 +14,14 @@ var gameDataBase = {
     juicerBar: 0,
     howMuchJuice: 0,
     exploreLevel: 0,
+	achievementBar: 0,
     achievement1: 0,
     achievement2: 0,
+    achievement3: 0,
     achievement4: 0,
+    achievement5: 0,
+    achievement6: 0,
+    achievement7: 0,
     limesPerClick: 1,
     knife: 0,
     peeledLimes: 0,
@@ -87,7 +92,6 @@ var gameDataBase = {
     peelers: 0,
     peelerBar: 0,
     howManyPeeledLimes: 0,
-    achievement3: 0,
     basketInfoToggle: 1,
 
     basketsMax: 50,
@@ -130,6 +134,8 @@ var gameDataBase = {
     bigGloves: 0,
     villageNumber: 1,
     nutritionists: 0,
+    showAchievements: 0,
+
 
     megaCoins: 0,
     megaCoinsInBank: 0,
@@ -163,6 +169,9 @@ var gameDataBase = {
     unlockBenevolence: 0,
 	benevolenceToggle: 0,
 
+    ambidextrousBar: 0,
+    ambidextrousSkillLevel: 0,
+    ambidextrousSkillLevelMax: 100,
 
 
     diseaseTileSize: 1,
@@ -211,6 +220,8 @@ var gameDataBase = {
 
 
     currentTask: "none",
+    currentTask2: "none",
+
 
     keenEyeBar: 0,	
     keenEyeSkillLevel: 0,
@@ -241,7 +252,14 @@ var gameDataBase = {
 	creditScore2: 0,
 	creditScore3: 0,
 	coinsToAlphaBar: 0,
+	isCoinsToAlphaBar: 0,
 	currencyBrokerHireBar: 0,
+	confirmStorage: 0,
+	smarterAdvertisingManagerBroker: 0,
+	convertedCoinsSinceTravel: 0,
+	
+	buyMegaCoinsTimes: 0,
+	buyMegaCoinsTimesMax: 10,
 	
 	amountCoinsToAlpha: 0,
 	amountCoinsToAlphaMax: 10,
@@ -252,17 +270,14 @@ var gameDataBase = {
 	typeToHire: 0,
 	typeToHireToggle: 0,
 	doesHaveCurrencyBroker: 0,
-
-	currencyApplicantFeeMaximum: 20,
-	currencyApplicantSpeedMinimum: 20,
-	currencyApplicantTransferAmountMinimum: 0,
+	convertCoinsNowBar: 0,
 
 	currencyApplicantFee: 0,
 	currencyApplicantSpeed: 0,
 	currencyApplicantPrice: 0,
 	currencyApplicantTransferAmount: 0,
 	
-	currencyBrokerFee: 10000,
+	currencyBrokerFee: 200000,
 	currencyBrokerSpeed: 20,
 	currencyBrokerPrice: 0,
 	currencyBrokerTransferAmount: 1,
@@ -271,19 +286,23 @@ var gameDataBase = {
 	maxBrokerApplicantSpeed: 60,
 	brokerApplicantSpeedPrice: 0,
 
-	minBrokerApplicantFee: 50,
-	maxBrokerApplicantFee: 100,
+	minBrokerApplicantFee: 5000,
+	maxBrokerApplicantFee: 10000,
 	brokerApplicantFeePrice: 0,
+	autoCurrencyConversionBuy: 0,
 	
 	minBrokerApplicantAmount: 1,
-	maxBrokerApplicantAmount: 5,
+	maxBrokerApplicantAmount: 10,
 	brokerApplicantAmountPrice: 0,
 	
 	advertisingManagerBroker: 0,
 	autoAdvertiseBroker: 0,
 	autoAdvertiseSpeedValue: 30,
 	autoAdvertiseSpeedValueMax: 60,
+	autoAdvertiseAmountValue: 5, 
 	advertisePrice: 10,
+	isAdvertising: 0,
+
 
 
     isOptionsOpen: 0,
@@ -305,6 +324,7 @@ function gameStart() {
 	surveyingBarDoMove = 0
 	benevolenceBarDoMove = 0
 	watertightBarDoMove = 0
+
 
     addAestheticBase()
 

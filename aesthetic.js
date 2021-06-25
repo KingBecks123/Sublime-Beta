@@ -43,7 +43,31 @@ function addAesthetic() {
     toggleAesthetic("autoAdvertiseBroker")
     toggleAesthetic("increaseJuicePricex10")
 
+	currentTaskAesthetic('usePeelers')		
+	currentTaskAesthetic('useMaxPeelers')	
+	
+	currentTaskAesthetic('makeJuice')		
+	currentTaskAesthetic('makeMaxJuice')
+	
+	currentTaskAesthetic('eatFood')	
+	currentTaskAesthetic('sellYourJuice')	
 
+
+
+    //Achievement
+    var x = document.getElementsByClassName("achievement");
+    for (i = 0; i < x.length; i++) {
+		if (gameData['achievement' + (i + 1)])
+		{
+			x[i].style.backgroundColor = limesRelatedAccent;
+		}
+		else
+		{
+			x[i].style.backgroundColor = grayAccent;
+		}
+        x[i].style.padding = "5px";
+        x[i].style['margin'] = "5px";
+    }
 
 
     if (gameData.diseaseControlFinished == 1) {
@@ -139,25 +163,17 @@ function addAesthetic() {
     ifMaxDarkGray("juicer")
     ifMaxDarkGray("peeler")
 
-	currentTaskAesthetic('usePeelers')		
-	currentTaskAesthetic('useMaxPeelers')	
-	
-	currentTaskAesthetic('makeJuice')		
-	currentTaskAesthetic('makeMaxJuice')
-	
-	currentTaskAesthetic('eatFood')	
 
-
-	if (gameData.currentTask == 'sellYourJuice') {
-		colorChanger('sellYourJuiceButton', accent4Dark)
+	if (gameData.currentTask == 'autoCurrencyConversionBuy' || gameData.currentTask2 == 'autoCurrencyConversionBuy') {
+		colorChanger('currencyConvertAlphaCoinsButton', '#F8FF01')
 	} else {
-		colorChanger('sellYourJuiceButton', accent4)
+		colorChanger('currencyConvertAlphaCoinsButton', '#FDFF9A')
 	}
 	
 	function currentTaskAesthetic(x){
 		
 		button = x + "Button"
-		if (gameData.currentTask == x) {
+		if (gameData.currentTask == x || gameData.currentTask2 == x) {
 			colorChanger(button, accent4Dark)
 		} else {
 			colorChanger(button, accent4)
@@ -210,10 +226,31 @@ function addAesthetic() {
 			currentSkillAesthetic('limebidextrous')		
 			currentSkillAesthetic('intelligence')
 			currentSkillAesthetic('knifebidextrous')	
+			currentSkillAesthetic('ambidextrous')	
+
 		}
 		else{
 			for (i = 0; i < x.length; i++) {
 				x[i].style.backgroundColor = accent4;
+				x[i].style['margin'] = "5px 5px 5px 5px";
+			}
+	}
+	
+	
+    //Currency Button
+    var x = document.getElementsByClassName("currencyButton");
+	if(gameData.autoCurrencyConversionBuy){
+			for (i = 0; i < x.length; i++) {
+				
+				x[i].style['margin'] = "5px";
+				x[i].style['padding'] = "1px 10px 1px 10px";
+				x[i].style['border-radius'] = "12px";
+			}
+
+		}
+		else{
+			for (i = 0; i < x.length; i++) {
+				x[i].style.backgroundColor = '#FDFF9A';
 				x[i].style['margin'] = "5px 5px 5px 5px";
 			}
 	}

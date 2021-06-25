@@ -1,10 +1,26 @@
 function advertise() {
-    if ((gameData.advertiseBar == 100 || gameData.advertiseBar == 0) && (gameData.coins >= gameData.advertisePrice)) {
+    if ((gameData.advertiseBar == 100 || gameData.advertiseBar == 0) && (gameData.coins >= gameData.advertisePrice) && gameData.isAdvertising == 0) {
         gameData.coins -= gameData.advertisePrice
 		gameData.typeToHire = gameData.typeToHireToggle
         gameData.advertiseBar = 0
+		gameData.isAdvertising = 1
         advertiseBar()
     }
+}
+
+function advertiseBar() {
+    if (gameData.advertiseBar <= 99) {
+        gameData.advertiseBar += 1;
+		moveBar("advertise")
+        setTimeout(advertiseBar, (200 / (gameData.advertisingLevel2 * 2 * gameData.advertisingLevel3 + gameData.advertisingLevel2 + 2 * gameData.advertisingLevel3 + 1) / gameData.tickspeed))
+    } else {
+        gameData.applicationReady = 1
+        gameData.hasAdvertised = 1
+        randomizeApplication()
+		gameData.isAdvertising = 0
+
+    }
+    
 }
 
 function searchForACurrencyBroker() {
@@ -21,14 +37,29 @@ function working() {
 }
 
 function coinsToAlphaStart() {
+	
+	if(!gameData.autoCurrencyConversionBuy){
+		price = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
+		if (gameData.coins >= price && (gameData.coinsToAlphaBar == 100 || gameData.coinsToAlphaBar == 0)) {
+			gameData.coins -= price
+			gameData.coinsToAlphaBar = 0
+			coinsToAlphaBar()
+		}
+	}
+	else
+	{
+		pickCurrentTask('autoCurrencyConversionBuy')
+	}
+
+}
+
+function coinsToAlphaClick(){
 	price = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
 	if (gameData.coins >= price && (gameData.coinsToAlphaBar == 100 || gameData.coinsToAlphaBar == 0)) {
 		gameData.coins -= price
-        gameData.coinsToAlphaBar = 0
-        coinsToAlphaBar()
+		gameData.coinsToAlphaBar = 0
+		coinsToAlphaBar()
 	}
-
-
 }
 
 function coinsToAlphaBar() {
@@ -209,26 +240,36 @@ function autoCollectingBar() {
 
 }
 
-
-
-
-function learnANewSkill() {
-    if (gameData.learnANewSkill <= 2 || (gameData.tomes == 1 && gameData.learnANewSkill <= 3)) {
-        barStartGranular("learnANewSkill")
+function convertCoinsNow() {
+    if (gameData.coins >= 1e5 && (gameData.convertCoinsNowBar == 0 || gameData.convertCoinsNowBar == 100)) {
+        gameData.coins -= 1e5
+		gameData.convertedCoinsSinceTravel += 1
+		gameData.convertCoinsNowBar = 0
+        convertCoinsNowBar()
     }
 }
 
-function advertiseBar() {
-    if (gameData.advertiseBar <= 99) {
-        gameData.advertiseBar += 1;
-		moveBar("advertise")
-        setTimeout(advertiseBar, (200 / (gameData.advertisingLevel2 * 2 * gameData.advertisingLevel3 + gameData.advertisingLevel2 + 2 * gameData.advertisingLevel3 + 1) / gameData.tickspeed))
-    } else {
-        gameData.applicationReady = 1
-        gameData.hasAdvertised = 1
-        randomizeApplication()
+
+function convertCoinsNowBar() {
+    if (gameData.convertCoinsNowBar < 100) {
+        gameData.convertCoinsNowBar += 0.5;
+		moveBar("convertCoinsNow")
+        setTimeout(convertCoinsNowBar, 50 * (gameData.convertedCoinsSinceTravel + 1))
     }
-    
+	else
+	{
+        gameData.megaCoins += 1
+	}
+		
+
+
+}
+
+
+function learnANewSkill() {
+    if (gameData.learnANewSkill <= 2 || (gameData.tomes == 1 && gameData.learnANewSkill <= 3) || (gameData.tomes == 2 && gameData.learnANewSkill <= 4)) {
+        barStartGranular("learnANewSkill")
+    }
 }
 
 
@@ -265,6 +306,10 @@ function keenEyeBar() {
     basicBarSkill("keenEye")
 }
 
+function ambidextrousBar() {
+    basicBarSkill("ambidextrous")
+}
+
 function learnANewSkillBar() {
     if (gameData.learnANewSkillBar < 100) {
         gameData.learnANewSkillBar += 0.1;
@@ -294,6 +339,10 @@ function learnANewSkillBar() {
             case 3:
                 gameData.learnANewSkill = 4
                 update("newInfo", "You Learned Knifebidextrous!")
+                break;
+            case 4:
+                gameData.learnANewSkill = 5
+                update("newInfo", "You Learned Ambidextrous!")
         }
     }
 
@@ -316,13 +365,15 @@ function sellYourJuiceBar() {
 
     if (gameData.deliveryBar <= 99.9) {
         if (gameData.deliveryType <= 1) {
-            if (gameData.deliveryBar <= 99.9) {
+
                 gameData.deliveryOngoing = 1
                 gameData.deliveryBar += 0.1;
 			    moveBar("delivery")
                 setTimeout(sellYourJuiceBar, (100 / (gameData.deliveryType * 100 + 1)) / gameData.tickspeed)
-            }
-        } else if (gameData.deliveryType == 2) {
+
+        } 
+		else 
+		{
             if (gameData.deliveryBar <= 99.5) {
                 gameData.deliveryOngoing = 1
                 gameData.deliveryBar += 0.5;
@@ -330,7 +381,8 @@ function sellYourJuiceBar() {
                 setTimeout(sellYourJuiceBar, (100 / (gameData.deliveryType * 100 + 1)) / gameData.tickspeed)
             }
         }
-    } else {
+    } 
+	else {
         gameData.coins += (gameData.nationalJuiceMarketing + 1) * Math.floor(gameData.juiceBulkAmount * (1 + (gameData.juicePriceCents / 100)))
         gameData.deliveryOngoing = 0
     }

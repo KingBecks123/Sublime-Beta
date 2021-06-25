@@ -4,7 +4,7 @@ function loadStuff(savegame) {
     if (savegame !== null) {
         Object.assign(gameData, savegame);
         backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 98
+        gameData.versionNumber = 103
         updateValues()
         updateAfterLoad()
     } else {
@@ -104,20 +104,54 @@ function pinButton() {
 }
 
 
+
 function pickCurrentTask(x) {
+	
 	if (!event.shiftKey){
-		if(gameData.currentTask == x && gameData.currentTask !== "none")
-		{
-			gameData.currentTask = "none"
+		if(gameData.ambidextrousSkillLevel !== gameData.ambidextrousSkillLevelMax){
+			if(gameData.currentTask == x && gameData.currentTask !== "none")
+			{
+				gameData.currentTask = "none"
+			}
+			else
+			{
+				gameData.currentTask = x
+			}
+			
 		}
 		else
 		{
-			gameData.currentTask = x
+			if(gameData.currentTask == x || gameData.currentTask == "none" )
+			{
+				if(gameData.currentTask == x && gameData.currentTask !== "none")
+				{
+					gameData.currentTask = "none"
+				}
+				else if (gameData.currentTask == "none")
+				{
+					if(!((gameData.currentTask2 == 'makeJuice' && x == 'makeMaxJuice') || (gameData.currentTask2 == 'makeMaxJuice' && x == 'makeJuice') || (gameData.currentTask2 == 'usePeelers' && x == 'useMaxPeelers') || (gameData.currentTask2 == 'useMaxPeelers' && x == 'usePeelers')))
+					gameData.currentTask = x
+				}
+				
+
+			}
+			else
+			{
+				if(gameData.currentTask2 == x && gameData.currentTask2 !== "none")
+				{
+					gameData.currentTask2 = "none"
+				}
+				else if (gameData.currentTask2 == "none")
+				{
+					if(!((gameData.currentTask == 'makeJuice' && x == 'makeMaxJuice') || (gameData.currentTask == 'makeMaxJuice' && x == 'makeJuice') || (gameData.currentTask == 'usePeelers' && x == 'useMaxPeelers') || (gameData.currentTask == 'useMaxPeelers' && x == 'usePeelers')))
+					gameData.currentTask2 = x
+				}
+
+			}
 		}
 		
-		 if (gameData.currentTask == 'eatFood') {
-			eat()
-		}
+		
+		
 	}
 	
 	
@@ -174,9 +208,11 @@ function startCurrentTask(x) {
 
 	 else if (x == 'useMaxPeelers') {
 		peelerPeelMax()
+	}
+	 else if (x == 'autoCurrencyConversionBuy') {
+		coinsToAlphaClick()
 	}	
 	
-	updateValues()
 }
 
 
@@ -462,6 +498,7 @@ function restartBar(x) {
     if (y <= 99 && y != 0) {
         eval(x + "Bar()")
     }
+	
 }
 
 function restartBarNoMovement(x) {
@@ -579,7 +616,7 @@ function checkShow(i, txt) {
 
 function increaseValue(id) {
 
-    if (gameData[id] < gameData[id + 'Max']) {
+    if (gameData[id] < gameData[id + 'Max'] || gameData[id + 'Max'] == null) {
         gameData[id] += 1
     }
     updateValues()

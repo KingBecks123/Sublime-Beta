@@ -3,17 +3,22 @@ var loopNumbercurrentTask = 0;
 
 function mainGameLoopSlow() {
 	
-	 if (gameData.autoStartSimulation)
+	if (gameData.autoStartSimulation)
 		startSimulation()
 	
-	 if (gameData.autoStartTask) 
+	if (gameData.autoStartTask) 
 		diseaseControlTask()
 	
-	 if (gameData.autoCheckSimulation)
+	if (gameData.autoCheckSimulation)
 		checkResults()
-
-	 if (gameData.autoAdvertiseBroker && gameData.currencyApplicantSpeed > gameData.autoAdvertiseSpeedValue)
-		advertise()
+	
+	if (gameData.autoAdvertiseBroker)
+	{
+		if (gameData.currencyApplicantSpeed > gameData.autoAdvertiseSpeedValue || (gameData.smarterAdvertisingManagerBroker && gameData.currencyApplicantTransferAmount < gameData.autoAdvertiseAmountValue))
+		{
+			advertise()
+		}
+	}
 
 	if(gameData.numberOfTiles >= 17)
 	{
@@ -37,6 +42,8 @@ function mainGameLoopSlow() {
 	}
 
 	startCurrentTask(gameData.currentTask)	
+	startCurrentTask(gameData.currentTask2)	
+
 	
 	if(gameData.currentSkill !== 'none')
 		barStartGranularSkillBasic(gameData.currentSkill)
@@ -49,7 +56,16 @@ function mainGameLoopSlow() {
 		else if (gameData.alphaCoinsExchangeRate > 50)
 			gameData.alphaCoinsExchangeRate -= 1
 	}
-
+	
+	gameData.achievementBar = 0
+    for (i = 1; i < 7; i++) {
+		
+		if (gameData['achievement' + i]) {
+			gameData.achievementBar += 100 / 7
+		}
+	}
+	
+	moveBar('achievement')
 	updateMapTileAesthetic()
 	setTimeout(mainGameLoopSlow, 500)
 }
@@ -201,6 +217,9 @@ function hireApplicant() {
 			gameData.currencyBrokerSpeed = gameData.currencyApplicantSpeed
 			gameData.currencyBrokerPrice = gameData.currencyApplicantPrice
 			gameData.currencyBrokerTransferAmount = gameData.currencyApplicantTransferAmount
+			
+			gameData.coinsToAlphaBar = 0
+
 		}
 	}
     updateValues()
@@ -305,10 +324,20 @@ function peelLime() {
 }
 
 function buyTome() {
-    if (gameData.coins >= 10) {
-        gameData.coins -= 10
-        gameData.tomes = 1
-    }
+	if(gameData.tomes == 0)
+	{
+		if (gameData.coins >= 10) {
+			gameData.coins -= 10
+			gameData.tomes = 1
+		}
+	}
+	else if(gameData.tomes == 1)
+	{
+		if (gameData.alphaCoins >= 100) {
+			gameData.alphaCoins -= 100
+			gameData.tomes = 2
+		}
+	}
     updateValues()
 }
 
@@ -402,6 +431,14 @@ function buyAdvertisingManager(){
     updateValues()
 }
 
+function buySmarterAdvertisingManager(){
+    if (gameData.alphaCoins >= 50) {
+        gameData.alphaCoins -= 50
+        gameData.smarterAdvertisingManagerBroker = 1
+    }
+    updateValues()
+}
+
 function buyEntrepreneurialCertificate() {
     if (gameData.megaCoins >= 10) {
         gameData.megaCoins -= 10
@@ -431,7 +468,7 @@ function increaseCreditScore2() {
 function increaseCreditScore3() {
     if (gameData.megaCoins >= 50) {
         gameData.megaCoins -= 50
-        gameData.megaCoinsInBankMax += 700
+        gameData.megaCoinsInBankMax += 800
         gameData.creditScore3 = 1
 
     }
@@ -448,17 +485,18 @@ function buyABiggerWallet() {
 }
 
 function buyMegaCoins() {
-    if (gameData.coins >= 10000 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
+    if (gameData.coins >= 10000 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax && gameData.buyMegaCoinsTimes < gameData.buyMegaCoinsTimesMax) {
         gameData.coins -= 10000
         gameData.megaCoinsInBank += 5
+		gameData.buyMegaCoinsTimes += 1
     }
     updateValues()
 }
 
-function buyMegaCoinsNow() {
-    if (gameData.coins >= 1e5) {
-        gameData.coins -= 1e5
-        gameData.megaCoins += 1
+function autoCurrencyConversionBuy() {
+    if (gameData.alphaCoins >= 10) {
+        gameData.alphaCoins -= 10
+        gameData.autoCurrencyConversionBuy = 1
     }
     updateValues()
 }
@@ -596,6 +634,12 @@ function travelToNextVillage() {
     }
 }
 
+function stopActions(){
+	gameData.currentTask = 'none'
+	gameData.currentTask2 = 'none'
+
+}
+
 function lookAround() {
 
     gameData.lookAroundNumber += 1
@@ -648,20 +692,49 @@ function buyAMap() {
 
 
 function storageJuicersUnlock() {
-    if (gameData.coins >= 100) {
-        gameData.coins -= 100
-        gameData.storageJuicersUnlock = 1
-        gameData.juicersMax *= 5
-    }
+	
+	if(gameData.confirmStorage)
+	{
+		if (window.prompt("Are you sure? Type 'yes' if you are") == "yes")
+		{	
+			if (gameData.coins >= 100) {
+				gameData.coins -= 100
+				gameData.storageJuicersUnlock = 1
+				gameData.juicersMax *= 5
+			}
+		}
+	}
+	else
+	{
+		if (gameData.coins >= 100) {
+			gameData.coins -= 100
+			gameData.storageJuicersUnlock = 1
+			gameData.juicersMax *= 5
+		}
+	}
     updateValues()
 }
 
 function storagePeelersUnlock() {
-    if (gameData.coins >= 100) {
-        gameData.coins -= 100
-        gameData.storagePeelersUnlock = 1
-        gameData.peelersMax *= 5
-    }
+	if(gameData.confirmStorage)
+	{
+		if (window.prompt("Are you sure? Type 'yes' if you are") == "yes")
+		{	
+			if (gameData.coins >= 100) {
+				gameData.coins -= 100
+				gameData.storagePeelersUnlock = 1
+				gameData.peelersMax *= 5
+			}
+		}
+	}
+	else
+	{
+		if (gameData.coins >= 100) {
+			gameData.coins -= 100
+			gameData.storagePeelersUnlock = 1
+			gameData.peelersMax *= 5
+		}
+	}
     updateValues()
 }
 

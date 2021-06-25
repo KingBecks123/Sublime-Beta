@@ -85,10 +85,12 @@
 		<div id="rottenLimesHide">
 			<div class="stat" id="textForRottenLimesDiv" style="color:#030;display:none  ;">Rotten Limes</div><div class="stat ar" id="textForRottenLimes" style="color:#060; display:none ; ">0</div><p id="textForRottenLimesP" style="display:none ; "> </p><br  id="textForRottenLimesBr"  style="display:none ; "/>
 		</div>
-		<div class="stat" id="textForPeeledLimesDiv" style="color:#282;display:none  ;">Peeled Limes</div><div class="stat ar" id="textForPeeledLimes" style="color:#5F5; display:none ; ">0</div><p id="textForPeeledLimesP" style="display:none ; "> </p><br  id="textForPeeledLimesBr"  style="display:none ; "/>
-		<div class="stat" id="textForJuiceDiv"       style="color:#484;display:none  ;">Juice       </div><div class="stat ar" id="textForJuice"       style="color:#9F9; display:none ; ">0</div><p id="textForJuiceP"       style="display:none ; "> </p><br  id="textForJuiceBr"        style="display:none ; "/>
-		<div class="stat" id="textForCoinsDiv"       style="color:#880;display:none  ;">Coins       </div><div class="stat ar" id="textForCoins"       style="color:#FF0; display:none ; ">0</div><p id="textForCoinsP"       style="display:none ; "> </p><br  id="textForCoinsBr"        style="display:none ; "/>
-		<div class="stat" id="textForMegaCoinsDiv"   style="color:#800;display:none  ;">Mega Coins  </div><div class="stat ar" id="textForMegaCoins"   style="color:#F00; display:none ; ">0</div><p id="textForMegaCoinsP"   style="display:none ; "> </p><br  id="textForMegaCoinsBr"    style="display:none ; "/>
+		<div class="stat" id="textForPeeledLimesDiv" style="color:#282;display:none  ;">Peeled Limes </div><div class="stat ar" id="textForPeeledLimes"  style="color:#5F5; display:none ; ">0</div><p id="textForPeeledLimesP"  style="display:none ; "> </p><br  id="textForPeeledLimesBr"   style="display:none ; "/>
+		<div class="stat" id="textForJuiceDiv"       style="color:#484;display:none  ;">Juice        </div><div class="stat ar" id="textForJuice"        style="color:#9F9; display:none ; ">0</div><p id="textForJuiceP"        style="display:none ; "> </p><br  id="textForJuiceBr"         style="display:none ; "/>
+		<div class="stat" id="textForCoinsDiv"       style="color:#880;display:none  ;">Coins        </div><div class="stat ar" id="textForCoins"        style="color:#FF0; display:none ; ">0</div><p id="textForCoinsP"        style="display:none ; "> </p><br  id="textForCoinsBr"         style="display:none ; "/>
+		<div class="stat" id="textForMegaCoinsDiv"   style="color:#800;display:none  ;">Mega Coins   </div><div class="stat ar" id="textForMegaCoins"    style="color:#F00; display:none ; ">0</div><p id="textForMegaCoinsP"    style="display:none ; "> </p><br  id="textForMegaCoinsBr"     style="display:none ; "/>
+		<div class="stat" id="textForAlphaCoinsDiv"  style="color:#880;display:none  ;">Alpha Coins  </div><div class="stat ar" id="textForAlphaCoins"   style="color:#FF0; display:none ; ">0</div><p id="textForAlphaCoinsP"   style="display:none ; "> </p><br  id="textForAlphaCoinsBr"    style="display:none ; "/>
+
 	</div>	
 
     <div class="row" style="background-color:#bfbfbf;padding-left: 130px;display:block;height:60px;">
@@ -102,6 +104,8 @@
     <div style="display:block;float: left;margin-left:5px;margin-top:5px;">
         <button class="basicButtonSize" id="pickUpLimes" style="width:120px" onclick="getLimesButton()">Collect Limes</button>
         <button class="basicButtonSize" id="lookAroundButton" onclick="lookAround()">Look Around</button>
+        <button class="specialButton" id="stopActionsButton" style="width:120px" onclick="stopActions()">Stop Actions</button>
+
     </div>
     <br>
     <br>
@@ -146,6 +150,7 @@
         <button class="specialButton" id="diseaseTileSizeButton" onclick="switchValue('diseaseTileSize')">Disease Tiles Small</button>
         <button class="specialButton" id="diseaseTileSymbolsButton" onclick="switchValue('diseaseTileSymbols')">Disease Tiles No Symbols</button>
         <button class="specialButton" id="hideRottenLimesButton" onclick="switchValue('hideRottenLimes')">Hide Rotten Limes</button>
+        <button class="specialButton" id="confirmStorageButton" onclick="switchValue('confirmStorage')">Don't Confirm x5 Storage</button>
 
 
 
@@ -427,9 +432,16 @@
 					
 					    <button class="basicButtonSize" id="autoAdvertiseBrokerButton" style="display:inline-block" onclick="switchValue('autoAdvertiseBroker')">Auto</button>
 						<p class="basicText" style="display:block;">Rule:</p>
-						<p class="basicText" id="textForAdvertisingBrokerRule" , style="display:block;">Auto advertise unless speed is under 30 seconds.</p>
+						<p class="basicText" id="textForAdvertisingBrokerRule">Auto advertise unless speed is under 30 seconds.</p>
 						<button class="specialButton" onclick="decreaseValue('autoAdvertiseSpeedValue')" style="width:168px">Decrease</button>
 						<button class="specialButton" onclick="increaseValue('autoAdvertiseSpeedValue')" style="width:168px">Increase</button>
+
+					<div id="smarterAdvertisingBrokerRule">
+						<p class="basicText" id="textForSmarterAdvertisingBrokerRule">Auto advertise unless speed is under 30 seconds.</p>
+						<button class="specialButton" onclick="decreaseValue('autoAdvertiseAmountValue')" style="width:168px">Decrease</button>
+						<button class="specialButton" onclick="increaseValue('autoAdvertiseAmountValue')" style="width:168px">Increase</button>
+					</div>
+
 					
 					</div>
 					
@@ -451,6 +463,14 @@
                     <button class="specialButton" onclick="buyAdvertisingManager()">Advertising Manager</button>
                     <p class="basicText">Take on a manager to help you advertise for brokers</p>
                     <p class="basicText">Price: 10 Alpha Coins</p>
+
+                </div>
+				
+                <div id="smarterAutoBrokerAdvertiser" class="basicDiv">
+
+                    <button class="specialButton" onclick="buySmarterAdvertisingManager()">Smarter Advertising Manager</button>
+                    <p class="basicText">Add a new rule for your advertising manager</p>
+                    <p class="basicText">Price: 50 Alpha Coins</p>
 
                 </div>
 
@@ -477,7 +497,7 @@
         </div>
 
 
-        <div id="travel" , style="display:none;">
+        <div id="travel" , style="display:none;width:380px;">
             <div id="travellingArea">
                 <div class="basicDiv">
 
@@ -487,33 +507,30 @@
 
                 </div>
 				
-				<div class="basicDiv" id="textForAlphaCoinsDiv2">
-					<p class="basicTextSize" id="textForAlphaCoins2" style="color:#F8FF01;background-color:#000000">0 Alpha Coins</p>
-				</div>
-				
                 <div class="basicDiv">
-
-                    <button class="specialButton" onclick="buyMegaCoins()">Transfer Coins</button>
-                    <p class="basicText" style="display:block;">10,000 Coins -> 5 Mega Coins in the bank</p>
-					
-                    <p class="basicText" style="display:block;">Transfer money to a bank account in the next town</p>
-                    <p class="basicText" style="display:block;">You can only spend this money once you arrive</p>
-                    <p class="basicText" id="textForMegaCoinsInBank" style="display:block;">0 Mega Coins In Bank</p>
-
-                    <button class="specialButton" onclick="buyMegaCoinsNow()">Convert Coins</button>
-                    <p class="basicText" style="display:block;">100,000 Coins -> 1 Mega Coin now</p>
-			        <p class="basicText" style="display:block;">Get instant access to mega coins</p>
-		
-
-
 					<div id="alphaCoinToMegaCoinDiv">
 
 						<button class="specialButton" onclick="buyMegaCoinsWithAlphaCoins()">Transfer Alpha Coins</button>
 						<p class="basicText" style="display:block;">10 Alpha Coins -> 1 Mega Coin</p>
 
-
-
 					</div>
+                    <button class="specialButton" onclick="buyMegaCoins()">Transfer Coins</button>
+                    <p class="basicText" style="display:block;">10,000 Coins -> 5 Mega Coins in the bank</p>
+					
+                    <p class="basicText" style="display:block;">Transfer money to a bank account in the next town</p>
+                    <p class="basicText" style="display:block;">You can only spend this money once you arrive</p>
+                    <p class="basicText" id="buyMegaCoinsTimes" style="display:block;">Transfer times: 0 / 10</p>
+
+                    <p class="basicText" id="textForMegaCoinsInBank" style="display:block;">0 Mega Coins In Bank</p>
+
+                    <button class="specialButton" onclick="convertCoinsNow()">Convert Coins</button>
+                    <p class="basicText" style="display:block;">100,000 Coins -> 1 Mega Coin now</p>
+			        <p class="basicText" style="display:block;">Get instant access to mega coins</p>
+					<div class="skillProgress" id="convertCoinsNowProgress">
+						<div class="skillBar" , id="convertCoinsNowBar">0%</div>
+					</div>
+
+
 
                 </div>
 
@@ -607,12 +624,8 @@
 		
         <div id="trade" style="width:380px" >
 
-			<div class="basicDiv" id="textForAlphaCoinsDiv">
-				<p class="basicTextSize" id="textForAlphaCoins" style="color:#F8FF01;background-color:#000000">0 Alpha Coins</p>
-			</div>
-
             <div class="basicDiv" id="earnAlphaCoins">
-                <button class="basicButtonSize" id="currencyConvertAlphaCoinsButton" style="display:block;background-color:#FDFF9A" onclick="coinsToAlphaStart()">Convert Coins to Alpha Coins</button>
+                <button class="currencyButton" id="currencyConvertAlphaCoinsButton" style="display:block;background-color:#FDFF9A" onclick="coinsToAlphaStart()">Convert Coins to Alpha Coins</button>
 
 				<div class="skillProgress" id="coinsToAlphaProgress">
 					<div class="skillBar" , id="coinsToAlphaBar">0%</div>
@@ -640,8 +653,9 @@
 			<div id="brokerApplicantUpgrades">
 				<div class="basicDiv">
 					<p class="basicTextYellow">Applicant Speed</p>
-					<button class="specialButton" onclick="brokerApplicant('Speed', 'max')" style="width:168px">Decrease Maximum</button>
+					
 					<button class="specialButton" onclick="brokerApplicant('Speed', 'min')" style="width:168px">Decrease Minimum</button>
+					<button class="specialButton" onclick="brokerApplicant('Speed', 'max')" style="width:168px">Decrease Maximum</button>
 
 					<p class="basicText" id="textForBrokerApplicantSpeed">Currently 20 - 100 Seconds</p>
 					<p class="basicText" id="brokerApplicantSpeedPrice">Price: 1 Alpha Coins</p>
@@ -649,8 +663,8 @@
 				
 				<div class="basicDiv">
 					<p class="basicTextYellow">Applicant Fee</p>
-					<button class="specialButton" onclick="brokerApplicant('Fee', 'max100')" style="width:168px">Decrease Maximum</button>
 					<button class="specialButton" onclick="brokerApplicant('Fee', 'min100')" style="width:168px">Decrease Minimum</button>
+					<button class="specialButton" onclick="brokerApplicant('Fee', 'max100')" style="width:168px">Decrease Maximum</button>
 
 					<p class="basicText" id="textForBrokerApplicantFee">Currently 10,000 - 200,000 Coins</p>
 					<p class="basicText" id="brokerApplicantFeePrice">Price: 1 Alpha Coins</p>
@@ -658,12 +672,30 @@
 				
 				<div class="basicDiv">
 					<p class="basicTextYellow">Applicant Alpha Coin Transfer Amount</p>
-					<button class="specialButton" onclick="brokerApplicant('Amount', 'maxup')" style="width:168px">Increase Maximum</button>
 					<button class="specialButton" onclick="brokerApplicant('Amount', 'minup')" style="width:168px">Increase Minimum</button>
+					<button class="specialButton" onclick="brokerApplicant('Amount', 'maxup')" style="width:168px">Increase Maximum</button>
 
 					<p class="basicText" id="textForBrokerApplicantAmount">Currently 1 - 5 Alpha Coins</p>
 					<p class="basicText" id="brokerApplicantAmountPrice">Price: 1 Alpha Coins</p>
 				</div>
+				
+                <div id="autoCurrencyConversion" class="basicDiv">
+
+                    <button class="specialButton" onclick="autoCurrencyConversionBuy()">Auto Converter</button>
+                    <p class="basicText">Make currency conversion a togglable task</p>
+                    <p class="basicText">Price: 10 Alpha Coins</p>
+
+                </div>
+				
+				
+                <div id="tomeDiv2" class="basicDiv">
+                    <button class="specialButton" onclick="buyTome()">Buy A Tome</button>
+                    <p class="basicText">Tomes can teach you new skills!</p>
+                    <p class="basicText">Price: 100 Alpha Coins</p>
+                </div>
+				
+				
+
 			</div>
 
 			
@@ -754,15 +786,29 @@
             <button class="specialButton" id="inventoryKnifeLime" , onclick="peelLime()">On Limes</button>
         </div>
     </div>
+	
+    <div id="achievements">
+		<div style="width:380px;">
+			<div class="basicDiv">
+				<div class="skillProgress" id="achievementProgress">
+					<div class="skillBar" id="achievementBar">0%</div>
+				</div>
+			</div>
+		
+			<div id="achievements" class="basicDiv">
+				<p class="achievement">Collect 10 Coins.</p>
+				<p class="achievement">Collect 100 Coins.</p>
+				<p class="achievement">Collect 1,000 Coins.</p>
+				<p class="achievement">Collect 10,000 Coins.</p>
+				<p class="achievement">Collect 100,000 Coins.</p>
+				<p class="achievement">Collect 1,000,000 Coins.</p>
+				<p class="achievement">Collect 10,000,000 Coins.</p>
 
-    <div id="achievements" class="basicDiv">
-        <p class="basicTextSize" id="coinsAchievement">Collect 10 Coins.</p>
-        <p class="basicTextSize" id="coinsAchievement2">Collect 100 Coins.</p>
-        <p class="basicTextSize" id="coinsAchievement3">Collect 1,000 Coins.</p>
-        <p class="basicTextSize" id="coinsAchievement4">Collect 10,000 Coins.</p>
 
-
+			</div>
+		</div>
     </div>
+
 
     <div id="forest">
         <div class="basicDiv">
@@ -1246,17 +1292,33 @@
             <p class="basicText" , id="knifebidextrousSkillLevel"></p>
 
         </div>
+		
+        <div class="basicDiv" , id="ambidextrousDiv" , style="display:none;">
+
+            <button class="skillButton" , id="ambidextrousButton" , onclick="pickCurrentSkill('ambidextrous')">Ambidextrous</button>
+            <div class="skillInfo">
+                <p class="basicText">Yes, i made a skill without a lime pun.</p>
+                <p class="basicText">Reach level 100 to be able to toggle two actions at once.</p>
+            </div>
+            <div class="skillProgress" id="ambidextrousProgress">
+                <div class="skillBar" , id="ambidextrousBar">0%</div>
+            </div>
+            <p class="basicText" , id="ambidextrousSkillLevel"></p>
+
+
+
+        </div>
     </div>
     </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="aesthetic.js?v=               98" charset="utf-8" type="text/javascript"></script>
-    <script src="myfunctions.js?v=             98" charset="utf-8" type="text/javascript"></script>
-    <script src="main.js?v=                    98" charset="utf-8" type="text/javascript"></script>
-    <script src="diseasetask.js?v=             98" charset="utf-8" type="text/javascript"></script>
-    <script src="technical.js?v=               98" charset="utf-8" type="text/javascript"></script>
-    <script src="bars.js?v=                    98" charset="utf-8" type="text/javascript"></script>
-    <script src="update.js?v=                  98" charset="utf-8" type="text/javascript"></script>
-    <script src="oldupdatefixes.js?v=          98" charset="utf-8" type="text/javascript"></script>
+    <script src="aesthetic.js?v=               103" charset="utf-8" type="text/javascript"></script>
+    <script src="myfunctions.js?v=             103" charset="utf-8" type="text/javascript"></script>
+    <script src="main.js?v=                    103" charset="utf-8" type="text/javascript"></script>
+    <script src="diseasetask.js?v=             103" charset="utf-8" type="text/javascript"></script>
+    <script src="technical.js?v=               103" charset="utf-8" type="text/javascript"></script>
+    <script src="bars.js?v=                    103" charset="utf-8" type="text/javascript"></script>
+    <script src="update.js?v=                  103" charset="utf-8" type="text/javascript"></script>
+    <script src="oldupdatefixes.js?v=          103" charset="utf-8" type="text/javascript"></script>
 
 </body>
 
