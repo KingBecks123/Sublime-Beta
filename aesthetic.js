@@ -7,6 +7,9 @@ accent2 = "gray"; //When buttons are toggled off
 accent3 = "#4DFE89"; //When buttons are toggled on
 accent4 = "#FFBB9A"; //Special Buttons
 accent4Dark = "#FF894C"; //Special Buttons Dark
+whiteBlue = "#99DEFF"; //White
+grayBlue = "#4DC3FF"; //White
+
 
 grayAccent = "#50514F";
 grayAccentLight = "#BBBBBB";
@@ -51,13 +54,57 @@ function addAesthetic() {
 	
 	currentTaskAesthetic('eatFood')	
 	currentTaskAesthetic('sellYourJuice')	
+	
+	currentTaskAesthetic('findPieCustomers')	
 
 
+
+	if(gameData.wheat)
+		colorChanger('winnowWheat', accent4)
+	else
+		colorChanger('winnowWheat', grayAccentLight)
+
+	if(gameData.wheatSeeds)
+		colorChanger('grindFlour', accent4)
+	else
+		colorChanger('grindFlour', grayAccentLight)
+	
+	
+	
+	
+
+    var x = document.getElementsByClassName("changeResearchersBy10");
+    for (i = 0; i < x.length; i++) {
+		if (gameData.changeResearchersBy10Unlock)
+		{
+			x[i].style.display = 'inline-block';
+		}
+		else
+		{
+			x[i].style.display = 'none';
+		}
+
+    }
 
     //Achievement
     var x = document.getElementsByClassName("achievement");
     for (i = 0; i < x.length; i++) {
 		if (gameData['achievement' + (i + 1)])
+		{
+			x[i].style.backgroundColor = limesRelatedAccent;
+		}
+		else
+		{
+			x[i].style.backgroundColor = grayAccent;
+		}
+        x[i].style.padding = "5px";
+        x[i].style['margin'] = "5px";
+    }
+	
+    //Special Achievement
+    var x = document.getElementsByClassName("specialAchievement");
+    for (i = 0; i < x.length; i++) {
+		if (gameData['specialAchievement' + (i + 1)])
 		{
 			x[i].style.backgroundColor = limesRelatedAccent;
 		}
@@ -89,9 +136,6 @@ function addAesthetic() {
 	{
 		colorChanger('checkResultsButton', grayAccent)
 	}
-	
-	
-
 
     if (gameData.autoCollectingBar == 0 || gameData.autoCollectingBar == (gameData.nourishment + 1) * 100) {
         colorChanger("pickUpLimes", limesRelatedAccent)
@@ -123,42 +167,6 @@ function addAesthetic() {
     }
 	
 
-	checkRespectMilestone(10,    'lime',  'Automatically start tasks')
-	checkRespectMilestone(25,    'lime',  'Automatically start simulation')
-	checkRespectMilestone(50,    'lime',  'Allow entrance to the Special Shopping District')
-	checkRespectMilestone(100,   'lime',  'Automatically check simulation')
-	checkRespectMilestone(500,   'lime',  'Automatically situate a civilian')
-	checkRespectMilestone(1000,  'lime',  'Unlock scientific research')
-	checkRespectMilestone(10000, 'red' ,  'Unlock more mega coin upgrades')
-
-
-
-
-	function checkRespectMilestone(number, color, text){
-		
-		i = 'respectMilestone' + number
-
-
-		if (gameData.respect >= number) {
-			gameData[i] = 1
-		}
-		
-		if (gameData[i]) {
-			
-			update(number + 'RespectMilestone', number.toLocaleString() + ' Respect: ' + text)
-			
-			if(color == 'lime')
-				colorChanger(number + 'RespectMilestone', limesRelatedAccent)
-			if(color == 'red')
-				colorChanger(number + 'RespectMilestone', '#FF999A')
-		} else {
-
-			colorChanger(number + 'RespectMilestone', grayAccentLight)
-		}
-	}
-
-
-
     ifMaxDarkGray("basket")
     ifMaxDarkGray("juicer")
     ifMaxDarkGray("peeler")
@@ -168,6 +176,12 @@ function addAesthetic() {
 		colorChanger('currencyConvertAlphaCoinsButton', '#F8FF01')
 	} else {
 		colorChanger('currencyConvertAlphaCoinsButton', '#FDFF9A')
+	}
+	
+	if (gameData.currentTask == 'alphaToBeta' || gameData.currentTask2 == 'alphaToBeta') {
+		colorChanger('currencyConvertBetaCoinsButton', '#F8FF01')
+	} else {
+		colorChanger('currencyConvertBetaCoinsButton', '#FDFF9A')
 	}
 	
 	function currentTaskAesthetic(x){
@@ -221,12 +235,14 @@ function addAesthetic() {
 				x[i].style['padding'] = "1px 10px 1px 10px";
 				x[i].style['border-radius'] = "12px";
 			}
-			currentSkillAesthetic('keenEye')		
-			currentSkillAesthetic('rottenWisdom')	
-			currentSkillAesthetic('limebidextrous')		
-			currentSkillAesthetic('intelligence')
-			currentSkillAesthetic('knifebidextrous')	
-			currentSkillAesthetic('ambidextrous')	
+			
+			
+			for (let i = 0; i < mainSkills.length; i++) {
+				currentSkillAesthetic(mainSkills[i])		
+			}			
+
+
+
 
 		}
 		else{
@@ -309,7 +325,7 @@ function addAestheticBase(){
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = grayAccentLight;
         x[i].style.padding = "5px";
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 	
     //Basic Text Yellow
@@ -317,34 +333,34 @@ function addAestheticBase(){
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = '#FDFF9A';
         x[i].style.padding = "5px";
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 
     //Basic Text Size
     var x = document.getElementsByClassName("basicTextSize");
     for (i = 0; i < x.length; i++) {
         x[i].style.padding = "5px";
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 
     //Gray Button
     var x = document.getElementsByClassName("grayButton");
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = grayAccentLight;
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 
     //Basic Button
     var x = document.getElementsByClassName("basicButton");
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = accent3;
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 
     //Basic Button Size
     var x = document.getElementsByClassName("basicButtonSize");
     for (i = 0; i < x.length; i++) {
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 
     //Basic Button Size Round
@@ -361,7 +377,7 @@ function addAestheticBase(){
     var x = document.getElementsByClassName("specialButton");
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = accent4;
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 	
 	
@@ -369,7 +385,7 @@ function addAestheticBase(){
     var x = document.getElementsByClassName("specialButtonTravel");
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = "#FF999A";
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 
     //Pin Button
@@ -380,6 +396,14 @@ function addAestheticBase(){
         x[i].style['margin'] = "5px";
     }
 
+    //Field Tile
+    var x = document.getElementsByClassName("fieldTile");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.color = "#964D1A";
+        x[i].style.backgroundColor = "#DEAD85";
+        x[i].style.height = '80px';
+        x[i].style.width = '80px';
+    }
 
     //Skills
 
@@ -387,14 +411,72 @@ function addAestheticBase(){
     var x = document.getElementsByClassName("skillProgress");
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = accent0;
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }
 
     //Vertical Progress
     var x = document.getElementsByClassName("verticalProgress");
     for (i = 0; i < x.length; i++) {
         x[i].style.backgroundColor = accent0;
-        x[i].style['margin'] = "5px 5px 5px 5px";
+        x[i].style['margin'] = "5px";
     }	
 	
+	
+	changeVariablesColorAesthetic()
+	normalizeButtons()
+	pinButton()
+}
+
+function changeVariablesColor(){
+	switchValue('moreVisibleVariables')
+	changeVariablesColorAesthetic()
+}
+
+function changeVariablesColorAesthetic(){
+	
+	if(gameData.moreVisibleVariables)
+	{
+		color = whiteBlue
+		colorDark = grayBlue
+
+		
+		for (let i = 0; i < mainVariables.length; i++) {
+			changeVariableColors("textFor" + jsUcfirst(mainVariables[i]), color, colorDark)
+		}
+
+
+	}
+	
+	else
+	{
+		changeVariableColorsPretty('Limes'       ,'#00B300', '#00FF01')
+		changeVariableColorsPretty('RottenLimes' ,'#00B300', '#00FF01')
+		changeVariableColorsPretty('Coins'       ,'#AEB301', '#F8FF01')
+		changeVariableColorsPretty('Juice'       ,'#00B33D', '#00FF55')
+		changeVariableColorsPretty('MegaCoins'   ,'#B40001', '#FE0000')
+		changeVariableColorsPretty('AlphaCoins'  ,'#B37700', '#FFAA01')
+		changeVariableColorsPretty('PeeledLimes' ,'#72B301', '#A0FF01')
+		changeVariableColorsPretty('BetaCoins'   ,'#AEB301', '#F8FF01')
+		changeVariableColorsPretty('Pies'        ,'#964D1A', '#C67848')
+
+		
+
+	}
+
+}
+
+function changeVariableColorsPretty(elem, colorDark, color){
+	colorChangerText('textFor' + elem + 'Div', colorDark)
+	colorChangerText('textFor' + elem, color)
+}
+
+function changeVariableColors(elem, color, colorDark){
+		  label = document.getElementById(elem+'Div')
+	  if (label)
+		  label.style.color = colorDark
+	  
+	  label = document.getElementById(elem)
+	  if (label)
+		  label.style.color = color
+
 }

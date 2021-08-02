@@ -3,12 +3,19 @@ function loadStuff(savegame) {
 
     if (savegame !== null) {
         Object.assign(gameData, savegame);
-        backwardsCompatibility(savegame.versionNumber)
-        gameData.versionNumber = 103
+
+        backwardsCompatibility(gameData.versionNumber)
+        gameData.versionNumber = 127
         updateValues()
         updateAfterLoad()
     } else {
         update("newInfo", "Save File Empty.")
+    }
+}
+
+function preventNegative(id){
+    if (gameData[id] < 0) {
+        gameData[id] 
     }
 }
 
@@ -108,50 +115,44 @@ function pinButton() {
 function pickCurrentTask(x) {
 	
 	if (!event.shiftKey){
-		if(gameData.ambidextrousSkillLevel !== gameData.ambidextrousSkillLevelMax){
+		
+		if (gameData.ambidextrousSkillLevel == gameData.ambidextrousSkillLevelMax)
+		{
+			if(gameData.currentTask == x && gameData.currentTask !== "none" && gameData.currentTask2 !== x)
+			{
+				gameData.currentTask = "none"
+			}
+			
+
+			else if (gameData.currentTask == "none" && gameData.currentTask2 !== x)
+			{
+				if(!((gameData.currentTask2 == 'makeJuice' && x == 'makeMaxJuice') || (gameData.currentTask2 == 'makeMaxJuice' && x == 'makeJuice') || (gameData.currentTask2 == 'usePeelers' && x == 'useMaxPeelers') || (gameData.currentTask2 == 'useMaxPeelers' && x == 'usePeelers')))
+				gameData.currentTask = x
+			}
+			
+			else if(gameData.currentTask2 == x && gameData.currentTask2 !== "none")
+			{
+				gameData.currentTask2 = "none"
+			}
+
+			else if (gameData.currentTask2 == "none")
+			{
+				if(!((gameData.currentTask == 'makeJuice' && x == 'makeMaxJuice') || (gameData.currentTask == 'makeMaxJuice' && x == 'makeJuice') || (gameData.currentTask == 'usePeelers' && x == 'useMaxPeelers') || (gameData.currentTask == 'useMaxPeelers' && x == 'usePeelers')))
+				gameData.currentTask2 = x
+			}
+		}
+		else
+		{
 			if(gameData.currentTask == x && gameData.currentTask !== "none")
 			{
 				gameData.currentTask = "none"
 			}
+			
 			else
 			{
 				gameData.currentTask = x
 			}
-			
 		}
-		else
-		{
-			if(gameData.currentTask == x || gameData.currentTask == "none" )
-			{
-				if(gameData.currentTask == x && gameData.currentTask !== "none")
-				{
-					gameData.currentTask = "none"
-				}
-				else if (gameData.currentTask == "none")
-				{
-					if(!((gameData.currentTask2 == 'makeJuice' && x == 'makeMaxJuice') || (gameData.currentTask2 == 'makeMaxJuice' && x == 'makeJuice') || (gameData.currentTask2 == 'usePeelers' && x == 'useMaxPeelers') || (gameData.currentTask2 == 'useMaxPeelers' && x == 'usePeelers')))
-					gameData.currentTask = x
-				}
-				
-
-			}
-			else
-			{
-				if(gameData.currentTask2 == x && gameData.currentTask2 !== "none")
-				{
-					gameData.currentTask2 = "none"
-				}
-				else if (gameData.currentTask2 == "none")
-				{
-					if(!((gameData.currentTask == 'makeJuice' && x == 'makeMaxJuice') || (gameData.currentTask == 'makeMaxJuice' && x == 'makeJuice') || (gameData.currentTask == 'usePeelers' && x == 'useMaxPeelers') || (gameData.currentTask == 'useMaxPeelers' && x == 'usePeelers')))
-					gameData.currentTask2 = x
-				}
-
-			}
-		}
-		
-		
-		
 	}
 	
 	
@@ -161,6 +162,9 @@ function pickCurrentTask(x) {
 	
 	updateValues()
 }
+
+
+
 
 function pickCurrentSkill(x) {
 	if (!event.shiftKey && gameData.multitasking){
@@ -186,31 +190,40 @@ function pickCurrentSkill(x) {
 
 function startCurrentTask(x) {
 		
-	 if (x == 'eatFood') {
+	if (x == 'eatFood') {
 		eat()
 	}
 	
-	 else if (x == 'sellYourJuice') {
+	else if (x == 'sellYourJuice') {
 		sellYourJuice()
 	}
 
-	 else if (x == 'makeMaxJuice') {
+	else if (x == 'makeMaxJuice') {
 		makeMaxJuice()
 	}	
 
-	 else if (x == 'makeJuice') {
+	else if (x == 'makeJuice') {
 		makeJuice()
 	}	
 
-	 else if (x == 'usePeelers') {
+	else if (x == 'usePeelers') {
 		peelerPeel()
 	}	
-
-	 else if (x == 'useMaxPeelers') {
+	
+	else if (x == 'useMaxPeelers') {
 		peelerPeelMax()
 	}
-	 else if (x == 'autoCurrencyConversionBuy') {
+	
+	else if (x == 'autoCurrencyConversionBuy') {
 		coinsToAlphaClick()
+	}	
+	
+	else if (x == 'alphaToBeta') {
+		alphaToBetaClick()
+	}	
+	
+	else if (x == 'findPieCustomers') {
+		findPieCustomers()
 	}	
 	
 }
@@ -327,6 +340,18 @@ function switchValue(x) {
     updateValues()
 }
 
+function universalBuy(id, price, currency) {
+
+    if (gameData[currency] >= price) {
+		
+        gameData[currency] -= price
+        gameData[id] += 1
+		
+    }
+
+    updateValues()
+}
+
 function basicBuy(x, price) {
 
     if (gameData.coins >= price) {
@@ -349,37 +374,44 @@ function basicBuyMegaCoins(x, price) {
 
 function addResearchers(id, amount) {
 
-	if (amount > 0 && (researchersAvailable - amount >= 0))
+	if (amount > 0)
 	{
-		gameData[id + "Researchers"] += amount
-		researchersAvailable -= amount
+		if (researchersAvailable - amount >= 0)
+		{
+			gameData[id + "Researchers"] += amount
+			researchersAvailable -= amount
+		}
+		else
+		{
+			gameData[id + "Researchers"] += researchersAvailable
+			researchersAvailable = 0
+		}
 	}
-	else if (amount < 0 && (researchersAvailable - amount <= gameData.researchers) && gameData[id + "Researchers"] > 0)
+	else if (amount < 0 && gameData[id + "Researchers"] > 0)
 	{
-		gameData[id + "Researchers"]  += amount
-		researchersAvailable -= amount
+		if (researchersAvailable - amount <= gameData.researchers)
+		{
+			gameData[id + "Researchers"]  += amount
+			researchersAvailable -= amount
+		}
+		else
+		{
+			researchersAvailable += gameData[id + "Researchers"]
+			gameData[id + "Researchers"]  = 0
+		}
 	}
 
     updateValues()
 }
 
 function hireResearcher(id) {
-	
-    if (id == 'coins') {
-		if (gameData[id] >= 1e5) {
-			gameData[id] -= 1e5
-			gameData.researchers += 1
 
-		}
-    }
-	
-    else if (id == 'megaCoins') {
-		if (gameData[id] >= 1) {
-			gameData[id] -= 1
-			gameData.researchers += 1
+	if (gameData[id] >= 1) {
+		gameData[id] -= 1
+		gameData.researchers += 1
 
-		}
-    }
+	}
+
 
     updateValues()
 }
@@ -454,20 +486,21 @@ function beckyRandomMinMax(min, max) {
 
 //Recurring function for continuing a loading bar.
 function basicBarSkill(variable) {
-    i = eval("gameData." + variable + "Bar")
+	
+	variableBar = variable + "Bar"
 
-    if (i <= 99.5) {
-        eval("gameData." + variable + "Bar += 0.5");
-        x = variable + "Bar()"
-        if (variable != "eat") {
-            setTimeout(x, (50 / (gameData.intelligenceSkillLevel / gameData.intelligenceSkillLevelMax + 1)) / gameData.tickspeed)
-        } else {
-            setTimeout(x, 10 / gameData.tickspeed)
-        }
+    if (gameData[variableBar] <= 99.5) {
+		
+        gameData[variableBar] += 0.5
+				
+        setTimeout(variableBar + "()", (100 / (gameData.intelligenceSkillLevel * 2 / 20 + 1)) / gameData.tickspeed)
+
+		
     } else {
+		
+		gameData[variable + "SkillLevel"] += 1
+		gameData[variable] += 2
 
-        eval("gameData." + variable + "SkillLevel += 1");
-        eval("gameData." + variable + " += 2");
     }
     moveBar(variable)
 }
@@ -494,8 +527,8 @@ function sleep(milliseconds) {
 }
 
 function restartBar(x) {
-    y = eval("gameData." + x + "Bar")
-    if (y <= 99 && y != 0) {
+    y = gameData[x + "Bar"]
+    if (y < 100 && y != 0) {
         eval(x + "Bar()")
     }
 	
@@ -503,16 +536,8 @@ function restartBar(x) {
 
 function restartBarNoMovement(x) {
     y = eval("gameData." + x + "Bar")
-    if (y <= 99 && y != 0) {
+    if (y < 100 && y != 0) {
         eval(x + "Bar(0)")
-    }
-}
-
-//Starts a loading bar.
-function barStart(i, functionToCall, variable) {
-    if (i >= 99.9 || i == 0) {
-        eval(variable)
-        eval(functionToCall)
     }
 }
 
@@ -520,6 +545,7 @@ function barStart(i, functionToCall, variable) {
 function barStartGranular(variable) {
     variableBar = variable + "Bar"
     i = eval("gameData." + variableBar)
+	
     if (i == 100 || i == 0) {
         eval("gameData." + variableBar + " = 0")
         eval(variableBar + "()")
@@ -530,11 +556,9 @@ function barStartGranular(variable) {
 function barStartGranularSkillBasic(variable) {
     variableBar = variable + "Bar"
 
-    i = eval("gameData." + variableBar)
-    if ((i == 100 || i == 0) && (eval("gameData." + variable + "SkillLevel") < eval("gameData." + variable + "SkillLevelMax") && gameData.eat >= eval("gameData." + variable + "SkillLevel")) || variable == "eat") {
-        if (variable != "eat") {
-            eval("gameData.eat -= gameData." + variable + "SkillLevel")
-        }
+    i = gameData[variableBar]
+    if ((i == 100 || i == 0) && (eval("gameData." + variable + "SkillLevel") < eval("gameData." + variable + "SkillLevelMax") && gameData.eat >= eval("gameData." + variable + "SkillLevel"))) {
+        eval("gameData.eat -= gameData." + variable + "SkillLevel")
         eval("gameData." + variableBar + " = 0")
         eval(variableBar + "()")
     }
@@ -599,11 +623,24 @@ function colorChanger(id, content) {
     document.getElementById(id).style.backgroundColor = content;
 }
 
+//Text Color Changer
+function colorChangerText(id, content) {
+    document.getElementById(id).style.color = content;
+}
+
 //Checks if a value is high enough, and shows an element if so.
 function checkShow(i, n, txt) {
     if (i >= n) {
         tabs(txt, "block")
     }
+}
+
+//Checks if a value is higher than 0, and hides an element if so.
+function checkHide(i, txt) {
+    if (i > 0) {
+        hide(txt)
+    }
+
 }
 
 //Checks if a value is higher than 0, and shows an element if so.
@@ -629,20 +666,22 @@ function decreaseValue(id){
 updateValues()
 }
 
-//Checks if a value is higher than 0, and shows an element if so.
-function checkHide(i, txt) {
-    if (i) {
-        hide(txt)
-    }
-
-}
-
 //Checks if a value is higher than 0, and shows an element if so. If not, hides the element.
-function checkShowNonVariable(i, txt) {
+function checkShowOrHide(i, txt) {
     if (i >= 1) {
         tabs(txt, "block")
     } else {
         tabs(txt, "none")
+    }
+
+}
+
+//Checks if a value is higher than 0, and hides an element if so. If not, shows the element.
+function checkHideOrShow(i, txt) {
+    if (i >= 1) {
+        tabs(txt, "none")
+    } else {
+        tabs(txt, "block")
     }
 
 }
@@ -657,18 +696,17 @@ function saveAfterWipe(id) {
 }
 
 function saveGame() {
-
     localStorage.setItem('mathAdventureSave', JSON.stringify(gameData))
 
 }
 
 function exportGame() {
-    update("exportCode", JSON.stringify(gameData))
+    update("exportCode", btoa(JSON.stringify(gameData)))
 }
 
 
 function importGame() {
-    var savegame = JSON.parse(window.prompt("Import Code: "));
+    var savegame =  JSON.parse(atob(prompt("Import Code: ")))
 	if(savegame !== null)
 	{
 		Object.assign(gameData, gameDataBase)
@@ -684,11 +722,15 @@ function loadGame() {
     loadStuff(savegame)
 }
 
+function resetTime() {
+	gameData.tickspeed = 1
+}
+
 function autosave() {
     if (gameData.autosave == 1) {
         saveGame()
     }
-    setTimeout(autosave, 3000)
+    setTimeout(autosave, 500)
 }
 
 function resetGame() {
@@ -696,5 +738,27 @@ function resetGame() {
         Object.assign(gameData, gameDataBase)
         localStorage.setItem('mathAdventureSave', JSON.stringify(gameData))
         location.reload();
+    }
+}
+
+function backwardsCompatibility(versionNumber) {
+    if (versionNumber == undefined || versionNumber < 30) {
+
+        gameData.basketsMax = 50
+        gameData.juicersMax = 100
+        gameData.peelersMax = 500
+        gameData.intelligenceSkillLevelMax = 20
+    }
+    if (versionNumber < 78) {
+
+		gameData.diseaseArray = [
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]
+    ]
+		diseaseControlQuit()
+
     }
 }

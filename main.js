@@ -1,5 +1,19 @@
 var loopNumberBasket = 0;
+var loopNumberTimePlayed = 0;
 var loopNumbercurrentTask = 0;
+var numberOfBasicAchievements = 7;
+var numberOfSpecialAchievements = 2;
+var pieOvenColor = 0
+
+mainVariables = ['limes', 'rottenLimes', 'coins', 'juice', 'megaCoins', 'alphaCoins', 'peeledLimes', 'betaCoins', 'pies'];
+//Main variables change color in options and are updated as numbers.
+
+mainSkills = ['keenEye', 'rottenWisdom', 'limebidextrous', 'intelligence', 'knifebidextrous', 'motivation', 'ambidextrous'];
+//Uses: Restart bar after reloading. Sets the level to the max level if it somehow goes above. Updates test for level / levelMax. Updates aesthetic for the skill's button. Creates HTML for the skill.
+//Order is used for showing skills.
+
+mainSciences = ['watertight', 'surveying', 'benevolence'];
+//Uses: Updates time to complete science. Updates number of researchers allocated.
 
 function mainGameLoopSlow() {
 	
@@ -57,6 +71,14 @@ function mainGameLoopSlow() {
 			gameData.alphaCoinsExchangeRate -= 1
 	}
 	
+	if(gameData.maps > 4)
+	{
+		if(beckyRandom(2) == 1 && gameData.betaCoinsExchangeRate < 5000)
+			gameData.betaCoinsExchangeRate += 5
+		else if (gameData.betaCoinsExchangeRate > 500)
+			gameData.betaCoinsExchangeRate -= 5
+	}
+	
 	gameData.achievementBar = 0
     for (i = 1; i < 7; i++) {
 		
@@ -65,6 +87,40 @@ function mainGameLoopSlow() {
 		}
 	}
 	
+	gameData.lastSaveTime = Date.now()
+	loopNumberTimePlayed += 1
+	if(loopNumberTimePlayed == 2)
+	{
+		gameData.timePlayed += 1 
+		loopNumberTimePlayed = 0
+	}
+	
+	if(gameData.isThereACustomer)
+	{
+		if(gameData.customerWaitTime < 5)
+			update("customerButton", ":)")
+		else if(gameData.customerWaitTime >= 5 && gameData.customerWaitTime < 10)
+			update("customerButton", ":l")
+		else if(gameData.customerWaitTime >= 10 && gameData.customerWaitTime < 15)
+			update("customerButton", ":(")
+		else if (gameData.customerWaitTime == 15)
+		{
+			gameData.isThereACustomer = 0
+			gameData.customerWaitTime = 0
+			update("customerButton", "  ")
+			update("couldFindCustomer", "The customer left")	
+		}
+	}
+	else
+	{
+		update("customerButton", "  ")
+	}
+		
+	updateWheatField()
+
+	gameData.customerWaitTime += 1
+
+
 	moveBar('achievement')
 	updateMapTileAesthetic()
 	setTimeout(mainGameLoopSlow, 500)
@@ -83,6 +139,78 @@ function mainGameLoop() {
 	setTimeout(mainGameLoop, 50)
     updateValues()
 }
+
+function calculateOfflineProgress(){
+	secondsOffline = Math.floor((Date.now() - gameData.lastSaveTime) / 1000)
+	secondsOfflineThree = Math.floor(secondsOffline / 3)
+
+	if(gameData.basketScarecrow)
+	{
+		if(gameData.basketBar + secondsOfflineThree < 100)
+			gameData.basketBar += secondsOfflineThree
+		else
+			gameData.basketBar = 100
+	}
+	if(gameData.surveillanceCamera && secondsOffline > 60 && gameData.employeeWorking > 0)
+	{
+		for (i = 0; i < Math.floor(secondsOffline / 60) && gameData.employeeWorking > 0; i++) {
+			
+			gameData.employeeWorking -= 1
+			gameData.limes += gameData.employeeCurrentSpeed
+
+		}
+
+		gameData.workingBar = 0
+
+	}
+	if(gameData.surveillanceCamera2 && secondsOffline > 60)
+	{
+		
+		for (let i = 0; i < mainSciences.length; i++) {
+			
+			var barFilled   = gameData[mainSciences[i] + "Bar"]
+			var researchers = gameData[mainSciences[i] + "Researchers"]
+			
+			if (researchers > 0 && barFilled != 0)
+			{
+				if (mainSciences[i] == 'benevolence')
+					x = benevolenceEquation
+				if (mainSciences[i] == 'surveying')
+					x = surveyingEquation
+				if (mainSciences[i] == 'watertight')
+					x = watertightEquation
+
+				//0.5 makes it add half a bar.
+
+				amountToAdd = Math.floor(secondsOffline * 0.5 * researchers / x)
+				
+				if(barFilled + amountToAdd < 100)
+				{
+					gameData[mainSciences[i] + "Bar"] += amountToAdd
+				}
+				else
+				{
+					gameData[mainSciences[i] + "Bar"] = 0
+					
+					if (mainSciences[i] == 'surveying' && gameData.numberOfTiles < 20)
+						gameData.numberOfTiles += 1
+					else if (mainSciences[i] == 'watertight' && gameData.peeledLimesPerJuice > 1)
+						gameData.peeledLimesPerJuice -= 1
+					else
+						gameData[mainSciences[i]] += 1
+
+				}
+				moveBar(mainSciences[i])
+			}
+	
+		}
+	
+	}
+	
+	saveGame()
+
+}
+
 
 function sellMaxJuice() {
     if (gameData.juice < gameData.juiceBulkAmountMax) {
@@ -159,6 +287,15 @@ function deliveryToggleExpress() {
     updateValues()
 }
 
+function motivateEmployee() {
+	if(gameData.employeeWorking > 0 && gameData.workingBar < 99 - gameData.motivationSkillLevel / 20)
+	{
+	    gameData.workingBar += gameData.motivationSkillLevel / 20
+	}
+
+    updateValues()
+}
+
 function foodToggleLimes() {
     gameData.foodTypeToggle = 0
     updateValues()
@@ -168,7 +305,6 @@ function foodToggleRottenLimes() {
     gameData.foodTypeToggle = 1
     updateValues()
 }
-
 
 function payEmployee() {
     if (gameData.coins >= gameData.employeeWage && gameData.employeeWorking < gameData.employeeWorkingMax) {
@@ -226,6 +362,7 @@ function hireApplicant() {
 }
 
 function getLimesButton() {
+
 	if (gameData.lookAround < 1)
 		gameData.collectLimesAtBeginning += 1
 	
@@ -286,7 +423,7 @@ function getLimes() {
 		}
 		
 		
-		if (Math.random() <= (gameData.rottenWisdom / 100)) {
+		if (Math.random() <= (gameData.rottenWisdomSkillLevel / gameData.rottenWisdomSkillLevelMax)) {
 			if (Math.random() <= (gameData.limebidextrous / 100)) {
 				gameData.limes += gameData.limesPerClick
 				if (gameData.teachBar > 0 && gameData.teachBar < 100) {
@@ -346,10 +483,11 @@ function typeToHire(id) {
 	updateValues()
 }
 
-function unlockCurrencyBrokers() {
-    if (gameData.alphaCoins >= 5) {
-        gameData.alphaCoins -= 5
-        gameData.unlockCurrencyBrokers = 1
+function buyAFork() {
+    if (gameData.coins >= 1) {
+        gameData.coins -= 1
+        gameData.fork = 1
+        gameData.eatBar = 0
     }
     updateValues()
 }
@@ -393,12 +531,15 @@ function brokerApplicant(id, type) {
 		}
 		else if(type == 'max100')
 		{
-			brokerApplicantPrice(id)
-			gameData['maxBrokerApplicant' + id] -= 100
+			if (gameData['maxBrokerApplicant' + id] > gameData['minBrokerApplicant' + id] && gameData['maxBrokerApplicant' + id] >  100)
+			{
+				brokerApplicantPrice(id)
+				gameData['maxBrokerApplicant' + id] -= 100
+			}
 		}
 		else if(type == 'min100')
 		{
-			if (gameData['maxBrokerApplicant' + id] > gameData['minBrokerApplicant' + id]) {
+			if (gameData['minBrokerApplicant' + id] > 0) {
 				
 				brokerApplicantPrice(id)
 
@@ -427,22 +568,6 @@ function buyAdvertisingManager(){
     if (gameData.alphaCoins >= 10) {
         gameData.alphaCoins -= 10
         gameData.advertisingManagerBroker = 1
-    }
-    updateValues()
-}
-
-function buySmarterAdvertisingManager(){
-    if (gameData.alphaCoins >= 50) {
-        gameData.alphaCoins -= 50
-        gameData.smarterAdvertisingManagerBroker = 1
-    }
-    updateValues()
-}
-
-function buyEntrepreneurialCertificate() {
-    if (gameData.megaCoins >= 10) {
-        gameData.megaCoins -= 10
-        gameData.entrepreneurialCertificates = 1
     }
     updateValues()
 }
@@ -493,29 +618,24 @@ function buyMegaCoins() {
     updateValues()
 }
 
-function autoCurrencyConversionBuy() {
-    if (gameData.alphaCoins >= 10) {
-        gameData.alphaCoins -= 10
-        gameData.autoCurrencyConversionBuy = 1
-    }
+function buyMegaCoinsWithAlphaCoins(amount) {
+	if(amount == 1)
+	{
+		if (gameData.alphaCoins >= 10 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
+			gameData.alphaCoins -= 10
+			gameData.megaCoinsInBank += 1
+		}
+	}
+	else
+	{
+		if (gameData.alphaCoins >= 100 && gameData.megaCoinsInBank + 10 <= gameData.megaCoinsInBankMax) {
+			gameData.alphaCoins -= 100
+			gameData.megaCoinsInBank += 10
+		}
+	}
     updateValues()
 }
 
-function buyMegaCoinsWithAlphaCoins() {
-    if (gameData.alphaCoins >= 10 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
-        gameData.alphaCoins -= 10
-        gameData.megaCoinsInBank += 1
-    }
-    updateValues()
-}
-
-function buyBigGloves() {
-    if (gameData.megaCoins >= 5) {
-        gameData.megaCoins -= 5
-        gameData.bigGloves = 1
-    }
-    updateValues()
-}
 
 function buyBetterTraining() {
     if (gameData.megaCoins >= gameData.betterTraining) {
@@ -540,14 +660,6 @@ function upgradeMoreStorage() {
     updateValues()
 }
 
-function hireANutritionist() {
-    if (gameData.megaCoins >= 5) {
-        gameData.megaCoins -= 5
-        gameData.nutritionists = 1
-    }
-    updateValues()
-}
-
 function travelToNextVillage() {
     if (window.prompt("Are you sure? Type 'yes' if you are") == "yes") {
 		
@@ -559,7 +671,15 @@ function travelToNextVillage() {
 		if (gameData.manuscripts > 0) {
 			saveBeforeWipe('respectMilestone1000')
 		} 
+		
+		if (gameData.saveAlphaCoinsUnlock) {
+			saveBeforeWipe('alphaCoins')
+		} 
+		
+		saveBeforeWipe('saveAlphaCoinsUnlock')
         saveBeforeWipe('manuscripts')
+		
+        saveBeforeWipe('lightRobe')
 
 		
         saveBeforeWipe('increaseJuicePricePermanance')
@@ -567,69 +687,104 @@ function travelToNextVillage() {
 		
         megaCoinsNow = gameData.megaCoinsInBank
 		
-		saveBeforeWipe('alphaCoins')
-		saveBeforeWipe('nationalJuiceMarketing')
-		saveBeforeWipe('creditScore2')
-		saveBeforeWipe('creditScore3')
-		saveBeforeWipe('coinsMax')
-		saveBeforeWipe('respectMilestone10000')
-        saveBeforeWipe('unlockBenevolence')
-        saveBeforeWipe('nationalTradeCert')
-        saveBeforeWipe('bigGloves')
-        saveBeforeWipe('desktopMode')
-        saveBeforeWipe('nutritionists')
-        saveBeforeWipe('megaCoinsInBankMax')
-        saveBeforeWipe('betterTraining')
-        saveBeforeWipe('autosave')
-        saveBeforeWipe('showBarPercent')
-        saveBeforeWipe('hideCompletedSkills')
-        saveBeforeWipe('hideMaxedPurchases')
-        saveBeforeWipe('researchers')
-        saveBeforeWipe('upgradeMoreStorage')
+		
+		for (i = 1; i <= numberOfBasicAchievements; i++) {
+			saveBeforeWipe('achievement' + i)
+		}
+		for (i = 1; i <= numberOfSpecialAchievements; i++) {
+			saveBeforeWipe('specialAchievement' + i)	
+		}
+		
+		saveWipeValues = [
+		'surveillanceCamera2', 
+		'versionNumber', 
+		'nationalJuiceMarketing', 
+		'creditScore2', 
+		'creditScore3', 
+		'coinsMax', 
+		'respectMilestone10000', 
+		'unlockBenevolence', 
+		'nationalTradeCert', 
+		'bigGloves', 
+		'desktopMode', 
+		'nutritionists', 
+		'megaCoinsInBankMax', 
+		'betterTraining', 
+		'autosave', 
+		'showBarPercent', 
+		'hideCompletedSkills', 
+		'hideMaxedPurchases', 
+		'researchers', 
+		'upgradeMoreStorage', 
+		'changeResearchersBy10Unlock', 
+		'rottenActualWisdom', 
+		'timePlayed'];
+
+		for (let i = 0; i < saveWipeValues.length; i++) {
+			saveBeforeWipe(saveWipeValues[i])		
+		}
 
 
-        Object.assign(gameData, gameDataBase)
+
+
+		//Before Travel
+			Object.assign(gameData, gameDataBase)
+        //After Travel
 
 
 
-		if (increaseJuicePricePermananceNow == 1) {
+		saveAfterWipe('saveAlphaCoinsUnlock')
+		saveAfterWipe('megaCoins')	
+
+		if (gameData.saveAlphaCoinsUnlock) {
+			saveAfterWipe('alphaCoins')
+		} 
+
+		if (increaseJuicePricePermananceNow) {
 			saveAfterWipe('juicePricePrice')
 			saveAfterWipe('juicePriceCents')
 			saveAfterWipe('increaseJuicePricePermanance')
 		} 
 		
+		
         saveAfterWipe('manuscripts')
 		if (gameData.manuscripts > 0) {
 			saveAfterWipe('respectMilestone1000')
 		} 
-	
-	    saveAfterWipe('upgradeMoreStorage')
-		saveAfterWipe('alphaCoins')
-		saveAfterWipe('creditScore2')
-		saveAfterWipe('creditScore3')
-		saveAfterWipe('nationalJuiceMarketing')
-		saveAfterWipe('coinsMax')		
-		saveAfterWipe('respectMilestone10000')
-        saveAfterWipe('unlockBenevolence')
-        saveAfterWipe('nationalTradeCert')
-        saveAfterWipe('researchers')
-        saveAfterWipe('megaCoins')
-        saveAfterWipe('bigGloves')
-        saveAfterWipe('desktopMode')
-        saveAfterWipe('nutritionists')
-        saveAfterWipe('megaCoinsInBankMax')
-        saveAfterWipe('betterTraining')
-        saveAfterWipe('autosave')
-        saveAfterWipe('showBarPercent')
-        saveAfterWipe('hideCompletedSkills')
-        saveAfterWipe('hideMaxedPurchases')
+		
+		for (i = 1; i <= numberOfBasicAchievements; i++) {
+			saveAfterWipe('achievement' + i)
+		}
+		for (i = 1; i <= numberOfSpecialAchievements; i++) {
+			saveAfterWipe('specialAchievement' + i)	
+		}
+		
+		
+
+		for (let i = 0; i < saveWipeValues.length; i++) {
+			saveBeforeWipe(saveWipeValues[i])		
+		}
+		
+
+
+
 
 		gameData.juicersMax = 100 + gameData.upgradeMoreStorage * 500
 		gameData.peelersMax = 500 + gameData.upgradeMoreStorage * 2500
+		
+		if (lightRobeNow) {
+			gameData.respect += 50
+		} 
+		
+		if(rottenActualWisdom)
+			gameData.rottenWisdomSkillLevelMax = 25
 
 
         gameData.villageNumber = 2
         saveGame()
+		
+
+
         location.reload();
     }
 }
@@ -637,7 +792,11 @@ function travelToNextVillage() {
 function stopActions(){
 	gameData.currentTask = 'none'
 	gameData.currentTask2 = 'none'
+}
 
+function rottenActualWisdom(){
+	universalBuy('rottenActualWisdom', 50 , 'megaCoins')
+	gameData.rottenWisdomSkillLevelMax = 25
 }
 
 function lookAround() {
@@ -683,6 +842,10 @@ function buyAMap() {
     } else if (gameData.coins >= 2e5 && gameData.maps == 3) {
         gameData.coins -= 2e5
         gameData.maps = 4
+		if(thisTownDeliveries < 2)
+		{
+			gameData.specialAchievement2 = 1
+		}
     } else if (gameData.coins >= 2e5 && gameData.maps == 4) {
         gameData.coins -= 2e5
         gameData.maps = 5
@@ -697,22 +860,26 @@ function storageJuicersUnlock() {
 	{
 		if (window.prompt("Are you sure? Type 'yes' if you are") == "yes")
 		{	
-			if (gameData.coins >= 100) {
-				gameData.coins -= 100
-				gameData.storageJuicersUnlock = 1
-				gameData.juicersMax *= 5
-			}
+			storageJuicersUnlockDo()
 		}
 	}
 	else
 	{
-		if (gameData.coins >= 100) {
-			gameData.coins -= 100
-			gameData.storageJuicersUnlock = 1
-			gameData.juicersMax *= 5
-		}
+		storageJuicersUnlockDo()
 	}
     updateValues()
+}
+
+function storageJuicersUnlockDo() {
+	if (gameData.coins >= 100) {
+		gameData.coins -= 100
+		gameData.storageJuicersUnlock = 1
+		gameData.juicersMax *= 5
+		if (gameData.upgradeMoreStorage > 0)
+		{
+			gameData.specialAchievement1 = 1
+		}
+	}
 }
 
 function storagePeelersUnlock() {
@@ -720,21 +887,41 @@ function storagePeelersUnlock() {
 	{
 		if (window.prompt("Are you sure? Type 'yes' if you are") == "yes")
 		{	
-			if (gameData.coins >= 100) {
-				gameData.coins -= 100
-				gameData.storagePeelersUnlock = 1
-				gameData.peelersMax *= 5
-			}
+			storagePeelersUnlock()
 		}
 	}
 	else
 	{
-		if (gameData.coins >= 100) {
-			gameData.coins -= 100
-			gameData.storagePeelersUnlock = 1
-			gameData.peelersMax *= 5
+		storagePeelersUnlock()
+	}
+    updateValues()
+}
+
+function storagePeelersUnlock() {
+	if (gameData.coins >= 100) {
+		gameData.coins -= 100
+		gameData.storagePeelersUnlock = 1
+		gameData.peelersMax *= 5
+		if (gameData.upgradeMoreStorage > 0)
+		{
+			gameData.specialAchievement1 = 1
 		}
 	}
+}
+
+function changeZoomSize() {
+
+	if (gameData.changeZoomSize == 150)
+	{
+		gameData.changeZoomSize = 100
+		document.body.style.zoom=1.0;
+	}
+	else
+	{
+		gameData.changeZoomSize += 10
+		document.body.style.zoom= gameData.changeZoomSize / 100;
+	}
+	
     updateValues()
 }
 
@@ -753,24 +940,15 @@ function juicePeeledLimesToggle() {
     updateValues()
 }
 
-function sellYourLimes() {
-    if (gameData.limes >= 50) {
-        gameData.limes -= 50
-        gameData.coins += 1
-    }
-
-    updateValues()
-}
 
 function increaseJuicePrice() {
 	if(gameData.increaseJuicePricex10){
 		for (i = 0; i < 10; i++) {
 			if (gameData.coins >= gameData.juicePricePrice) {
 				gameData.coins -= gameData.juicePricePrice
-
-
-
 				gameData.juicePriceCents += 1
+				gameData.juicePricePrice = gameData.juicePriceCents + 1
+
 			}
 		}
 	}
@@ -806,23 +984,6 @@ function increaseJuiceSold() {
     } else if (gameData.juiceBulkAmountToggle < 500 && gameData.deliveryTypeToggle == 2 && gameData.fasterTransport > 0) {
         gameData.juiceBulkAmountToggle += 10
     }
-
-
-
-
-    updateValues()
-}
-
-function bribeTheBanks() {
-    if (gameData.alphaCoins >= 2) {
-        gameData.alphaCoins -= 2
-        gameData.amountCoinsToAlphaMax += 1
-
-    } 
-
-
-
-
     updateValues()
 }
 
@@ -836,8 +997,9 @@ function moveAutoCollecting() {
 
     var elem = document.getElementById("autoCollectingBar");
     var x = Math.floor(gameData.autoCollectingBar / (gameData.nourishment + 1))
+    var x2 = gameData.autoCollectingBar / (gameData.nourishment + 1)
 
-    elem.style.width = x + "%";
+    elem.style.width = x2 + "%";
     elem.innerHTML = x + "%";
 }
 

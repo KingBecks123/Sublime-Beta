@@ -1,28 +1,39 @@
 function updateAfterLoad() {
+	calculateOfflineProgress()
+
+	for (let i = 0; i < mainSkills.length; i++) {
+		restartBar(mainSkills[i])
+		
+		if(gameData[mainSkills[i] + 'SkillLevel'] > gameData[mainSkills[i] + 'SkillLevelMax'])
+		{
+			gameData[mainSkills[i] + 'SkillLevel'] = gameData[mainSkills[i] + 'SkillLevelMax']
+		}
+	}
+
+
+
     restartBar("learnANewSkill")
-    restartBar("rottenWisdom")
-    restartBar("limebidextrous")
-    restartBar("knifebidextrous")
-    restartBar("intelligence")
     restartBar("juicer")
     restartBar("peeler")
     restartBar("advertise")
-    restartBar("working")
     restartBar("eat")
-    restartBar("keenEye")
     restartBar("teach")
     restartBar("watertight")
     restartBar("surveying")
     restartBar("benevolence")
     restartBar("coinsToAlpha")
-    restartBar("convertCoinsNow")
+    restartBar("convertCoinsNow")    
+	restartBar("alphaToBeta")
+	restartBar("findPieCustomers")
+	restartBar("bakePie")
+
+	moveBar('delivery')
+	moveBar('bakePie')
 
 
-
-
-	
-	normalizeButtons()
-	pinButton()
+    if (gameData.workingBar <= 100 && (gameData.workingBar != 0 || gameData.employeeWorking > 0)) {
+        workingBar()
+    }
 
     if (gameData.autoCollectingBar !== 0) {
         autoCollectingBar()
@@ -33,14 +44,63 @@ function updateAfterLoad() {
     if (gameData.deliveryBar <= 99 && gameData.deliveryBar != 0) {
         sellYourJuiceBar()
     }
-
+	
     updateValues()
 }
 
+function addHTML(){
+	
+	for (let i = 0; i < mainSkills.length; i++) {
+	
+		var name = mainSkills[i]
+		var div = document.getElementById(name + "Div")
+		var title = ''
+		
+		if(name == 'rottenWisdom')
+			title = 'Rotten Wisdom'
+		else if(name == 'keenEye')
+			title = 'Keen Eye'
+		else
+		    title = jsUcfirst(name)
+		
+		
+		
+		
+		var skillLevel       = document.createElement("p");
+		    skillLevel.id    = name + "SkillLevel";
+		    skillLevel.classList.add("basicText");
+		    div.appendChild(skillLevel);
+			
+		var skillProgressSpan                = document.createElement("span")
+		skillProgressSpan.innerHTML          = '<div class="skillProgress" id="' + name + 'Progress"><div class="skillBar" , id="' + name + 'Bar">0%</div></div>';
+		insert(div, skillProgressSpan)
+		
+		
+		var skillButtonSpan                  = document.createElement("span")
+		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + name + "Button" + '" onclick="pickCurrentSkill(&apos;' + name + '&apos;)">' + title + '</button>';
+		insert(div, skillButtonSpan)
+
+
+	}
+
+	
+	function insert(div, thing)
+	{
+		div.insertBefore(thing, div.firstChild);
+
+	}
+
+	
+}
+
+			
+			
+			
+			
+			
 
 function updateValues() {
 
-	//Takes 8 - 13 ms.
 
 
     addAesthetic()
@@ -70,25 +130,39 @@ function updateValues() {
         gameData.coins = gameData.coinsMax
     }
 	
+    if (gameData.basketBar > 100) {
+        gameData.basketBar = 100
+    }
+	
+    if (gameData.eatBar > 100) {
+        gameData.eatBar = 100
+    }
+	
+    if (gameData.respect < 0) {
+        gameData.respect = 0
+    }
+	
+    if (gameData.workingBar > 100) {
+        gameData.workingBar = 100
+    }
+	
+    if (gameData.coinsToAlphaBar > 100) {
+        gameData.coinsToAlphaBar = 100
+    }
+	
     if (gameData.megaCoinsInBank > gameData.megaCoinsInBankMax) {
         gameData.megaCoinsInBank = gameData.megaCoinsInBankMax
     }
 	
-    if (gameData.coins < 0) {
-        gameData.coins = 0
-    }
+	preventNegative('coins')
+	preventNegative('limes')
+	preventNegative('respect')
 
-    if (gameData.deliveryBar > 99.9999) {
+
+    if (gameData.deliveryBar > 100) {
         gameData.deliveryBar = 100
     }
 
-    if (gameData.limes < 0) {
-        gameData.limes = 0
-    }
-
-    if (gameData.respect < 0) {
-        gameData.respect = 0
-    }
 
     if (gameData.learnANewSkillBar > 100) {
         gameData.learnANewSkillBar = 100
@@ -103,55 +177,65 @@ function updateValues() {
     overMaximum("peelers")
     overMaximum("intelligenceSkillLevel")
 
-    switch (gameData.showBarPercent) {
-        case 0:
+    if (!gameData.showBarPercent) {
             update("barPercentButton", "Bar Percent Hidden")
 
             var x = document.getElementsByClassName("skillBar");
             for (i = 0; i < x.length; i++) {
-                x[i].style.backgroundColor = accent3;
-                x[i].style.padding = "0px 0px 0px 0px";
                 x[i].style.color = "rgba(0, 0, 0, 0)";
             }
             var x = document.getElementsByClassName("verticalBar");
             for (i = 0; i < x.length; i++) {
-                x[i].style.backgroundColor = accent3;
-                x[i].style.padding = "0px 0px 0px 0px";
                 x[i].style.color = "rgba(0, 0, 0, 0)";
             }
-
-
-            break;
-        case 1:
+            var x = document.getElementsByClassName("skillBarColored");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.color = "rgba(0, 0, 0, 0)";
+            }
+	}
+	
+	else{
             update("barPercentButton", "Bar Percent Shown")
             var x = document.getElementsByClassName("skillBar");
             for (i = 0; i < x.length; i++) {
-                x[i].style.backgroundColor = accent3;
-                x[i].style.padding = "0px 0px 0px 0px";
                 x[i].style.color = accent0;
             }
             var x = document.getElementsByClassName("verticalBar");
             for (i = 0; i < x.length; i++) {
-                x[i].style.backgroundColor = accent3;
-                x[i].style.padding = "0px 0px 0px 0px";
                 x[i].style.color = accent0;
             }
+            var x = document.getElementsByClassName("skillBarColored");
+            for (i = 0; i < x.length; i++) {
+                x[i].style.color = accent0;
+            }
+	}
 
-
-    }
+	
+	var x = document.getElementsByClassName("skillBar");
+	for (i = 0; i < x.length; i++) {
+		x[i].style.backgroundColor = accent3;
+		x[i].style.padding = "0px 0px 0px 0px";
+	}
+	
+	var x = document.getElementsByClassName("skillBarColored");
+	for (i = 0; i < x.length; i++) {
+		x[i].style.padding = "0px 0px 0px 0px";
+	}
+	
+	var x = document.getElementsByClassName("verticalBar");
+	for (i = 0; i < x.length; i++) {
+		x[i].style.backgroundColor = accent3;
+		x[i].style.padding = "0px 0px 0px 0px";
+	}
 
     gameData.juiceSellReward = (gameData.nationalJuiceMarketing + 1) * Math.floor(gameData.juiceBulkAmountToggle * (1 + (gameData.juicePriceCents / 100)))
 
 
     gameData.limesInBaskets = Math.floor(gameData.baskets * (gameData.basketBar / 4))
 	
-    updateNumber("limes")
-    updateNumber("rottenLimes")
-    updateNumber("coins")
-    updateNumber("juice")
-    updateNumber("megaCoins")
-    updateNumber("alphaCoins")
-    updateNumber("peeledLimes")
+	for (let i = 0; i < mainVariables.length; i++) {
+		 updateNumber(mainVariables[i])
+	}
 	
 	if (gameData.coins > 0){
 		gameData.showAchievements = 1
@@ -161,47 +245,52 @@ function updateValues() {
 		tabs('achievementsButton', 'inline-block')
 	}
 
+	//All Science Updates.
 	if (gameData.respectMilestone1000) {
 		
-		researchersAvailable = gameData.researchers - gameData.watertightResearchers - gameData.surveyingResearchers - gameData.benevolenceResearchers
-		
-		update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
-		update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
-		update("benevolenceText", "Currently: Level " + gameData.benevolence)
+		benevolenceEquation = Math.pow(2, gameData.benevolence * 2)
+		watertightEquation = Math.pow(10, 6 - gameData.peeledLimesPerJuice)
+		surveyingEquation = Math.pow(2, gameData.numberOfTiles - 15)
+			
+		update("watertightText",  "Currently: "       + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
+		update("surveyingText",   "Currently: "       + gameData.numberOfTiles       + " / 20 Tiles"             )
+		update("benevolenceText", "Currently: Level " + gameData.benevolence                                     )
 
 		update("textForResearchers", researchersAvailable + " Available Researchers")
-		
-		update("textForWatertightResearchers", gameData.watertightResearchers + " Researchers")
-		update("textForSurveyingResearchers", gameData.surveyingResearchers + " Researchers")
-		update("textForBenevolenceResearchers", gameData.benevolenceResearchers + " Researchers")
+				
 		
 		if (gameData.limeDiseaseLakes < 10)
 			benevolenceRespectIncrease = 0
 		else 
 			benevolenceRespectIncrease = (Math.pow(2, gameData.limeDiseaseLakes - 10)) * gameData.benevolence
-
-		watertightResearchTime = Math.floor((2000 * Math.pow(10, 5 - gameData.peeledLimesPerJuice))/ gameData.watertightResearchers)
-		surveyingResearchTime = Math.floor(200 * (Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
-		benevolenceResearchTime = Math.floor(200 * (Math.pow(2, gameData.benevolence * 2)) / gameData.benevolenceResearchers)
 		
 		update("benevolenceRespectIncrease", "Respect increase:  " + benevolenceRespectIncrease.toLocaleString())
+		
+		researchersAvailable = gameData.researchers
+		
+		checkShowOrHide(gameData.benevolence, "benevolence")
+		checkShowOrHide(gameData.unlockBenevolence, "benevolenceDiv")
+
 
 		
-		timeToShowScience('watertight')
-		timeToShowScience('surveying')
-		timeToShowScience('benevolence')
+		//Adds the properties of all sciences.
+		for (let i = 0; i < mainSciences.length; i++) {
+			
+			//Shows how many researchers are currently working on the science.
+			update("textFor" + jsUcfirst(mainSciences[i]) + "Researchers", gameData[mainSciences[i] + "Researchers"] + " Researchers")
+
+			//Shows the estimated time to complete the science by multiplying the time for half a bar by 200.
+			eval([mainSciences[i] + 'ResearchTime'] + " = Math.floor(200 * " + [mainSciences[i] + 'Equation'] + "/ gameData[mainSciences[i] + 'Researchers'])")
+			
+			//Converts time to seconds or minutes or infinity depending on size.
+			timeToShowScience(mainSciences[i])
+			
+			//Updates the amount of researchers available.
+			researchersAvailable -= gameData[mainSciences[i] + "Researchers"]
+
+		}	
 		
 	}
-	
-	if (gameData.benevolence > 0)
-	{
-		showBasicDiv("benevolence")
-	}
-	else
-	{
-		hide("benevolence")
-	}
-	
 	
 	if (gameData.hideRottenLimes == 0)
 	{
@@ -241,15 +330,6 @@ function updateValues() {
 		hide("unlockBenevolence")
 	}
 	
-	if (gameData.unlockBenevolence)
-	{
-		showBasicDiv("benevolenceDiv")	
-	}
-	else
-	{
-		hide("benevolenceDiv")
-	}
-	
 	if (gameData.rottenWisdomSkillLevel == gameData.rottenWisdomSkillLevelMax)
 	{
 		showBasicDiv("hideRottenLimesButton")
@@ -258,21 +338,17 @@ function updateValues() {
 	{
 		hide("hideRottenLimesButton")
 	}
-
 	
 	upgradeMoreStoragePrice = Math.pow(2, gameData.upgradeMoreStorage) * 50
 	
     update("textForMegaCoinsInBank", gameData.megaCoinsInBank.toLocaleString() + " / " + gameData.megaCoinsInBankMax.toLocaleString() + " Mega Coins In Bank")
 
-    update("juicersAmount", gameData.juicers.toLocaleString() + " / " + gameData.juicersMax.toLocaleString() + " Juicers")
-    update("peelersAmount", gameData.peelers.toLocaleString() + " / " + gameData.peelersMax.toLocaleString() + " Peelers")
-
-    update("basketsAmount", gameData.baskets.toLocaleString() + " / " + gameData.basketsMax.toLocaleString() + " Baskets")
-    update("maxBaskets", gameData.basketsMax.toLocaleString() + " baskets fit under the current tree.")
 
     update("limesInBaskets", gameData.limesInBaskets.toLocaleString() + " Limes")
 
     update("textForRespect", gameData.respect.toLocaleString() + " Respect")
+	
+    update("textForTimePlayed", "Total Time Played: " + gameData.timePlayed.toLocaleString() + " Seconds")
 
 
 
@@ -286,27 +362,59 @@ function updateValues() {
 
     update("textForNourishmentPrice", "You Need: " + gameData.nourishmentPrice.toLocaleString() + " Limes")
 
-    update("textForBrokerApplicantSpeed", "Currently " + gameData.minBrokerApplicantSpeed.toLocaleString() + " - " + gameData.maxBrokerApplicantSpeed.toLocaleString() + " Seconds")
-    update("textForBrokerApplicantAmount", "Currently " + gameData.minBrokerApplicantAmount.toLocaleString() + " - " + gameData.maxBrokerApplicantAmount.toLocaleString() + " Coins")
 
-    update("textForAdvertisingBrokerRule", "Auto advertise if speed is over " + gameData.autoAdvertiseSpeedValue.toLocaleString() + " seconds")
-    update("textForSmarterAdvertisingBrokerRule", "And if transfer amount is under " + gameData.autoAdvertiseAmountValue.toLocaleString())
+	update("juicersAmount", gameData.juicers.toLocaleString() + " / " + gameData.juicersMax.toLocaleString() + " Juicers")
+	update("peelersAmount", gameData.peelers.toLocaleString() + " / " + gameData.peelersMax.toLocaleString() + " Peelers")
+
+
+	update("basketsAmount", gameData.baskets.toLocaleString() + " / " + gameData.basketsMax.toLocaleString() + " Baskets")
+	update("maxBaskets", gameData.basketsMax.toLocaleString() + " baskets fit under the current tree.")
+
+
+
 	update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
 
-
-	//gameData.minBrokerApplicantFee = 5000
-	//gameData.maxBrokerApplicantFee = 10000
-	//gameData.brokerApplicantFeePrice = 0
-
-    update("textForBrokerApplicantFee", "Currently " + gameData.minBrokerApplicantFee.toLocaleString() + " - " + gameData.maxBrokerApplicantFee.toLocaleString() + " Coins")
+	update("wheatNumber", "Wheat: " + gameData.wheat.toLocaleString())
+	update("wheatSeedsNumber", "Seeds: " + gameData.wheatSeeds.toLocaleString())
+	update("flourNumber", "Flour: " + gameData.flour.toLocaleString())
+	update("currentPieIngredients", "Current Ingredients: " + gameData.flourAsPieIngredient.toLocaleString() + " Flour + " + gameData.juiceAsPieIngredient.toLocaleString() + " Juice")
 
 
 
+	if(gameData.bachelorsDegreeFinance){
+		update("textForBrokerApplicantSpeed", "Currently " + gameData.minBrokerApplicantSpeed.toLocaleString() + " - " + gameData.maxBrokerApplicantSpeed.toLocaleString() + " Seconds")
+		update("textForBrokerApplicantAmount", "Currently " + gameData.minBrokerApplicantAmount.toLocaleString() + " - " + gameData.maxBrokerApplicantAmount.toLocaleString() + " Coins")
+		update("textForAdvertisingBrokerRule", "Auto advertise if speed is over " + gameData.autoAdvertiseSpeedValue.toLocaleString() + " seconds")
+		update("textForSmarterAdvertisingBrokerRule", "And if transfer amount is under " + gameData.autoAdvertiseAmountValue.toLocaleString())
+		update("textForBrokerApplicantFee", "Currently " + gameData.minBrokerApplicantFee.toLocaleString() + " - " + gameData.maxBrokerApplicantFee.toLocaleString() + " Coins")
+		update("brokerApplicantSpeedPrice", "Price: " + gameData.brokerApplicantSpeedPrice.toLocaleString() + " Alpha Coins")
+		update("brokerApplicantFeePrice", "Price: " + gameData.brokerApplicantFeePrice.toLocaleString() + " Alpha Coins")
+		update("brokerApplicantAmountPrice", "Price: " + gameData.brokerApplicantAmountPrice.toLocaleString() + " Alpha Coins")
+	}
+	
+	if(gameData.pieOven)
+	{
+		if(gameData.bakePieBar !== 100)
+		{
+			if(beckyRandom(2) == 1)
+				pieOvenColor += 10
+			else
+				pieOvenColor -= 10
+			
+			if(pieOvenColor > 200)
+				pieOvenColor = 200
+		
+			if(pieOvenColor < 0)
+				pieOvenColor = 0
+			
+		}
+		
+		document.getElementById('bakePieBar').style.backgroundColor = 'rgba(345, ' + pieOvenColor + ', 66)'
+	
+	}
 
 
-    update("brokerApplicantSpeedPrice", "Price: " + gameData.brokerApplicantSpeedPrice.toLocaleString() + " Alpha Coins")
-    update("brokerApplicantFeePrice", "Price: " + gameData.brokerApplicantFeePrice.toLocaleString() + " Alpha Coins")
-    update("brokerApplicantAmountPrice", "Price: " + gameData.brokerApplicantAmountPrice.toLocaleString() + " Alpha Coins")
+
 
 
 
@@ -387,77 +495,67 @@ function updateValues() {
 
 	}
 	
-	update("buyMegaCoinsTimes", "Transfer times: " + gameData.buyMegaCoinsTimes + " / " + gameData.buyMegaCoinsTimesMax)
+	if (gameData.maps > 4){
+		update("betaCoinExhangeRate", "Exchange Rate: " + gameData.betaCoinsExchangeRate.toLocaleString() + " Alpha Coins -> 1 Beta Coin")
+		betaCoinTotalPrice = gameData.betaCoinsExchangeRate * gameData.betaCoinTransferAmount
+		update("betaCoinTotalPrice", "Total Price: " + betaCoinTotalPrice.toLocaleString() + " Alpha Coins")
+		update("piePrice", "Current Price: " + gameData.piePrice.toLocaleString() + " Mega Coins")
+		
+		showBasicDiv('earnBetaCoins')
+		showBasicDiv('buyPie')
 
-
+	}	
 	
-	
+	update("buyMegaCoinsTimes"                , "Transfer times: " + gameData.buyMegaCoinsTimes + " / " + gameData.buyMegaCoinsTimesMax)
     update("textForAutomaticallyCollectsLimes", "Automatically collects limes at " + (gameData.shoes + 1) + "/s")
-
-
-    update("textForBetterTraining", "Current maximum: " + (gameData.betterTraining + 10).toLocaleString() + "00%")
-    update("textForCoinsMax", "Current maximum: " + gameData.coinsMax.toLocaleString() + " Coins")
-
-
-
-    update("textForCurrentEmployees", "Current Employees: " + gameData.employees.toLocaleString() + " / " + gameData.maxEmployees.toLocaleString())
-
-
-    update("numberOfCivilians", "Number Of Civilians: " + gameData.civiliansTotal.toLocaleString())
-
-    update("betterTrainingPrice", "Price: " + gameData.betterTraining.toLocaleString() + " Mega Coins")
+    update("textForBetterTraining"            , "Current maximum: " + (gameData.betterTraining + 10).toLocaleString() + "00%")
+    update("textForCoinsMax"                  , "Current maximum: " + gameData.coinsMax.toLocaleString() + " Coins")
+    update("textForCurrentEmployees"          , "Current Employees: " + gameData.employees.toLocaleString() + " / " + gameData.maxEmployees.toLocaleString())
+    update("numberOfCivilians"                , "Number Of Civilians: " + gameData.civiliansTotal.toLocaleString())
+    update("betterTrainingPrice"              , "Price: " + gameData.betterTraining.toLocaleString() + " Mega Coins")
+	update("sellYourJuiceAmount"              , "You Will Deliver " + gameData.juiceBulkAmountToggle.toLocaleString() + " / " + gameData.juiceBulkAmountMax.toLocaleString() + " Juice")
+	update("sellYourJuiceReward"              , "You Will Get " + gameData.juiceSellReward.toLocaleString() + " Coins")
+	update("sellYourJuicePrice"               , "You Need " + gameData.deliveryPrice.toLocaleString() + " Coins For Delivery")
+    update("upgradeMoreStoragePrice"          , "Price: " + upgradeMoreStoragePrice.toLocaleString() + " Mega Coins")
 	
 
-
-    update("sellYourJuiceAmount", "You Will Deliver " + gameData.juiceBulkAmountToggle.toLocaleString() + " / " + gameData.juiceBulkAmountMax.toLocaleString() + " Juice")
-    update("sellYourJuiceReward", "You Will Get " + gameData.juiceSellReward.toLocaleString() + " Coins")
-    update("sellYourJuicePrice", "You Need " + gameData.deliveryPrice.toLocaleString() + " Coins For Delivery")
-
-	
-    update("upgradeMoreStoragePrice", "Price: " + upgradeMoreStoragePrice.toLocaleString() + " Mega Coins")
-	
-
-	
+	if(gameData.pies > 0)
+		gameData.hasGottenPies = 1
 
 
 
 
-    checkShowNonVariable(gameData.juicers, "inventoryButton")
-    checkShowNonVariable(gameData.employees, "companyButton")
-    checkShowNonVariable(gameData.baskets, "forestButton")
-    checkShowNonVariable(gameData.hasGottenJuice, "juiceMarket")
+    checkShowOrHide(gameData.juicers, "inventoryButton")
+    checkShowOrHide(gameData.employees, "companyButton")
+    checkShowOrHide(gameData.baskets, "forestButton")
+    checkShowOrHide(gameData.hasGottenJuice, "juiceMarket")
+	checkShowOrHide(gameData.hasGottenPies, "bakeryButton")
+
 
 
     moveBar("teach")
     moveBar("working")
     moveBasket()
     moveAutoCollecting()
-
-    moveBar("ambidextrous")
-    update("ambidextrousSkillLevel", gameData.ambidextrousSkillLevel + " / " + gameData.ambidextrousSkillLevelMax)
-
-    moveBar("rottenWisdom")
-    update("rottenWisdom", gameData.rottenWisdom + "% Chance")
-    update("rottenWisdomSkillLevel", gameData.rottenWisdomSkillLevel + " / " + gameData.rottenWisdomSkillLevelMax)
 	
-    moveBar("keenEye")
-    update("keenEye", gameData.keenEyeSkillLevel * 5 + "% Chance")
-    update("keenEyeSkillLevel", gameData.keenEyeSkillLevel + " / " + gameData.keenEyeSkillLevelMax)
+	for (let i = 0; i < mainSkills.length; i++) {
+		update(mainSkills[i] + "SkillLevel", gameData[mainSkills[i] + "SkillLevel"] + " / " + gameData[mainSkills[i] + "SkillLevelMax"])
 
-    moveBar("limebidextrous")
-    update("limebidextrous", gameData.limebidextrous + "% Chance")
-    update("limebidextrousSkillLevel", gameData.limebidextrousSkillLevel + " / " + gameData.limebidextrousSkillLevelMax)
+	}
+	
+	update("rottenWisdom", 100 * gameData.rottenWisdomSkillLevel / gameData.rottenWisdomSkillLevelMax + "% Chance")
+	
+	update("keenEye", gameData.keenEyeSkillLevel * 5 + "% Chance")
 
-    moveBar("intelligence")
-    update("intelligence", Math.floor(((gameData.intelligenceSkillLevel * 2)/ gameData.intelligenceSkillLevelMax) * 100) + "% Faster")
-    update("intelligenceSkillLevel", gameData.intelligenceSkillLevel + " / " + gameData.intelligenceSkillLevelMax)
+	update("limebidextrous", gameData.limebidextrous + "% Chance")
 
-    moveBar("knifebidextrous")
-    update("knifebidextrous", gameData.knifebidextrous * 2.5 + "% Chance")
-    update("knifebidextrousSkillLevel", gameData.knifebidextrousSkillLevel + " / " + gameData.knifebidextrousSkillLevelMax)
+	update("intelligence", Math.floor(((gameData.intelligenceSkillLevel * 2)/ gameData.intelligenceSkillLevelMax) * 100) + "% Faster")
 
-    update("eat", gameData.eat + " / 100")
+	update("knifebidextrous", gameData.knifebidextrous * 2.5 + "% Chance")
 
+
+
+	update("eat", gameData.eat + " / 100")
 
     if (gameData.lookAround >= 1) {
         divVisibility("navigateButtons", "visible")
@@ -500,12 +598,10 @@ function updateValues() {
         gameData.limesPerClick = 2 + gameData.difficulty * 5
     }
 
-    if (gameData.betterTraining > 0) {
-        showBasicDiv("upgradeBetterTraining")
-    } else {
-        hide("upgradeBetterTraining")
-    }
-	
+	checkShowOrHide(gameData.betterTraining, 'upgradeBetterTraining')
+	checkShowOrHide(gameData.smarterAdvertisingManagerBroker, 'smarterAdvertisingBrokerRule')
+
+
     if (gameData.coinsMax > 1e6) {
         showBasicDiv("upgradeWallet")
     } else {
@@ -518,29 +614,52 @@ function updateValues() {
         hide("smarterAutoBrokerAdvertiser")
     }
 
-    if (gameData.smarterAdvertisingManagerBroker) {
-        showBasicDiv("smarterAdvertisingBrokerRule")
-    } else {
-        hide("smarterAdvertisingBrokerRule")
-    }
+	//Respect Milstones
+		checkRespectMilestone(10,    'lime',  'Automatically start tasks'                       ,'autoStartTaskButton'      )
+		checkRespectMilestone(25,    'lime',  'Automatically start simulation'                  ,'autoStartSimulationButton')
+		checkRespectMilestone(50,    'lime',  'Allow entrance to the Special Shopping District'                             )
+		checkRespectMilestone(100,   'lime',  'Automatically check simulation'                  ,'autoCheckSimulationButton')
+		checkRespectMilestone(500,   'lime',  'Automatically situate a civilian'                ,'autoPlaceACivilianDiv'    )
+		checkRespectMilestone(1000,  'lime',  'Unlock scientific research'                      ,'scienceButton'            )
+		checkRespectMilestone(10000, 'red' ,  'Unlock more mega coin upgrades'                                              )
 
-    if (gameData.respectMilestone10) {
-        tabs("autoStartTaskButton", "inline-block")
-    } else {
-        hide("autoStartTaskButton")
-	}
+
+
+		function checkRespectMilestone(number, color, text, id){
+			
+			i = 'respectMilestone' + number
+			
+			if (gameData.respect >= number) {
+				gameData[i] = 1
+			}
+
+			
+			if (gameData[i]) {
+				if(id !== undefined)
+				{
+					if(number == 500)
+						tabs(id, "block")
+					else
+						tabs(id, "inline-block")
+				}
 	
-    if (gameData.respectMilestone25) {
-        tabs("autoStartSimulationButton", "inline-block")
-    } else {
-        hide("autoStartSimulationButton")
-	}
-	
-    if (gameData.respectMilestone100) {
-        tabs("autoCheckSimulationButton", "inline-block")
-    } else {
-        hide("autoCheckSimulationButton")
-	}
+				update(number + 'RespectMilestone', number.toLocaleString() + ' Respect: ' + text)
+				
+				if(color == 'lime')
+					colorChanger(number + 'RespectMilestone', limesRelatedAccent)
+				if(color == 'red')
+					colorChanger(number + 'RespectMilestone', '#FF999A')
+				
+				
+			} else {
+				if(id !== undefined)
+					hide(id)
+				
+				colorChanger(number + 'RespectMilestone', grayAccentLight)
+			}
+			
+		}
+	//Respect Milstones End
 	
     if (gameData.increaseJuicePricePermanance < 1) {
         tabs("increaseJuicePricePermanance", "inline-block")
@@ -558,12 +677,7 @@ function updateValues() {
         hide("stopActionsButton")
 	}
 	
-    if (gameData.respectMilestone500) {
-        tabs("autoPlaceACivilianButton", "inline-block")
-    } else {
-        hide("autoPlaceACivilianButton")
-	}
-	
+
     if (gameData.manuscripts) {
         hide("buyManuscriptsDiv")
         showBasicDiv("upgradeManuscripts")
@@ -575,21 +689,15 @@ function updateValues() {
 		}
 	
 	
-    if (gameData.respectMilestone1000) {
-        tabs("scienceButton", "inline-block")
+	checkShowOrHide(gameData.doesHaveCurrencyBroker, "currencyBroker")
 
-		
+	
+    if (gameData.baskets > 0 && !gameData.basketScarecrow) {
+        showBasicDiv("offlineBasket")
     } else {
-        hide("scienceButton")
-
-		
+        hide("offlineBasket")	
 	}
 	
-    if (gameData.doesHaveCurrencyBroker) {
-        showBasicDiv("currencyBroker")
-    } else {
-        hide("currencyBroker")	
-	}
 	
 	
 	if (gameData.creditScore2) {
@@ -641,13 +749,14 @@ function updateValues() {
 
     }
 	
-    if (gameData.autoCurrencyConversionBuy) {
+    if (gameData.autoCurrencyConversionBuy)
         hide("autoCurrencyConversion")
-
-    } else {
-
+    else if (gameData.maps == 4)
         showBasicDiv("autoCurrencyConversion")
-
+    
+	
+    if (gameData.maps !== 4) {
+        hide("buyMapDiv5")
     }
 
     if (gameData.diseaseControlFinished == 1) {
@@ -702,12 +811,6 @@ function updateValues() {
         update("deliveryToggleStandardButton", "Standard Delivery")
     } else {
         update("deliveryToggleStandardButton", "Hyper Delivery")
-    }
-	
-	if (gameData.diseaseTileSize == 0) {
-        update("diseaseTileSizeButton", "Disease Tiles: Small")
-    } else {
-        update("diseaseTileSizeButton", "Disease Tiles: Large")
     }
 	
 	if (gameData.diseaseTileSymbols == 0) {
@@ -775,6 +878,8 @@ function updateValues() {
 		else
 			hide('earnBachelorFinance')
 
+		checkHideOrShow(gameData.rottenActualWisdom, "rottenActualWisdom")
+
 		
 		if (!gameData.creditScore2)
 			showBasicDiv('increaseCreditScore2')
@@ -790,11 +895,9 @@ function updateValues() {
     }	
 	
 	if (gameData.maps < 4) {
-		hide("diseaseTileSizeButton")
 		hide("diseaseTileSymbolsButton")
 	} else {
 
-		tabs("diseaseTileSizeButton", "inline-block")
 		tabs("diseaseTileSymbolsButton", "inline-block")
 
 	}
@@ -819,13 +922,13 @@ function updateValues() {
 	
 	
 
-    if (gameData.fork == 0 && gameData.learnANewSkill > -1) {
+    if (gameData.fork == 0 && gameData.learnANewSkill > -2) {
         showBasicDiv('buyAForkDiv')
     } else {
         hide('buyAForkDiv')
     }
 	
-    if (gameData.shoes == 0 && gameData.learnANewSkill > -2) {
+    if (gameData.shoes == 0 && gameData.learnANewSkill > -1) {
         showBasicDiv('buyShoesDiv')
     } else {
         hide('buyShoesDiv')
@@ -937,6 +1040,23 @@ function updateValues() {
 
 
 
+	if (gameData.hasAdvertised && !gameData.surveillanceCamera)
+		showBasicDiv("offlineEmployee")
+	else 
+		hide("offlineEmployee")
+	
+	if (gameData.surveillanceCamera2) {
+		hide("offlineScience")
+		showBasicDiv("upgradeHighTechSurveillance")
+	} 
+	
+	if (gameData.respectMilestone10000) {
+		update("specialAchievement1", "Get a 5x multplier with Buy More Land purchased")
+	} 
+	if (gameData.maps > 3) {
+		update("specialAchievement2", "Buy a Giant Map after only sending one delivery in that town")
+	} 
+
 
     if (gameData.advertisingLevel1 == 0) {
         hide("advertisingMethods")
@@ -945,24 +1065,17 @@ function updateValues() {
             showBasicDiv("researchBetterAdvertising")
         } else {
             hide("researchBetterAdvertising")
+
         }
 
     } else {
         tabs("advertisingMethods", "block")
         hide("researchBetterAdvertising")
-    }
 
-    if (gameData.advertisingLevel2 == 0) {
-        tabs("advertisingLeaflets", "block")
-    } else {
-        hide("advertisingLeaflets")
     }
+	
 
-    if (gameData.advertisingLevel3 == 0) {
-        tabs("advertisingBillboard", "block")
-    } else {
-        hide("advertisingBillboard")
-    }
+
 
     if (gameData.bulkBuyUnlock == 0) {
         hide("peelersBulkButton")
@@ -979,19 +1092,43 @@ function updateValues() {
 		update("basketsBulkButton", "x100")
 		update("juicersBulkButton", "x100")
     }
+	
+	checkHide(gameData.advertisingLevel2, "advertisingLeaflets")
+	checkHide(gameData.advertisingLevel3, "advertisingBillboard")
+	checkHide(gameData.storagePeelersUnlock, "storagePeelersDiv")
+	checkHide(gameData.storageJuicersUnlock, "storageJuicersDiv")
+	checkHide(gameData.changeResearchersBy10Unlock, "changeResearchersBy10Unlock")
+	checkHide(gameData.saveAlphaCoinsUnlock, "saveAlphaCoinsUnlock")
+	checkShow(gameData.saveAlphaCoinsUnlock, "upgradeSaveAlphaCoinsUnlock")
+	checkShow(gameData.wheatField, "fieldButton")
+	checkShow(gameData.wheatField, "buyWheatSeeds")
 
+	
+	if(gameData.mortarAndPestle)
+		showBasicDiv("grindFlour")
+	else
+		hide("grindFlour")
 
+	
+	checkHide(gameData.pieOven, "buyPieOven")
+	checkShow(gameData.pieOven, "pieOvenDiv")
 
-    if (gameData.storagePeelersUnlock == 1) {
-        hide("storagePeelersDiv")
-    }
-
-    if (gameData.storageJuicersUnlock == 1) {
-        hide("storageJuicersDiv")
-    }
-
-
-
+	
+	if(!gameData.wheatField)
+		checkShow(gameData.hasSoldPie, "buyWheatField")
+	else
+		hide("buyWheatField")
+	
+	if(gameData.wheatField && !gameData.pieOven)
+		showBasicDiv("buyPieOven")
+	else
+		hide("buyPieOven")
+	
+	if(gameData.wheatField && !gameData.mortarAndPestle)
+		showBasicDiv("buyMortarAndPestle")
+	else
+		hide("buyMortarAndPestle")
+	
 
     if (gameData.lookAround >= 2) {
         tabs("sellYourLimesDiv", "block")
@@ -1014,35 +1151,20 @@ function updateValues() {
 
     }
 
+	checkHide(gameData.tomes, "tomeDiv")
+
+    if (gameData.tomes == 1) 
+        showBasicDiv("tomeDiv2")
+	else
+		hide("tomeDiv2")
 
 
-    if (gameData.learnANewSkill >= -1) {	
-		showBasicDiv("autoCollectingDiv")
-		showBasicDiv("nourishment")
-		tabs("skillInfoButton", "inline-block")
-    }
 
-    if (gameData.learnANewSkill >= 0) {	
-		showBasicDiv("eatFoodDiv")
-		showOrHideSkill("keenEye")
-    }
-
-
+    if (gameData.tomes == 2)
+        showBasicDiv("tomeDiv3")
+	else
+		hide("tomeDiv3")
 	
-    if (gameData.learnANewSkill >= 1) {
-        showOrHideSkill("rottenWisdom")
-    }
-
-    if (gameData.learnANewSkill >= 2) {
-        showOrHideSkill("limebidextrous")
-    }
-
-    if (gameData.tomes > 0) {
-        hide("tomeDiv")
-    }
-    if (gameData.tomes > 1) {
-        hide("tomeDiv2")
-    }
 	
     if (gameData.autoCollectingBar == (gameData.nourishment + 1) * 100 || gameData.autoCollectingBar == 0) {
 		gameData.isAutoCollecting = 0
@@ -1050,47 +1172,13 @@ function updateValues() {
 	else{
 		gameData.isAutoCollecting = 1
     }
-		
 	
-
-    if (gameData.learnANewSkill >= 3) {
-        showOrHideSkill("intelligence")
-
-        if (gameData.tomes == 0) {
-            document.getElementById('learnANewSkillButton').style.backgroundColor = 'darkgray';
-            gameData.learnANewSkillBar = 100;
-        } else if (gameData.tomes == 1) {
-            document.getElementById('learnANewSkillButton').style.backgroundColor = '#FFBB9A';
-        }
-    }
-
-    if (gameData.learnANewSkill >= 4) {
-        showOrHideSkill("knifebidextrous")
-
-        if (gameData.tomes == 1) {
-            document.getElementById('learnANewSkillButton').style.backgroundColor = 'darkgray';
-            gameData.learnANewSkillBar = 100;
-        } else if (gameData.tomes == 2) {
-            document.getElementById('learnANewSkillButton').style.backgroundColor = '#FFBB9A';
-        }
-    }
-	
-    if (gameData.learnANewSkill >= 5) {
-        showOrHideSkill("ambidextrous")
-
-        gameData.learnANewSkillBar = 100;
-        document.getElementById('learnANewSkillButton').style.backgroundColor = 'darkgray';
-    }
-	
-	
-	
-
-    if (gameData.villageNumber > 0) {
-        tabs("marketMainButtonsDiv", "block")
+    if (gameData.villageNumber > 1) {
+        tabs("marketMainButtonsDiv", "inline-block")
     }
 
     if (gameData.maps >= 1) {
-        tabs("marketMainButtonsDiv", "block")
+        tabs("marketMainButtonsDiv", "inline-block")
         tabs("marketStoreButton", "inline-block")
         hide("buyAMapDiv")
     }
@@ -1104,6 +1192,10 @@ function updateValues() {
     if (gameData.maps >= 3 || gameData.villageNumber > 1) {
         tabs("travelButton", "inline-block")
     }
+	
+
+	document.getElementById("marketMainButtonsDiv").style.width = "360px"
+
 
     if (gameData.peeledLimes >= 1) {
         divVisibility("textForPeeledLimes", "inline-block")
@@ -1139,18 +1231,12 @@ function updateValues() {
         hide("sharperPeelerDiv")
     }
 
-    if (gameData.sharperPeelers >= 1) {
-        hide("sharperPeelerDiv")
-    }
+
+	checkHide(gameData.sharperPeelers, "sharperPeelerDiv")
+	checkHide(gameData.silkRobe, "buyARobe")
+	checkHide(gameData.unlockDiseaseAreaSwamp, "unlockDiseaseAreaSwamp")
 
 
-    if (gameData.silkRobe >= 1) {
-        hide("buyARobe")
-    }
-
-    if (gameData.unlockDiseaseAreaSwamp >= 1) {
-        hide("unlockDiseaseAreaSwamp")
-    }
 
     if (gameData.juicers >= 2) {
         divVisibility("makeMaxJuiceButton", "visible")
@@ -1164,10 +1250,10 @@ function updateValues() {
     }
 
 
-
-    if (gameData.peelers >= 1) {
-        showBasicDiv("peelerDiv")
-    }
+	checkShow(gameData.peelers, "peelerDiv")
+	checkShow(gameData.transferAlphaCoinsBulkUnlock, "transferAlphaCoinsBulk")
+	checkHide(gameData.transferAlphaCoinsBulkUnlock, "transferAlphaCoinsBulkUnlock")
+	checkHide(gameData.lightRobe, "lightRobe")
 
 
 
@@ -1180,13 +1266,58 @@ function updateValues() {
 	
 
 	
-    for (i = 1; i < 7; i++) {
+    for (i = 1; i <= numberOfBasicAchievements; i++) {
 		
 		if (gameData.coins >= Math.pow(10, i)) {
 			gameData['achievement' + i] = 1
 		}
 	}
+	
+	
+    if (gameData.learnANewSkill - 3 == gameData.tomes) {
+        document.getElementById('learnANewSkillButton').style.backgroundColor = 'darkgray';
+		gameData.learnANewSkillBar = 100;
+	}
+	else
+        document.getElementById('learnANewSkillButton').style.backgroundColor = '#FFBB9A';
+	
+	
+	
+		
+	if (gameData.learnANewSkill >= -1) {	
+		showBasicDiv("eatFoodDiv")
+		showOrHideSkill("keenEye")
+    }
 
-    moveBar("learnANewSkill")
+    if (gameData.learnANewSkill >= 0) {	
+		showBasicDiv("autoCollectingDiv")
+		showBasicDiv("nourishment")
+		tabs("skillInfoButton", "inline-block")
+    }
+	
+    if (gameData.learnANewSkill >= 1) {
+        showOrHideSkill("rottenWisdom")
+    }
+
+    if (gameData.learnANewSkill >= 2) {
+        showOrHideSkill("limebidextrous")
+    }
+	
+    if (gameData.learnANewSkill >= 3) {
+        showOrHideSkill("intelligence")
+    }
+
+    if (gameData.learnANewSkill >= 4) {
+        showOrHideSkill("knifebidextrous")
+    }
+	
+    if (gameData.learnANewSkill >= 5) {
+        showOrHideSkill("motivation")
+    }
+
+    if (gameData.learnANewSkill >= 6) {
+        showOrHideSkill("ambidextrous")
+    }
 
 }
+

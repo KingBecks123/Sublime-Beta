@@ -1,10 +1,12 @@
+var diseaseArrayDimensions = 5;
+
 function startSimulation() {
 
     if (gameData.civiliansPlaced == gameData.civiliansTotal) {
 
-        for (x = 0; x < 4; x++) {
+        for (x = 0; x < diseaseArrayDimensions; x++) {
 
-            for (y = 0; y < 4; y++) {
+            for (y = 0; y < diseaseArrayDimensions; y++) {
 
                 tileType = (gameData.diseaseArray[x][y])
 
@@ -15,7 +17,7 @@ function startSimulation() {
                         for (ySpread = y - 1; ySpread < y + 2; ySpread++) {
 
 
-                            if ((xSpread < 5 && xSpread >= 0 && ySpread < 5 && ySpread >= 0) && !(x == xSpread && y == ySpread)) {
+                            if ((xSpread < diseaseArrayDimensions && xSpread >= 0 && ySpread < diseaseArrayDimensions && ySpread >= 0) && !(x == xSpread && y == ySpread)) {
                                 if (gameData.diseaseArray[xSpread][ySpread] == 0) {
                                     gameData.diseaseArray[xSpread][ySpread] = 2
 
@@ -34,12 +36,15 @@ function startSimulation() {
             }
 
         }
-		
-		 if (gameData.autoCheckSimulation)
-			checkResults()
-
 		gameData.simulationTime = 1
-		updateMapTileAesthetic()
+
+		if (gameData.autoCheckSimulation)
+			checkResults()
+		else
+		{
+			updateMapTileAesthetic()
+		}
+
     }
 	
 
@@ -73,9 +78,9 @@ function checkResults() {
 if (gameData.civiliansPlaced == gameData.civiliansTotal && gameData.simulationTime == 1)
 	{
 		diseaseControlFailed = 0
-		for (x = 0; x < 4; x++) {
+		for (x = 0; x < diseaseArrayDimensions; x++) {
 
-			for (y = 0; y < 4; y++) {
+			for (y = 0; y < diseaseArrayDimensions; y++) {
 
 				if (gameData.diseaseArray[x][y] == 3) {
 
@@ -223,18 +228,10 @@ function updateMapTileAesthetic(){
     //Map Tile
     var x = document.getElementsByClassName("mapTile");
     for (i = 0; i < x.length; i++) {
-		
-		if(gameData.diseaseTileSize == 0) 
-		{
-			x[i].style['width'] = "20px";
-			x[i].style['height'] = "20px";
-		}
-		else
-		{
-			x[i].style['width'] = "40px";
-			x[i].style['height'] = "40px";
-		}
-		
+
+		x[i].style['width'] = "40px";
+		x[i].style['height'] = "40px";
+
         x[i].style.padding = "5px 5px 5px 5px";
 		
 		
@@ -252,31 +249,31 @@ function updateMapTileAesthetic(){
 
             if (tileType == 0) {                                //Blank
                 colorChanger(whichButton, accent4)
-				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+				if (gameData.diseaseTileSymbols)
 					update(whichButton, "‏‏‎ ‎‏‏‎ ‎‎")
             } else if (tileType == 1) {                         //Civillian
                 colorChanger(whichButton, limesRelatedAccent)
-				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+				if (gameData.diseaseTileSymbols)
 					update(whichButton, ":)")
 
             } else if (tileType == 2) {                         //Disease
                 colorChanger(whichButton, "#FF999A")
-				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+				if (gameData.diseaseTileSymbols)
 					update(whichButton, " +")
 
             } else if (tileType == 3) {                         //Dead Civillian
                 colorChanger(whichButton, "#565656")
-				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+				if (gameData.diseaseTileSymbols)
 					update(whichButton, ":(")
 
             } else if (tileType == 4) {                         //Lake
                 colorChanger(whichButton, "#4DFFFF")
-				if (gameData.diseaseTileSize && gameData.diseaseTileSymbols)
+				if (gameData.diseaseTileSymbols)
 					update(whichButton, "_")
 
             }
 			
-				if (!gameData.diseaseTileSize || !gameData.diseaseTileSymbols)
+				if (!gameData.diseaseTileSymbols)
 					update(whichButton, "‎‎‎‏‏‎")
 
         }

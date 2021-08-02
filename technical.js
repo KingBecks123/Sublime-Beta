@@ -22,6 +22,10 @@ var gameDataBase = {
     achievement5: 0,
     achievement6: 0,
     achievement7: 0,
+    specialAchievement1: 0,
+    specialAchievement2: 0,
+
+    thisTownDeliveries: 0,
     limesPerClick: 1,
     knife: 0,
     peeledLimes: 0,
@@ -29,13 +33,13 @@ var gameDataBase = {
     limeTypeToJuiceToggle: 0,
     lookAround: 0,
     rottenLimes: 0,
-    rottenWisdomBar: 0,
-    rottenWisdom: 0,
+
+	
+	
+	
     learnANewSkillBar: 0,
     learnANewSkill: -2,
-    limebidextrousBar: 0,
-    limebidextrous: 0,
-    intelligenceBar: 0,
+
     teachBar: 0,
     workingBar: 0,
     lookAroundNumber: 0,
@@ -61,8 +65,7 @@ var gameDataBase = {
     deliveryOngoing: 0,
     juiceBulkAmountToggle: 1,
     tomes: 0,
-    knifebidextrous: 0,
-    knifebidextrousBar: 0,
+
     applicationReady: 0,
     aesthetic: 0,
     foodTypeToggle: 1,
@@ -76,14 +79,7 @@ var gameDataBase = {
     hasGottenJuice: 0,
     foodType: 0,
     showBarPercent: 0,
-    intelligenceSkillLevel: 0,
-    limebidextrousSkillLevel: 0,
-    knifebidextrousSkillLevel: 0,
-    rottenWisdomSkillLevel: 0,
-    intelligenceSkillLevelMax: 20,
-    limebidextrousSkillLevelMax: 50,
-    knifebidextrousSkillLevelMax: 20,
-    rottenWisdomSkillLevelMax: 50,
+
     basketBar: 0,
     baskets: 0,
     limesInBaskets: 0,
@@ -169,9 +165,6 @@ var gameDataBase = {
     unlockBenevolence: 0,
 	benevolenceToggle: 0,
 
-    ambidextrousBar: 0,
-    ambidextrousSkillLevel: 0,
-    ambidextrousSkillLevelMax: 100,
 
 
     diseaseTileSize: 1,
@@ -179,6 +172,7 @@ var gameDataBase = {
 	autoPlaceACivilian: 0,
 
 	increaseJuicePricePermanance: 0,
+	changeResearchersBy10Unlock: 0,
 
     silkRobe: 0,
 
@@ -223,10 +217,18 @@ var gameDataBase = {
     currentTask2: "none",
 
 
-    keenEyeBar: 0,	
-    keenEyeSkillLevel: 0,
-    keenEyeSkillLevelMax: 20,
-
+	keenEyeSkillLevelMax:         20,
+	intelligenceSkillLevelMax:    20,
+	limebidextrousSkillLevelMax:  50,
+	knifebidextrousSkillLevelMax: 20,
+	rottenWisdomSkillLevelMax:    50,
+	motivationSkillLevelMax:     100,
+	ambidextrousSkillLevelMax:   100,
+		
+	knifebidextrous: 0,
+    limebidextrous: 0,
+	
+	
     desktopMode: 1,
 	
 	isAutoCollecting: 0,
@@ -258,8 +260,13 @@ var gameDataBase = {
 	smarterAdvertisingManagerBroker: 0,
 	convertedCoinsSinceTravel: 0,
 	
+	lastSaveTime: Date.now(),
+
+	
 	buyMegaCoinsTimes: 0,
 	buyMegaCoinsTimesMax: 10,
+	
+	changeZoomSize: 100,
 	
 	amountCoinsToAlpha: 0,
 	amountCoinsToAlphaMax: 10,
@@ -302,10 +309,50 @@ var gameDataBase = {
 	autoAdvertiseAmountValue: 5, 
 	advertisePrice: 10,
 	isAdvertising: 0,
+	basketScarecrow: 0,
+	mainTab: 'null',
+	moreVisibleVariables: 0,
+	invertText: 0,
+	surveillanceCamera: 0,
+	surveillanceCamera2: 0,
 
+	timePlayed: 0,
 
-
+	saveAlphaCoinsUnlock: 0,
     isOptionsOpen: 0,
+	transferAlphaCoinsBulkUnlock: 0,
+	lightRobe: 0,
+	rottenActualWisdom: 0,	
+	
+	//Beta Coins
+	betaCoins: 0,
+	betaCoinsExchangeRate: 2500,
+	betaCoinTransferAmount: 1,
+	alphaToBetaBar: 0,
+	
+	//Pie
+	pies: 0,
+	hasGottenPies: 0,
+	piePrice: 1,
+	findPieCustomersBar: 0,
+	couldFindCustomer: 2,
+	isFindingPieCustomers: 0,
+	isThereACustomer: 0,
+	customerWaitTime: 0,
+	hasSoldPie: 0,
+
+	//Wheat
+	wheatField: 0,
+	wheat: 0,
+	wheatSeeds: 0,
+	wheatFieldArray: new Array(),
+	mortarAndPestle: 0,
+	flour: 0,
+	pieOven: 0,
+	bakePieBar: 0,
+	juiceAsPieIngredient: 0,
+	flourAsPieIngredient: 0,
+
 
     autosave: 1,
 
@@ -316,20 +363,32 @@ var gameDataBase = {
     tickspeed: 1,
 }
 
+
+	for (let i = 0; i < mainSkills.length; i++) {
+		gameDataBase[mainSkills[i] + 'Bar'] = 0
+		gameDataBase[mainSkills[i] + 'SkillLevel'] = 0
+	}
+
+
+
+
 var gameData = {}
 
 
 function gameStart() {
+	
+	addHTML()
+
 
 	surveyingBarDoMove = 0
 	benevolenceBarDoMove = 0
 	watertightBarDoMove = 0
+	findPieCustomersBarDoMove = 0
 
-
-    addAestheticBase()
 
 
     Object.assign(gameData, gameDataBase)
+	
 
     loadGame()
 	
@@ -337,21 +396,25 @@ function gameStart() {
 	
     mainGameLoopSlow()
 
+	addAestheticBase()
+
 	
     updateValues()
     autosave()
-	
-	tab("null")
+
+	tab(gameData.mainTab)
     tabMarket("marketMain")
     tabStore("plebian")
     tabTasks("earn")
     tabScience("research")
+	tabOptions("gameOptions")
 
 }
 
 
 function tab(tabby) {
-
+	gameData.mainTab = tabby
+    update("exportCode", "")
 
     tabs("options", "none")
     tabs("market", "none")
@@ -363,6 +426,9 @@ function tab(tabby) {
     tabs("company", "none")
     tabs("forest", "none")
     tabs("science", "none")
+    tabs("bakery", "none")
+    tabs("field", "none")
+
 
 	
 	colorChanger('scienceButton', '#9ABBFF')
@@ -375,6 +441,8 @@ function tab(tabby) {
 	colorChanger('tasksButton', '#FF98DD')
 	colorChanger('companyButton', '#BBBBBB')
 	colorChanger('forestButton', '#BBBBBB')
+	colorChanger('bakeryButton', '#BBBBBB')
+	colorChanger('fieldButton', '#C67848')
 
 
 
@@ -402,6 +470,8 @@ function tab(tabby) {
 			colorChanger(tabby + "Button", "#FF4DFF")
 		if(tabby == 'megaCoinUpgrades')
 			colorChanger(tabby + "Button", "#FF4D4D")
+		if(tabby == 'field')
+			colorChanger(tabby + "Button", "#964D1A")
 
     }
 
@@ -461,6 +531,16 @@ function tabScience(tabby) {
 	colorChanger('researchersButton', '#BBBBBB')		
 	
 	colorChanger(tabby + "Button", "#898989")
+	
+    document.getElementById(tabby).style.display = "block"
+}
+
+
+function tabOptions(tabby) {
+    tabs("gameOptions", "none")
+    tabs("uiOptions", "none")
+    tabs("statsOptions", "none")
+
 	
     document.getElementById(tabby).style.display = "block"
 }
