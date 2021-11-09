@@ -5,7 +5,7 @@ function loadStuff(savegame) {
         Object.assign(gameData, savegame);
 
         backwardsCompatibility(gameData.versionNumber)
-        gameData.versionNumber = 127
+        gameData.versionNumber = 128
         updateValues()
         updateAfterLoad()
     } else {
@@ -17,6 +17,11 @@ function preventNegative(id){
     if (gameData[id] < 0) {
         gameData[id] 
     }
+}
+
+function setRotation(id, number){
+	document.getElementById(id).style.transform = 'rotate(' + number + 'deg)'		
+
 }
 
 function timeToShowScience(id){
@@ -554,14 +559,25 @@ function barStartGranular(variable) {
 
 //Starts a granular loading bar for basic skills.
 function barStartGranularSkillBasic(variable) {
+	
     variableBar = variable + "Bar"
-
     i = gameData[variableBar]
-    if ((i == 100 || i == 0) && (eval("gameData." + variable + "SkillLevel") < eval("gameData." + variable + "SkillLevelMax") && gameData.eat >= eval("gameData." + variable + "SkillLevel"))) {
-        eval("gameData.eat -= gameData." + variable + "SkillLevel")
-        eval("gameData." + variableBar + " = 0")
-        eval(variableBar + "()")
+    if ((i == 100 || i == 0) && (gameData[variable + "SkillLevel"] < gameData[variable + "SkillLevelMax"] && gameData.eat >= gameData[variable + "SkillLevel"])) {
+
+		gameData.eat -= gameData[variable + "SkillLevel"]
+
+		if(gameData.skillTrainer == 1)
+		{
+			gameData[variableBar] = 100
+		}
+		else
+		{
+			gameData[variableBar] = 0
+		}
+		
+		eval(variableBar + "()")
     }
+	
 }
 
 //Replaces an element with new text.
@@ -573,34 +589,38 @@ function update(id, content) {
 function updateNumber(id) {
   elem = "textFor" + jsUcfirst(id)
   valRaw = gameData[id]
+  
   if (valRaw > 1e9)
        val = valRaw.toExponential(3)
   else
        val = valRaw.toLocaleString()
-  if (valRaw)
-  {
-	  if(valRaw > 0){
-		  
-      label = document.getElementById(elem+'Div')
-      if (label)
-          label.style.display = "block"
+   
+	if((valRaw && gameData[id + 'ShowVariable']) || id == 'limes')
+	{
+		showBasicDiv(elem + 'Div')
+		showBasicDiv(elem + 'Br' )
+		showBasicDiv(elem + 'P'  )
+		showBasicDiv(elem        )
+	}
+	else
+	{
+		hide        (elem + 'Div')
+		hide        (elem + 'Br' )
+		hide        (elem + 'P'  )
+		hide        (elem        )
+	}
 	  
-	  label = document.getElementById(elem+'P')
-      if (label)
-          label.style.display = "block"
-	  
-	  label = document.getElementById(elem)
-      if (label)
-          label.style.display = "block"
-	  
-	  label = document.getElementById(elem+'Br')
-      if (label)
-          label.style.display = "block"
-	  }
-  }      
   update(elem, val)
 }
 
+function currencyDisplay(id){
+	variable = mainVariables[id] + 'ShowVariable'
+	if (gameData[variable])
+		gameData[variable] = false
+	else
+		gameData[variable] = true
+
+}
 
 //Capitalises the first letter in a string.
 function jsUcfirst(string) {
@@ -687,7 +707,7 @@ function checkHideOrShow(i, txt) {
 }
 
 function saveBeforeWipe(id) {
-	eval(id + 'Now' + '=' + 'gameData.' + id )
+	eval(id + 'Now = gameData.' + id )
 }
 
 
@@ -724,13 +744,6 @@ function loadGame() {
 
 function resetTime() {
 	gameData.tickspeed = 1
-}
-
-function autosave() {
-    if (gameData.autosave == 1) {
-        saveGame()
-    }
-    setTimeout(autosave, 500)
 }
 
 function resetGame() {

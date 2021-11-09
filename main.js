@@ -3,10 +3,16 @@ var loopNumberTimePlayed = 0;
 var loopNumbercurrentTask = 0;
 var numberOfBasicAchievements = 7;
 var numberOfSpecialAchievements = 2;
-var pieOvenColor = 0
 
-mainVariables = ['limes', 'rottenLimes', 'coins', 'juice', 'megaCoins', 'alphaCoins', 'peeledLimes', 'betaCoins', 'pies'];
-//Main variables change color in options and are updated as numbers.
+
+mainVariables       = ['limes', 'rottenLimes' , 'peeledLimes' , 'juice', 'coins', 'megaCoins' , 'alphaCoins' , 'betaCoins' , 'pies', 'pieCoins' ];
+mainVariablesNames  = ['Limes', 'Rotten Limes', 'Peeled Limes', 'Juice', 'Coins', 'Mega Coins', 'Alpha Coins', 'Beta Coins', 'Pies', 'Pie Coins'];
+
+mainVariablesColor  = ['#00B300', '#00B300' , '#72B301' , '#00B33D', '#AEB301', '#B40001' , '#B37700' , '#AEB301' , '#964D1A', '#964D1A' ];
+mainVariablesColor2 = ['#00FF01', '#00FF01' , '#A0FF01' , '#00FF55', '#F8FF01', '#FE0000' , '#FFAA01' , '#F8FF01' , '#C67848', '#C67848' ];
+
+
+	
 
 mainSkills = ['keenEye', 'rottenWisdom', 'limebidextrous', 'intelligence', 'knifebidextrous', 'motivation', 'ambidextrous'];
 //Uses: Restart bar after reloading. Sets the level to the max level if it somehow goes above. Updates test for level / levelMax. Updates aesthetic for the skill's button. Creates HTML for the skill.
@@ -81,10 +87,8 @@ function mainGameLoopSlow() {
 	
 	gameData.achievementBar = 0
     for (i = 1; i < 7; i++) {
-		
-		if (gameData['achievement' + i]) {
+		if (gameData['achievement' + i])
 			gameData.achievementBar += 100 / 7
-		}
 	}
 	
 	gameData.lastSaveTime = Date.now()
@@ -116,13 +120,14 @@ function mainGameLoopSlow() {
 		update("customerButton", "  ")
 	}
 		
-	updateWheatField()
+	updatePieStuffSlow()
 
 	gameData.customerWaitTime += 1
 
 
 	moveBar('achievement')
 	updateMapTileAesthetic()
+	saveGame()
 	setTimeout(mainGameLoopSlow, 500)
 }
 
@@ -710,7 +715,6 @@ function travelToNextVillage() {
 		'nutritionists', 
 		'megaCoinsInBankMax', 
 		'betterTraining', 
-		'autosave', 
 		'showBarPercent', 
 		'hideCompletedSkills', 
 		'hideMaxedPurchases', 
@@ -762,7 +766,7 @@ function travelToNextVillage() {
 		
 
 		for (let i = 0; i < saveWipeValues.length; i++) {
-			saveBeforeWipe(saveWipeValues[i])		
+			saveAfterWipe(saveWipeValues[i])		
 		}
 		
 
