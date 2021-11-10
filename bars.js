@@ -190,7 +190,10 @@ function alphaToBetaBar() {
 function basket() {
     gameData.basketBar = 0;
     gameData.limes += gameData.limesInBaskets;
+	gameData.goldenLimes += gameData.goldenLimesInBaskets;
     gameData.limesInBaskets = 0;
+    gameData.goldenLimesInBaskets = 0;
+
 }
 
 function workingBar() {
@@ -426,11 +429,15 @@ function keenEyeBar() {
 }
 
 function ambidextrousBar() {
-    basicBarSkill("ambidextrous")
+    basicBarSkill("ambidextrous", "slow")
 }
 
 function motivationBar() {
     basicBarSkill("motivation")
+}
+
+function bitterSpeedBar() {
+    basicBarSkill("bitterSpeed")
 }
 
 function learnANewSkillBar() {
@@ -472,6 +479,9 @@ function learnANewSkillBar() {
             case 5:
                 gameData.learnANewSkill = 6
                 update("newInfo", "You Learned Ambidextrous!")
+            case 6:
+                gameData.learnANewSkill = 7
+                update("newInfo", "You Learned Bitter Speed!")
         }
     }
 
@@ -588,7 +598,7 @@ function peelerPeelMax() {
 
 function makeMaxJuice() {
 
-    if ((gameData.juicerBar == 100 || gameData.juicerBar == 0) && gameData.isCurrentlyJuicing == 0) {
+    if ((gameData.juicerBar >= 100 || gameData.juicerBar == 0) && gameData.isCurrentlyJuicing == 0) {
 
         if (gameData.limeTypeToJuice == 0)
 		{
@@ -619,9 +629,9 @@ function makeMaxJuice() {
 }
 
 function juicerBar() {
-    if (gameData.juicerBar <= 99.5) 
+    if (gameData.juicerBar < 100) 
 	{
-        gameData.juicerBar += 0.5;
+        gameData.juicerBar += 0.5 + gameData.bitterSpeeding * 10;
 		moveBar("juicer")
         setTimeout(juicerBar, 50 / ((gameData.limeTypeToJuiceToggle * 3 + 1) * gameData.tickspeed))
     } 
@@ -634,12 +644,33 @@ function juicerBar() {
 }
 
 function peelerBar() {
-    if (gameData.peelerBar <= 99.5) 
+    if (gameData.peelerBar < 100) 
 	{
-        gameData.peelerBar += 0.5;
+        gameData.peelerBar += 0.5 + gameData.bitterSpeeding * 10
 		moveBar("peeler")
         setTimeout(peelerBar, (50 / ((gameData.sharperPeelers + 1) * 2)) / gameData.tickspeed)
     } 
 	else 
 		gameData.peeledLimes += gameData.howManyPeeledLimes;
+}
+
+function eatGoldenLime(){
+	if(gameData.goldenLimes > 0)
+	{
+		gameData.goldenLimes -= 1
+		gameData.eatGoldenLimeBar = 100
+		gameData.bitterSpeeding = 1
+		eatGoldenLimeBar()
+	}
+}
+
+function eatGoldenLimeBar(){
+    if (gameData.eatGoldenLimeBar > 0) 
+	{
+        gameData.eatGoldenLimeBar -= 0.5;
+		moveBar("eatGoldenLime")
+        setTimeout(eatGoldenLimeBar, (gameData.bitterSpeedSkillLevel / gameData.tickspeed))
+    } 
+	else 
+		gameData.bitterSpeeding = 0
 }

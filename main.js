@@ -1,20 +1,22 @@
 var loopNumberBasket = 0;
+var loopNumberGoldenLimes = 0;
 var loopNumberTimePlayed = 0;
 var loopNumbercurrentTask = 0;
 var numberOfBasicAchievements = 7;
 var numberOfSpecialAchievements = 2;
 
 
-mainVariables       = ['limes', 'rottenLimes' , 'peeledLimes' , 'juice', 'coins', 'megaCoins' , 'alphaCoins' , 'betaCoins' , 'pies', 'pieCoins' ];
-mainVariablesNames  = ['Limes', 'Rotten Limes', 'Peeled Limes', 'Juice', 'Coins', 'Mega Coins', 'Alpha Coins', 'Beta Coins', 'Pies', 'Pie Coins'];
+mainVariables       = ['limes'  , 'rottenLimes' , 'peeledLimes' , 'juice'  , 'coins'  , 'megaCoins' , 'alphaCoins' , 'betaCoins' , 'pies'   , 'pieCoins' , 'goldenLimes' ];
+mainVariablesNames  = ['Limes'  , 'Rotten Limes', 'Peeled Limes', 'Juice'  , 'Coins'  , 'Mega Coins', 'Alpha Coins', 'Beta Coins', 'Pies'   , 'Pie Coins', 'Golden Limes'];
 
-mainVariablesColor  = ['#00B300', '#00B300' , '#72B301' , '#00B33D', '#AEB301', '#B40001' , '#B37700' , '#AEB301' , '#964D1A', '#964D1A' ];
-mainVariablesColor2 = ['#00FF01', '#00FF01' , '#A0FF01' , '#00FF55', '#F8FF01', '#FE0000' , '#FFAA01' , '#F8FF01' , '#C67848', '#C67848' ];
+mainVariablesColor  = ['#00B300', '#00B300'     , '#72B301'     , '#00B33D', '#AEB301', '#B40001'   , '#B37700'    , '#AEB301'   , '#964D1A', '#964D1A'  , '#AEB301'     ];
+mainVariablesColor2 = ['#00FF01', '#00FF01'     , '#A0FF01'     , '#00FF55', '#F8FF01', '#FE0000'   , '#FFAA01'    , '#F8FF01'   , '#C67848', '#C67848'  , '#F8FF01'     ];
 
 
-	
 
-mainSkills = ['keenEye', 'rottenWisdom', 'limebidextrous', 'intelligence', 'knifebidextrous', 'motivation', 'ambidextrous'];
+mainSkills =      ['keenEye' , 'rottenWisdom' , 'limebidextrous', 'intelligence', 'knifebidextrous', 'motivation', 'ambidextrous', 'bitterSpeed' ];
+mainSkillsNames = ['Keen Eye', 'Rotten Wisdom', 'Limebidextrous', 'Intelligence', 'Knifebidextrous', 'Motivation', 'Ambidextrous', 'Bitter Speed'];
+
 //Uses: Restart bar after reloading. Sets the level to the max level if it somehow goes above. Updates test for level / levelMax. Updates aesthetic for the skill's button. Creates HTML for the skill.
 //Order is used for showing skills.
 
@@ -66,7 +68,7 @@ function mainGameLoopSlow() {
 
 	
 	if(gameData.currentSkill !== 'none')
-		barStartGranularSkillBasic(gameData.currentSkill)
+		barStartGranularSkillBasic(gameData.currentSkill, false)
 
 		
 	if(gameData.bachelorsDegreeFinance)
@@ -134,12 +136,26 @@ function mainGameLoopSlow() {
 function mainGameLoop() {
 	
 	loopNumberBasket += 1	
+	loopNumberGoldenLimes += 1	
+
 	
-	 if (gameData.basketBar < 100 && loopNumberBasket >= 24) {
+	if (gameData.basketBar < 100 && loopNumberBasket >= 24) {
         gameData.basketBar += 0.2;
 		loopNumberBasket = 0
+		
+		if(beckyRandom(100) == 1)
+			gameData.goldenLimesInBaskets += 1
     }
+	
+	if (loopNumberGoldenLimes >= 200) {
+        if(gameData.goldenLimes > 0)
+		{
+			gameData.goldenLimes -= 1
+		}
+		
+		loopNumberGoldenLimes = 0
 
+    }
 	
 	setTimeout(mainGameLoop, 50)
     updateValues()
@@ -293,7 +309,7 @@ function deliveryToggleExpress() {
 }
 
 function motivateEmployee() {
-	if(gameData.employeeWorking > 0 && gameData.workingBar < 99 - gameData.motivationSkillLevel / 20)
+	if(gameData.employeeWorking > 0)
 	{
 	    gameData.workingBar += gameData.motivationSkillLevel / 20
 	}

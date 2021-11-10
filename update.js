@@ -234,8 +234,11 @@ function updateValues() {
 	
     update("textForMegaCoinsInBank", gameData.megaCoinsInBank.toLocaleString() + " / " + gameData.megaCoinsInBankMax.toLocaleString() + " Mega Coins In Bank")
 
+	if(gameData.forestTreeType == 1)
+		update("limesInBaskets", gameData.limesInBaskets.toLocaleString() + " Limes")
+	else
+		update("limesInBaskets", gameData.limesInBaskets.toLocaleString() + " Limes + " + gameData.goldenLimesInBaskets.toLocaleString() + " Golden Limes")
 
-    update("limesInBaskets", gameData.limesInBaskets.toLocaleString() + " Limes")
 
     update("textForRespect", gameData.respect.toLocaleString() + " Respect")
 	
@@ -863,7 +866,6 @@ function updateValues() {
 
         if (gameData.storageJuicersUnlock == 1 && gameData.storagePeelersUnlock == 1) {
             hide("storageDiv")
-
         }
     }
 
@@ -874,10 +876,6 @@ function updateValues() {
 	else 
 		hide("offlineEmployee")
 	
-	if (gameData.surveillanceCamera2) {
-		hide("offlineScience")
-		showBasicDiv("upgradeHighTechSurveillance")
-	} 
 	
 	if (gameData.respectMilestone10000) {
 		update("specialAchievement1", "Get a 5x multplier with Buy More Land purchased")
@@ -922,6 +920,8 @@ function updateValues() {
 		update("juicersBulkButton", "x100")
     }
 	
+	
+	//Check Hide
 	checkHide(gameData.advertisingLevel2, "advertisingLeaflets")
 	checkHide(gameData.advertisingLevel3, "advertisingBillboard")
 	checkHide(gameData.storagePeelersUnlock, "storagePeelersDiv")
@@ -929,6 +929,14 @@ function updateValues() {
 	checkHide(gameData.changeResearchersBy10Unlock, "changeResearchersBy10Unlock")
 	checkHide(gameData.saveAlphaCoinsUnlock, "saveAlphaCoinsUnlock")
 	checkShow(gameData.saveAlphaCoinsUnlock, "upgradeSaveAlphaCoinsUnlock")
+	
+	checkHide(gameData.surveillanceCamera2, "offlineScience")
+	checkShow(gameData.surveillanceCamera2, "upgradeHighTechSurveillance")
+
+	checkHide(gameData.forestTree2, "buyANewTree")
+	checkShow(gameData.forestTree2, "treeTypeDiv")
+
+
 	
 	updatePieStuff()
 		
@@ -968,6 +976,11 @@ function updateValues() {
 	else
 		hide("tomeDiv3")
 	
+    if (gameData.tomes == 3)
+        showBasicDiv("tomeDiv4")
+	else
+		hide("tomeDiv4")
+	
 	
     if (gameData.autoCollectingBar == (gameData.nourishment + 1) * 100 || gameData.autoCollectingBar == 0) {
 		gameData.isAutoCollecting = 0
@@ -979,12 +992,6 @@ function updateValues() {
     if (gameData.villageNumber > 1) {
         tabs("marketMainButtonsDiv", "inline-block")
     }
-	
-	if (gameData.rottenLimes)
-		gameData.hasGottenRottenLimes = 1
-	
-	if (gameData.hasGottenRottenLimes)
-        tabs("foodToggleRottenLimesButton", "inline-block")
 
     if (gameData.maps >= 1) {
         tabs("marketMainButtonsDiv", "inline-block")
@@ -998,6 +1005,12 @@ function updateValues() {
         tabs("marketStoreButton", "inline-block")
         hide("buyAnotherMapDiv")
     }
+	
+    if (gameData.maps == 2) {
+        showBasicDiv("buyThirdMapDiv")
+    } else {
+        hide("buyThirdMapDiv")
+    }
 
     if (gameData.maps >= 3 || gameData.villageNumber > 1) {
         tabs("travelButton", "inline-block")
@@ -1010,11 +1023,6 @@ function updateValues() {
         tabs("juicePeeledLimesToggleButton", "inline-block")
     }
 
-    if (gameData.maps == 2) {
-        showBasicDiv("buyThirdMapDiv")
-    } else {
-        hide("buyThirdMapDiv")
-    }
 
     if (gameData.knife >= 1) {
         showBasicDiv("knifeDiv")
@@ -1062,6 +1070,8 @@ function updateValues() {
 	checkHide(gameData.transferAlphaCoinsBulkUnlock, "transferAlphaCoinsBulkUnlock")
 	checkHide(gameData.lightRobe, "lightRobe")
 	checkHide(gameData.skillTrainer, "skillTrainer")
+	checkShow(gameData.bitterSpeedSkillLevel, "eatGoldenLimeProgress")
+	checkShow(gameData.bitterSpeedSkillLevel, "eatGoldenLime")
 
 
 
@@ -1103,30 +1113,20 @@ function updateValues() {
 		tabs("skillInfoButton", "inline-block")
     }
 	
-    if (gameData.learnANewSkill >= 1) {
-        showOrHideSkill("rottenWisdom")
-    }
-
-    if (gameData.learnANewSkill >= 2) {
-        showOrHideSkill("limebidextrous")
-    }
-	
-    if (gameData.learnANewSkill >= 3) {
-        showOrHideSkill("intelligence")
-    }
-
-    if (gameData.learnANewSkill >= 4) {
-        showOrHideSkill("knifebidextrous")
-    }
-	
-    if (gameData.learnANewSkill >= 5) {
-        showOrHideSkill("motivation")
+    if (gameData.learnANewSkill >= 5)
 		showBasicDiv("motivateEmployeeButton")
-    }
-
-    if (gameData.learnANewSkill >= 6) {
-        showOrHideSkill("ambidextrous")
-    }
+	
+    if (gameData.forestTreeType == 2)
+		showBasicDiv("goldenLimesInfo")
+	else
+		hide("goldenLimesInfo")
+	
+	
+	for (let i = 0; i < mainSkills.length; i++) {
+		if (gameData.learnANewSkill >= i) {
+			showOrHideSkill(mainSkills[i])
+		}
+	}
 
 }
 

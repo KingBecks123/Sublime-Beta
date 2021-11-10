@@ -96,7 +96,20 @@ function addAesthetic() {
 		colorChanger('grindFlour', grayAccentLight)
 	
 
+	if(gameData.forestTreeType == 1)
+	{
+		colorChanger('forestTree1', accent3)
+		colorChanger('forestTree2', accent2)
+	}
 
+	else
+	{
+		colorChanger('forestTree2', accent3)
+		colorChanger('forestTree1', accent2)
+	}
+	
+	
+	
 
     var x = document.getElementsByClassName("changeResearchersBy10");
     for (i = 0; i < x.length; i++) {

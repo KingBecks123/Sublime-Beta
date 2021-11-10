@@ -5,7 +5,7 @@ function loadStuff(savegame) {
         Object.assign(gameData, savegame);
 
         backwardsCompatibility(gameData.versionNumber)
-        gameData.versionNumber = 128
+        gameData.versionNumber = 129
         updateValues()
         updateAfterLoad()
     } else {
@@ -185,7 +185,7 @@ function pickCurrentSkill(x) {
 	
 	
 	else {
-		barStartGranularSkillBasic(x)
+		barStartGranularSkillBasic(x, true)
 	}
 	
 	updateValues()
@@ -324,10 +324,11 @@ function basicToggle(input, type) {
 
 function moveBar(x) {
     i = x + "Bar"
-
+	if(gameData[i] > 100)
+		gameData[i] = 100
 
     var elem = document.getElementById(i);
-    elem.style.width = eval("gameData." + i) + "%";
+    elem.style.width = gameData[i] + "%";
     elem.innerHTML = "  " + Math.ceil(eval("gameData." + i)) + "%";
 }
 
@@ -490,7 +491,7 @@ function beckyRandomMinMax(min, max) {
 }
 
 //Recurring function for continuing a loading bar.
-function basicBarSkill(variable) {
+function basicBarSkill(variable, speed) {
 	
 	variableBar = variable + "Bar"
 
@@ -498,7 +499,10 @@ function basicBarSkill(variable) {
 		
         gameData[variableBar] += 0.5
 				
-        setTimeout(variableBar + "()", (100 / (gameData.intelligenceSkillLevel * 2 / 20 + 1)) / gameData.tickspeed)
+		if(speed == 'slow')
+			setTimeout(variableBar + "()", (1000 / (gameData.intelligenceSkillLevel * 2 / 20 + 1)) / gameData.tickspeed)
+		else
+			setTimeout(variableBar + "()", (100 / (gameData.intelligenceSkillLevel * 2 / 20 + 1)) / gameData.tickspeed)
 
 		
     } else {
@@ -558,7 +562,7 @@ function barStartGranular(variable) {
 }
 
 //Starts a granular loading bar for basic skills.
-function barStartGranularSkillBasic(variable) {
+function barStartGranularSkillBasic(variable, useSkillTrainer) {
 	
     variableBar = variable + "Bar"
     i = gameData[variableBar]
@@ -566,7 +570,7 @@ function barStartGranularSkillBasic(variable) {
 
 		gameData.eat -= gameData[variable + "SkillLevel"]
 
-		if(gameData.skillTrainer == 1)
+		if(gameData.skillTrainer == 1 && useSkillTrainer == true)
 		{
 			gameData[variableBar] = 100
 		}
@@ -774,4 +778,8 @@ function backwardsCompatibility(versionNumber) {
 		diseaseControlQuit()
 
     }
+}
+
+function setValue(id, amount){
+	gameData[id] = amount
 }

@@ -116,6 +116,15 @@
 
         }
     </style>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-5S0BD7ZKYH"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-5S0BD7ZKYH');
+	</script>
 </head>
 
 <body id="mainBody" , onload="gameStart()">
@@ -588,6 +597,12 @@
 					<p class="basicText">Price: 200,000 Coins</p>
 				</div>
 				
+                <div class="basicDiv" , id="buyANewTree">
+                    <button class="specialButton" onclick="basicBuy('forestTree2', 1e6)">Buy A New Tree</button>
+                    <p class="basicText">An orchardist recommends this new type of tree</p>
+                    <p class="basicText">Price: 1,000,000 Coins</p>
+                </div>
+				
                 <div class="basicDiv" , id="buyMapDiv5">
                     <button class="specialButton" onclick="basicBuy('maps', 1e7)">Buy An Enormous Map</button>
                     <p class="basicText">These map prices are getting absurd...</p>
@@ -892,6 +907,12 @@
                     <p class="basicText">Price: 50 Alpha Coins</p>
                 </div>
 				
+                <div id="tomeDiv4" class="basicDiv">
+                    <button class="specialButton" onclick="universalBuy('tomes', 100, 'alphaCoins')">Buy A Golden Tome</button>
+                    <p class="basicText">The orchardist says those limes are useful for something...</p>
+                    <p class="basicText">Price: 100 Alpha Coins</p>
+                </div>
+				
                 <div id="skillTrainer" class="basicDiv">
                     <button class="specialButton" onclick="universalBuy('skillTrainer', 50, 'alphaCoins')">Hire A Trainer</button>
                     <p class="basicText">This trainer will help you to instantly complete a skill's level</p>
@@ -990,6 +1011,16 @@
 
 
     <div id="inventory" style="width:380px;">
+	
+        <div class="pin basicDivSize" id="goldenBarDiv" style="background-color:#F8FF01;border-style: solid;border-color: #222222">
+
+            <div class="skillProgress" id="eatGoldenLimeProgress" style="display:none">
+				<div class="skillBarColored" style="background-color:#F8FF01" id="eatGoldenLimeBar">0%</div>
+            </div>
+            <button class="basicButtonSize" id="eatGoldenLime" onclick="eatGoldenLime()" style="background-color:#F8FF01">Eat Golden Lime</button>
+
+        </div>
+		
         <div class="pin basicDivSize" id="useJuicersDiv" style="background-color:#4DFE89;border-style: solid;border-color: #222222">
 
             <p class="basicText" style="border-style: solid;border-width: 2px;border-color: #222222" id="juicersAmount">1 Juicers</p>
@@ -1059,6 +1090,11 @@
 
 
     <div id="forest">
+		<div class="basicDiv" id="treeTypeDiv" style="display:none">
+			<button class="basicButtonSize" id="forestTree1" style="background-color:lightgray;" onclick="setValue('forestTreeType', 1)">Basic Tree</button>
+			<button class="basicButtonSize" id="forestTree2" style="background-color:lightgray;" onclick="setValue('forestTreeType', 2)">??? Tree</button>
+		</div>
+		
         <div class="basicDiv">
             <p class="basicText" id="basketsAmount" , style="background-color:#bfbfbf;padding: 5px;">1 Basket</p>
             <button class="specialButton" style="background-color:#87a7b3;" , onclick="basket()">Empty Baskets</button>
@@ -1066,6 +1102,8 @@
             <p class="basicText basketInfo">Baskets collect 5 Limes per minute each</p>
             <p class="basicText basketInfo">Baskets collect up to 25 Limes each</p>
             <p class="basicText basketInfo" id="maxBaskets">20 baskets fit under the current tree</p>
+			<span style="display:none" id="goldenLimesInfo"><p class="basicText basketInfo">Golden limes slowly rot away once you collect them</p></span>
+
 
             <p class="basicText" id="limesInBaskets">0 Limes</p>
 
@@ -1654,11 +1692,17 @@
         <div class="basicDiv" , id="ambidextrousDiv" , style="display:none;">
             <div class="skillInfo">
                 <p class="basicText">Yes, i made a skill without a lime pun                  </p>
-                <p class="basicText">Reach level 100 to be able to toggle two actions at once</p>
+                <p class="basicText">Reach level 20 to be able to toggle two actions at once</p>
             </div>
         </div>
 		
-		
+        <div class="basicDiv" , id="bitterSpeedDiv" , style="display:none;">
+            <div class="skillInfo">
+                <p class="basicText">The bitterness of the golden limes increases your abilities!</p>
+                <p class="basicText">Specifically lime peeling and juicing.</p>
+                <p class="basicText">Every level increases that effect's length.</p>
+            </div>
+        </div>
 		
 		
 		
@@ -1666,14 +1710,14 @@
     </div>
     </div>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="aesthetic.js?v=               128" charset="utf-8" type="text/javascript"></script>
-    <script src="myfunctions.js?v=             128" charset="utf-8" type="text/javascript"></script>
-    <script src="main.js?v=                    128" charset="utf-8" type="text/javascript"></script>
-    <script src="diseasetask.js?v=             128" charset="utf-8" type="text/javascript"></script>
-    <script src="technical.js?v=               128" charset="utf-8" type="text/javascript"></script>
-    <script src="bars.js?v=                    128" charset="utf-8" type="text/javascript"></script>
-    <script src="update.js?v=                  128" charset="utf-8" type="text/javascript"></script>
-    <script src="pie.js?v=                     128" charset="utf-8" type="text/javascript"></script>
+    <script src="aesthetic.js?v=               129" charset="utf-8" type="text/javascript"></script>
+    <script src="myfunctions.js?v=             129" charset="utf-8" type="text/javascript"></script>
+    <script src="main.js?v=                    129" charset="utf-8" type="text/javascript"></script>
+    <script src="diseasetask.js?v=             129" charset="utf-8" type="text/javascript"></script>
+    <script src="technical.js?v=               129" charset="utf-8" type="text/javascript"></script>
+    <script src="bars.js?v=                    129" charset="utf-8" type="text/javascript"></script>
+    <script src="update.js?v=                  129" charset="utf-8" type="text/javascript"></script>
+    <script src="pie.js?v=                     129" charset="utf-8" type="text/javascript"></script>
 
 
 </body>

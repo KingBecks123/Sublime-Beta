@@ -33,7 +33,6 @@ var gameDataBase = {
     limeTypeToJuiceToggle: 0,
     lookAround: 0,
     rottenLimes: 0,
-    hasGottenRottenLimes: 0,
 
 	
 	
@@ -227,7 +226,9 @@ var gameDataBase = {
 	knifebidextrousSkillLevelMax: 20,
 	rottenWisdomSkillLevelMax:    50,
 	motivationSkillLevelMax:     100,
-	ambidextrousSkillLevelMax:   100,
+	ambidextrousSkillLevelMax:   20,
+	bitterSpeedSkillLevelMax:   200,
+
 		
 	knifebidextrous: 0,
     limebidextrous: 0,
@@ -327,7 +328,15 @@ var gameDataBase = {
     isOptionsOpen: 0,
 	transferAlphaCoinsBulkUnlock: 0,
 	lightRobe: 0,
-	rottenActualWisdom: 0,	
+	rottenActualWisdom: 0,
+	
+	forestTree2: 0,
+	forestTreeType: 1,
+	goldenLimes: 0,
+	goldenLimesInBaskets: 0,
+	eatGoldenLimeBar: 100,
+	bitterSpeeding: 0,
+
 	
 	//Beta Coins
 	betaCoins: 0,
@@ -577,7 +586,6 @@ function tabScience(tabby) {
     document.getElementById(tabby).style.display = "block"
 }
 
-
 function tabOptions(tabby) {
     tabs("gameOptions", "none")
     tabs("uiOptions", "none")
@@ -657,14 +665,8 @@ function addHTML(){
 	
 		var name = mainSkills[i]
 		var div = document.getElementById(name + "Div")
-		var title = ''
+		var title = mainSkillsNames[i]
 		
-		if(name == 'rottenWisdom')
-			title = 'Rotten Wisdom'
-		else if(name == 'keenEye')
-			title = 'Keen Eye'
-		else
-		    title = jsUcfirst(name)
 		
 		
 		
