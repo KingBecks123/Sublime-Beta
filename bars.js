@@ -1,96 +1,3 @@
-function advertise() {
-    if ((gameData.advertiseBar == 100 || gameData.advertiseBar == 0) && (gameData.coins >= gameData.advertisePrice) && gameData.isAdvertising == 0) {
-        gameData.coins -= gameData.advertisePrice
-		gameData.typeToHire = gameData.typeToHireToggle
-        gameData.advertiseBar = 0
-		gameData.isAdvertising = 1
-        advertiseBar()
-    }
-}
-
-function advertiseBar() {
-    if (gameData.advertiseBar < 100) {
-        gameData.advertiseBar += 0.5;
-		moveBar("advertise")
-        setTimeout(advertiseBar, (100 / (gameData.advertisingLevel2 * 2 * gameData.advertisingLevel3 + gameData.advertisingLevel2 + 2 * gameData.advertisingLevel3 + 1) / gameData.tickspeed))
-    } else {
-        gameData.applicationReady = 1
-        gameData.hasAdvertised = 1
-        randomizeApplication()
-		gameData.isAdvertising = 0
-
-    }
-    
-}
-
-function useBellows() {
-	if(gameData.bellowsBar < 0.5)
-	{	
-		gameData.bellowsBar = 100
-		bellowsBar()
-	}
-
-	gameData.bellowsBar = 100
-	gameData.bellowsCurrentlyBlowing = 1
-
-}
-
-function bellowsBar() {
-    if (gameData.bellowsBar > 0) {
-        gameData.bellowsBar -= 0.5;
-		moveBar("bellows")
-        setTimeout(bellowsBar, 100)
-    } else {
-		gameData.bellowsCurrentlyBlowing = 0
-    }
-}
-
-function bakePie() {
-    if ((gameData.bakePieBar == 100 || gameData.bakePieBar == 0) && gameData.juiceAsPieIngredient > 0 && gameData.flourAsPieIngredient > 0 && !gameData.isPieBaking) {
-        gameData.bakePieBar = 0
-		gameData.isPieBaking = 1
-        bakePieBar()
-    }
-}
-
-function bakePieBar() {
-    if (gameData.bakePieBar < 100) {
-        gameData.bakePieBar += 0.5;
-		moveBar("bakePie")
-        setTimeout(bakePieBar, 100 / (gameData.bellowsCurrentlyBlowing + 1))
-    } else {
-		gameData.pies += 1
-		gameData.juiceAsPieIngredient = 0
-		gameData.flourAsPieIngredient = 0
-		gameData.isPieBaking = 0
-    }
-}
-
-function findPieCustomers() {
-    if ((gameData.findPieCustomersBar == 100 || gameData.findPieCustomersBar == 0) && !gameData.isFindingPieCustomers) {
-        gameData.findPieCustomersBar = 0
-		gameData.isFindingPieCustomers = 1			
-		update("couldFindCustomer", "Waiting for customers...")		
-        findPieCustomersBar()
-    }
-}
-
-function findPieCustomersBar() {
-    if (gameData.findPieCustomersBar < 100) {
-		
-		if(findPieCustomersBarDoMove)
-			gameData.findPieCustomersBar += 0.5;
-		
-		findPieCustomersBarDoMove = 1
-		moveBar("findPieCustomers")
-		setTimeout(findPieCustomersBar, (Math.pow(2, gameData.piePrice) + 10) / gameData.tickspeed)
-		
-    } else {
-        lookForCustomer()
-    }
-    
-}
-
 function searchForACurrencyBroker() {
     if (gameData.alphaCoins >= 10) {
         gameData.alphaCoins -= 10
@@ -122,8 +29,9 @@ function coinsToAlphaStart() {
 }
 
 function coinsToAlphaClick(){
-	price = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
-	if (gameData.coins >= price && (gameData.coinsToAlphaBar == 100 || gameData.coinsToAlphaBar == 0) && gameData.isCurrentlyExchangingAlpha == 0) {
+	price = ((gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount) * ((gameData.alphaCoinConvertBulkToggle * 9) + 1)
+	if (gameData.coins >= price && (gameData.coinsToAlphaBar == 100 || gameData.coinsToAlphaBar == 0) && !gameData.isCurrentlyExchangingAlpha) {
+		gameData.alphaCoinConvertBulkToggleSet = gameData.alphaCoinConvertBulkToggle
 		gameData.coins -= price
 		gameData.coinsToAlphaBar = 0
 		gameData.isCurrentlyExchangingAlpha = 1
@@ -143,8 +51,7 @@ function coinsToAlphaBar() {
 			moveBar("coinsToAlpha")
 			setTimeout(coinsToAlphaBar, 15 / gameData.tickspeed)
 		} else {
-			gameData.alphaCoins += gameData.currencyBrokerTransferAmount
-			gameData.isCurrentlyExchangingAlpha = 0
+			end()
 		}
 	}
 	else
@@ -158,17 +65,36 @@ function coinsToAlphaBar() {
 			else
 				setTimeout(coinsToAlphaBar, 100 / gameData.tickspeed)
 		} else {
-			gameData.alphaCoins += gameData.currencyBrokerTransferAmount
-			gameData.isCurrentlyExchangingAlpha = 0
+			end()
 		}
+	}
+	
+	function end(){
+		
+		if(gameData.alphaCoinConvertBulkToggleSet == 0)
+			gameData.alphaCoins += gameData.currencyBrokerTransferAmount
+		else
+			gameData.alphaCoins += gameData.currencyBrokerTransferAmount * 10
+		
+		gameData.isCurrentlyExchangingAlpha = 0
 	}
 }
 
+
+
 function alphaToBetaClick(){
-	price = gameData.betaCoinsExchangeRate * gameData.betaCoinTransferAmount
+	if(gameData.textForA2BBrokerAmountToggle == 0)
+		price = gameData.betaCoinsExchangeRate
+	else
+		price = gameData.betaCoinsExchangeRate * gameData.basicA2BBrokerAmount
+
+	
+	
+	
 	if (gameData.alphaCoins >= price && (gameData.alphaToBetaBar == 100 || gameData.alphaToBetaBar == 0)) {
 		gameData.alphaCoins -= price
 		gameData.alphaToBetaBar = 0
+		gameData.a2BBrokerAmountSet = gameData.textForA2BBrokerAmountToggle
 		alphaToBetaBar()
 	}
 }
@@ -181,7 +107,11 @@ function alphaToBetaBar() {
 		setTimeout(alphaToBetaBar, 15 / gameData.tickspeed)
 		
 	} else {
-		gameData.betaCoins += gameData.betaCoinTransferAmount
+		if(gameData.a2BBrokerAmountSet == 0)
+			gameData.betaCoins += 1
+		else
+			gameData.betaCoins += gameData.basicA2BBrokerAmount
+
 		
 	}
 }
@@ -479,6 +409,7 @@ function learnANewSkillBar() {
             case 5:
                 gameData.learnANewSkill = 6
                 update("newInfo", "You Learned Ambidextrous!")
+                break;
             case 6:
                 gameData.learnANewSkill = 7
                 update("newInfo", "You Learned Bitter Speed!")

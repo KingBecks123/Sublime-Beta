@@ -34,6 +34,7 @@ function updateAfterLoad() {
 
 	moveBar('delivery')
 	moveBar('bakePie')
+	moveWell()
 
 
     if (gameData.workingBar <= 100 && (gameData.workingBar != 0 || gameData.employeeWorking > 0)) {
@@ -122,7 +123,6 @@ function updateValues() {
 	
 	var x = document.getElementsByClassName("verticalBar");
 	for (i = 0; i < x.length; i++) {
-		x[i].style.backgroundColor = accent3;
 		x[i].style.padding = "0px 0px 0px 0px";
 	}
 
@@ -201,15 +201,6 @@ function updateValues() {
 		
 	}
 	
-	if (gameData.typeToHireToggle)
-	{
-		gameData.advertisePrice = 10000
-	}
-	else
-	{
-		gameData.advertisePrice = 10
-	}
-	
 	if (gameData.nationalJuiceMarketing)
 	{
 		hide('juiceMarketing')
@@ -265,9 +256,10 @@ function updateValues() {
 	update("maxBaskets", gameData.basketsMax.toLocaleString() + " baskets fit under the current tree.")
 
 
-
-	update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
-
+	if(gameData.advertisePriceType == 'coins')
+		update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
+	else if(gameData.advertisePriceType == 'betaCoins')
+		update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Beta Coins")
 
 
 	if(gameData.bachelorsDegreeFinance){
@@ -279,6 +271,12 @@ function updateValues() {
 		update("brokerApplicantSpeedPrice", "Price: " + gameData.brokerApplicantSpeedPrice.toLocaleString() + " Alpha Coins")
 		update("brokerApplicantFeePrice", "Price: " + gameData.brokerApplicantFeePrice.toLocaleString() + " Alpha Coins")
 		update("brokerApplicantAmountPrice", "Price: " + gameData.brokerApplicantAmountPrice.toLocaleString() + " Alpha Coins")
+		
+		update("textForA2BBrokerRule", "Converts Alpha Coins to Beta Coins if the conversion rate is below " + gameData.basicA2BBrokerRule.toLocaleString())
+		
+		update("textForA2BBrokerAmountToggleButton", "Bulk convert amount: " + gameData.basicA2BBrokerAmount.toLocaleString())
+		update("textForA2BBrokerPrice", "Increase for " + gameData.increaseBasicA2BBrokerAmountPrice.toLocaleString() + " Pie Coins")
+
 	}
 	
 	
@@ -315,68 +313,53 @@ function updateValues() {
         hide("applicationInfo")
     }
 	
-	
-    if (gameData.applicationReady == 1) {
-		
-		if(gameData.applicationType == 0)
-		{
-			update("application",
-				"<br>" +
-				"Skills: Can Collect Limes." + "<br>" +
-				"Speed: " + gameData.applicantSpeed.toLocaleString() + "% Of What I'm Taught." + "<br>" +
-				"Price: " + gameData.applicantPrice.toLocaleString() + " Coins." + "<br>" +
-				"Wages: " + gameData.applicantWage.toLocaleString() + " Coins Per Minute." + "<br>" +
-				"Hunger: " + gameData.applicantHunger.toLocaleString() + " Limes Per Second." + "<br>" +
-				"<br>"
-			)
-			showBasicDiv("applicationInfo")
-		}
-		else{
+	updateHiringArea()
 
-			update("application",
-				"<br>" +
-				"Speed: " + gameData.currencyApplicantSpeed.toLocaleString() + " Seconds." + "<br>" +
-				"Transfer Fee: " + gameData.currencyApplicantFee.toLocaleString() + " Coins." + "<br>" +
-				"Alpha Coins Per Transfer: " + gameData.currencyApplicantTransferAmount.toLocaleString() + "." + "<br>" +
-				"Hire Price: " + gameData.currencyApplicantPrice.toLocaleString() + " Coins." + "<br>" +
-		
-
-
-
-				"<br>"
-			)
-
-		}
-		
-		
-		
-		
-    } else {
-        update("application", "Pin applications here")
-        hide("applicationInfo")
-    }
 	
 	if (gameData.bachelorsDegreeFinance){
 		update("currencyBrokerTransferAmount"   , "Speed: "                    + gameData.currencyBrokerSpeed.toLocaleString()          + " Seconds.")
 		update("currencyBrokerFee"              , "Transfer Fee: "             + gameData.currencyBrokerFee.toLocaleString()            + ".")
 		update("currencyBrokerSpeed"            , "Alpha Coins Per Transfer: " + gameData.currencyBrokerTransferAmount.toLocaleString() + ".")
-		update("alphaCoinExhangeRate"           , "Exchange Rate: "            + gameData.alphaCoinsExchangeRate.toLocaleString()       + " Coins -> 1 Alpha Coin")
-		update("currencyConvertAlphaCoinsButton", "Convert Coins to "          + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
 		update("alphaCoinTransactionFee"        , "Transfer Fee: "             + gameData.currencyBrokerFee.toLocaleString()            + " Coins Per Alpha Coin")
-		update("alphaCoinTotalPrice"            , "Total Price: "              + alphaCoinTotalPrice.toLocaleString()                   + " Coins")
 
 		alphaCoinTotalPrice = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
 
+		if(!gameData.alphaCoinConvertBulkToggle)
+		{
+			update("alphaCoinExhangeRate"           , "Exchange Rate: "            + gameData.alphaCoinsExchangeRate.toLocaleString()              + " Coins -> 1 Alpha Coin"  )
+			update("alphaCoinTotalPrice"            , "Total Price: "              + alphaCoinTotalPrice.toLocaleString()                   + " Coins")
+			update("currencyConvertAlphaCoinsButton", "Convert Coins to "          + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
+		}
+		else
+		{
+			update("alphaCoinExhangeRate"           , "Exchange Rate: "            + (gameData.alphaCoinsExchangeRate * 10).toLocaleString()       + " Coins -> 10 Alpha Coins")
+			update("alphaCoinTotalPrice"            , "Total Price: "              + (alphaCoinTotalPrice * 10).toLocaleString()                   + " Coins")
+			update("currencyConvertAlphaCoinsButton", "Convert Coins to "          + (gameData.currencyBrokerTransferAmount * 10).toLocaleString() + " Alpha Coins")
+		}
+
 	}
+
 	
 	if (gameData.maps > 4){
 		update("betaCoinExhangeRate", "Exchange Rate: " + gameData.betaCoinsExchangeRate.toLocaleString() + " Alpha Coins -> 1 Beta Coin")
-		betaCoinTotalPrice = gameData.betaCoinsExchangeRate * gameData.betaCoinTransferAmount
+		betaCoinTotalPrice = gameData.betaCoinsExchangeRate * (gameData.textForA2BBrokerAmountToggle * (gameData.basicA2BBrokerAmount - 1) + 1)
 		update("betaCoinTotalPrice", "Total Price: " + betaCoinTotalPrice.toLocaleString() + " Alpha Coins")
 		update("piePrice", "Current Price: " + gameData.piePrice.toLocaleString() + " Pie Coins")
 		
 		showBasicDiv('earnBetaCoins')
 		showBasicDiv('buyPie')
+		
+		if(gameData.basicAlphaToBetaBroker == 0)
+		{
+			showBasicDiv('basicAlphaToBetaBroker')
+			hide('basicAlphaToBetaBrokerRule')
+		}
+		else
+		{
+			hide('basicAlphaToBetaBroker')
+			showBasicDiv('basicAlphaToBetaBrokerRule')
+		}
+
 
 	}	
 	
@@ -399,6 +382,8 @@ function updateValues() {
     checkShowOrHide(gameData.baskets       , "forestButton")
     checkShowOrHide(gameData.hasGottenJuice, "juiceMarket")
 
+    checkHideOrShow(gameData.forestWell, "buyAWell")
+    checkShowOrHide(gameData.forestWell, "forestWellDiv")
 
 
     moveBar("teach")
@@ -586,7 +571,7 @@ function updateValues() {
 	}
 	
 	
-	if (gameData.advertisingManagerBroker && gameData.typeToHireToggle)
+	if (gameData.advertisingManagerBroker && gameData.typeToHireToggle == 1)
         tabs("autoAdvertiseBrokerDiv", "inline-block")
     else
         hide("autoAdvertiseBrokerDiv")
@@ -667,6 +652,17 @@ function updateValues() {
     else
         update("diseaseTileSymbolsButton", "Disease Tiles: Symbols")
 
+	if (gameData.shiftClickOption)
+	{
+        update("shiftClickOption", "Don't Toggle: Shift Click")
+		tabs("dontToggleButton", "none")
+	}
+
+    else
+	{
+        update("shiftClickOption", "Don't Toggle: Button Option")
+		tabs("dontToggleButton", "inline-block")
+	}
 
 
     if (gameData.deliveryManager == 0) {
@@ -902,8 +898,6 @@ function updateValues() {
     }
 	
 
-
-
     if (gameData.bulkBuyUnlock == 0) {
         hide("peelersBulkButton")
 		hide("basketsBulkButton")
@@ -929,12 +923,20 @@ function updateValues() {
 	checkHide(gameData.changeResearchersBy10Unlock, "changeResearchersBy10Unlock")
 	checkHide(gameData.saveAlphaCoinsUnlock, "saveAlphaCoinsUnlock")
 	checkShow(gameData.saveAlphaCoinsUnlock, "upgradeSaveAlphaCoinsUnlock")
+	checkShow(gameData.changeResearchersBy10Unlock, "upgradeChangeResearchersBy10")
+	checkShow(gameData.rottenActualWisdom, "upgradeRottenActualWisdomUnlock")
+
+
 	
 	checkHide(gameData.surveillanceCamera2, "offlineScience")
 	checkShow(gameData.surveillanceCamera2, "upgradeHighTechSurveillance")
 
 	checkHide(gameData.forestTree2, "buyANewTree")
 	checkShow(gameData.forestTree2, "treeTypeDiv")
+	
+	if(gameData.tomes > 3)
+		showBasicDiv("goldenBarDiv")
+
 
 
 	
@@ -1072,6 +1074,11 @@ function updateValues() {
 	checkHide(gameData.skillTrainer, "skillTrainer")
 	checkShow(gameData.bitterSpeedSkillLevel, "eatGoldenLimeProgress")
 	checkShow(gameData.bitterSpeedSkillLevel, "eatGoldenLime")
+	checkHide(gameData.transferAlphaCoinBags, "transferAlphaCoinBagsUnlock")
+	
+	if(gameData.transferAlphaCoinBags)
+		tabs("alphaCoinConvertBulkButton", "inline-block")
+
 
 
 

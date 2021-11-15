@@ -82,9 +82,9 @@ function mainGameLoopSlow() {
 	if(gameData.maps > 4)
 	{
 		if(beckyRandom(2) == 1 && gameData.betaCoinsExchangeRate < 5000)
-			gameData.betaCoinsExchangeRate += 5
+			gameData.betaCoinsExchangeRate += 50
 		else if (gameData.betaCoinsExchangeRate > 500)
-			gameData.betaCoinsExchangeRate -= 5
+			gameData.betaCoinsExchangeRate -= 50
 	}
 	
 	gameData.achievementBar = 0
@@ -123,12 +123,16 @@ function mainGameLoopSlow() {
 	}
 		
 	updatePieStuffSlow()
-
 	gameData.customerWaitTime += 1
-
-
 	moveBar('achievement')
 	updateMapTileAesthetic()
+	
+	
+	if (gameData.basicAlphaToBetaBroker && gameData.betaCoinsExchangeRate < gameData.basicA2BBrokerRule)
+	alphaToBetaClick()
+	
+	
+	
 	saveGame()
 	setTimeout(mainGameLoopSlow, 500)
 }
@@ -143,7 +147,7 @@ function mainGameLoop() {
         gameData.basketBar += 0.2;
 		loopNumberBasket = 0
 		
-		if(beckyRandom(100) == 1)
+		if(beckyRandom(100) == 1 && gameData.forestTreeType == 2)
 			gameData.goldenLimesInBaskets += 1
     }
 	
@@ -255,38 +259,6 @@ function collectingUpgrade() {
     updateValues()
 }
 
-function randomizeApplication() {
-	if(gameData.typeToHire == 0){
-		
-		if (gameData.firstApplicant == 1) {
-			gameData.applicantSpeed = 100
-			gameData.applicantPrice = 0
-			gameData.applicantWage = 5
-			gameData.applicantHunger = 1
-
-			gameData.firstApplicant = 0
-		} else {
-			gameData.applicantSpeed = (Math.floor(Math.random() * (10 + gameData.betterTraining) + 1) * 100)
-			gameData.applicantPrice = Math.floor(Math.random() * 200)
-			gameData.applicantWage = Math.floor(Math.random() * 16) + 5
-			gameData.applicantHunger = Math.floor(Math.random() * 20) + 1
-		}
-		
-		gameData.applicationType = 0
-	}
-	else{
-		gameData.currencyApplicantFee = beckyRandomMinMax(gameData.minBrokerApplicantFee, gameData.maxBrokerApplicantFee)
-		gameData.currencyApplicantSpeed = beckyRandomMinMax(gameData.minBrokerApplicantSpeed, gameData.maxBrokerApplicantSpeed)
-		gameData.currencyApplicantPrice = (Math.floor(Math.random() * 20) + 1) * 10000
-		gameData.currencyApplicantTransferAmount = beckyRandomMinMax(gameData.minBrokerApplicantAmount, gameData.maxBrokerApplicantAmount)
-		
-		gameData.applicationType = 1
-
-	}
-
-
-    updateValues()
-}
 
 
 
@@ -334,51 +306,6 @@ function payEmployee() {
         working()
     }
 
-    updateValues()
-}
-
-function hireApplicant() {
-	if(gameData.applicationType == 0){
-		if (gameData.coins >= gameData.applicantPrice && gameData.applicationReady == 1) {
-			gameData.applicationReady = 0
-			gameData.employeeWorking = 0
-			gameData.workingBar = 0
-
-			gameData.coins -= gameData.applicantPrice
-
-			gameData.employeeHunger = gameData.applicantHunger
-			gameData.employeeSpeed = gameData.applicantSpeed
-			gameData.employeePrice = gameData.applicantPrice
-			gameData.employeeWage = gameData.applicantWage
-
-			gameData.employeeCurrentSpeed = -(gameData.employeeHunger * 60)
-
-			gameData.employees = 1
-
-			gameData.employeeIsWorking = 0
-			gameData.workingBar = 0
-			
-			update("speedEmployee", "Speed: " + gameData.employeeSpeed.toLocaleString() + "% of what I'm taught.")
-			update("wageEmployee", "Wages: " + gameData.employeeWage.toLocaleString() + " Coins per minute.")
-			update("hungerEmployee", "Hunger: " + gameData.employeeHunger.toLocaleString() + " Limes per second.")
-		}
-	}
-	else{
-		if (gameData.coins >= gameData.currencyApplicantPrice && gameData.applicationReady == 1) {
-			gameData.applicationReady = 0
-			gameData.doesHaveCurrencyBroker = 1
-
-			gameData.coins -= gameData.currencyApplicantPrice
-
-			gameData.currencyBrokerFee = gameData.currencyApplicantFee
-			gameData.currencyBrokerSpeed = gameData.currencyApplicantSpeed
-			gameData.currencyBrokerPrice = gameData.currencyApplicantPrice
-			gameData.currencyBrokerTransferAmount = gameData.currencyApplicantTransferAmount
-			
-			gameData.coinsToAlphaBar = 0
-
-		}
-	}
     updateValues()
 }
 
@@ -499,11 +426,6 @@ function buyTome() {
     updateValues()
 }
 
-function typeToHire(id) {
-	gameData.typeToHireToggle = id
-	updateValues()
-}
-
 function buyAFork() {
     if (gameData.coins >= 1) {
         gameData.coins -= 1
@@ -583,14 +505,6 @@ function brokerApplicant(id, type) {
 function brokerApplicantPrice(id){
 	gameData.alphaCoins -= gameData['brokerApplicant'+ id + 'Price']
 	gameData['brokerApplicant'+ id + 'Price'] += 5
-}
-
-function buyAdvertisingManager(){
-    if (gameData.alphaCoins >= 10) {
-        gameData.alphaCoins -= 10
-        gameData.advertisingManagerBroker = 1
-    }
-    updateValues()
 }
 
 function increaseCreditScore() {
@@ -815,8 +729,11 @@ function stopActions(){
 }
 
 function rottenActualWisdom(){
-	universalBuy('rottenActualWisdom', 50 , 'megaCoins')
-	gameData.rottenWisdomSkillLevelMax = 25
+    if (gameData.megaCoins >= 50) {
+        gameData.megaCoins -= 50
+        gameData.rottenActualWisdom += 1
+		gameData.rottenWisdomSkillLevelMax = 25
+    }
 }
 
 function lookAround() {
@@ -1028,4 +945,35 @@ function buyABasket() {
 
     gameData.basketBar -= gameData.basketBar / (gameData.baskets + 1)
     bulkableBuyMax('baskets', 2)
+}
+
+function decreaseBasicA2BBrokerRule(){
+	if(gameData.basicA2BBrokerRule > 0)
+		gameData.basicA2BBrokerRule -= 50
+}
+
+function increaseBasicA2BBrokerRule(){
+	gameData.basicA2BBrokerRule += 50
+}
+
+function increaseBasicA2BBrokerAmount(){
+	if(gameData.pieCoins >= gameData.increaseBasicA2BBrokerAmountPrice)
+	{
+		gameData.pieCoins -= gameData.increaseBasicA2BBrokerAmountPrice
+		gameData.basicA2BBrokerAmount += 1
+		gameData.increaseBasicA2BBrokerAmountPrice *= 2
+	}
+	
+}
+
+function throwPieCoinsWell(){
+	gameData.pieCoinsInWell += gameData.pieCoins
+	gameData.pieCoins = 0
+	moveWell()
+}
+
+function moveWell() {
+    var elem = document.getElementById("wellBar");
+    elem.style.height = (gameData.pieCoinsInWell / 2) + "%";
+    elem.innerHTML = Math.floor(gameData.pieCoinsInWell / 2) + "%";
 }

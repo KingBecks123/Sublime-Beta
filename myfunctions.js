@@ -119,7 +119,7 @@ function pinButton() {
 
 function pickCurrentTask(x) {
 	
-	if (!event.shiftKey){
+	if (!event.shiftKey && !gameData.dontToggle){
 		
 		if (gameData.ambidextrousSkillLevel == gameData.ambidextrousSkillLevelMax)
 		{
@@ -172,7 +172,7 @@ function pickCurrentTask(x) {
 
 
 function pickCurrentSkill(x) {
-	if (!event.shiftKey && gameData.multitasking){
+	if (!gameData.dontToggle && !event.shiftKey && gameData.multitasking){
 		if(gameData.currentSkill == x && gameData.currentSkill !== "none")
 		{
 			gameData.currentSkill = "none"
@@ -308,12 +308,12 @@ function basicToggle(input, type) {
     x = document.getElementsByClassName(info);
 
     if (eval(toggleVar + " == 1")) {
-        document.getElementById(button).style.backgroundColor = accent3;
+		colorChanger(button, accent3)
         for (i = 0; i < x.length; i++) {
             x[i].style.display = "block";
         }
     } else {
-        document.getElementById(button).style.backgroundColor = accent2;
+		colorChanger(button, accent2)
 
         for (i = 0; i < x.length; i++) {
             x[i].style.display = "none";

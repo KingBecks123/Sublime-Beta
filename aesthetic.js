@@ -45,7 +45,6 @@ function addAesthetic() {
     twoToggleButtons('deliveryToggleExpressButton', 'deliveryToggleStandardButton', gameData.deliveryTypeToggle)
     twoToggleButtons('foodToggleRottenLimesButton', 'foodToggleLimesButton', gameData.foodTypeToggle)
     twoToggleButtons('juicePeeledLimesToggleButton', 'juiceLimesToggleButton', gameData.limeTypeToJuice)
-    twoToggleButtons('hireBrokerToggleButton', 'hireEmployeeToggleButton', gameData.typeToHireToggle)
 
 
     showOrHideClass("unlockDiseaseAreaSwamp")
@@ -56,11 +55,17 @@ function addAesthetic() {
     basicToggle("teach", "Info")
     basicToggle("employeeStats", "Info")
     basicToggle("basket", "Info")
+    basicToggle("sellingPie", "Info")
+    basicToggle("pieMerchant", "Info")
+
 
 
     basicToggle("juicers", "Bulk")
     basicToggle("peelers", "Bulk")
     basicToggle("baskets", "Bulk")
+	
+    basicToggle("alphaCoinConvert", "Bulk")
+
 
     toggleAesthetic("autoStartTask")
     toggleAesthetic("autoStartSimulation")
@@ -70,6 +75,9 @@ function addAesthetic() {
     toggleAesthetic("autoAdvertiseBroker")
     toggleAesthetic("increaseJuicePricex10")
     toggleAesthetic("pieConveyorBeltOn")
+    toggleAesthetic("dontToggle")
+    toggleAesthetic("textForA2BBrokerAmountToggle")
+
 
 
 	currentTaskAesthetic('usePeelers')		
@@ -83,7 +91,26 @@ function addAesthetic() {
 	
 	currentTaskAesthetic('findPieCustomers')	
 	
-	
+
+	if(gameData.typeToHireToggle == 0)
+	{
+		colorChanger('hireEmployeeToggleButton', accent3)
+		colorChanger('hireBrokerToggleButton', accent2)
+		colorChanger('hirePieMerchantToggleButton', accent2)
+	}
+	else if(gameData.typeToHireToggle == 1)
+	{
+		colorChanger('hireEmployeeToggleButton', accent2)
+		colorChanger('hireBrokerToggleButton', accent3)
+		colorChanger('hirePieMerchantToggleButton', accent2)
+	}
+	else if(gameData.typeToHireToggle == 2)
+	{
+		colorChanger('hireEmployeeToggleButton', accent2)
+		colorChanger('hireBrokerToggleButton', accent2)
+		colorChanger('hirePieMerchantToggleButton', accent3)
+	}
+
 
 	if(gameData.wheat)
 		colorChanger('winnowWheat', accent4)

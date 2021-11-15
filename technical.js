@@ -96,6 +96,7 @@ var gameDataBase = {
 
     firstApplicant: 1,
     teachInfoToggle: 0,
+    sellingPieInfoToggle: 1,
     employeeStatsInfoToggle: 0,
 
     bulkBuyUnlock: 0,
@@ -235,6 +236,8 @@ var gameDataBase = {
 	
 	
     desktopMode: 1,
+	shiftClickOption: 1,
+	dontToggle: 0,
 	
 	isAutoCollecting: 0,
 	
@@ -264,6 +267,9 @@ var gameDataBase = {
 	confirmStorage: 0,
 	smarterAdvertisingManagerBroker: 0,
 	convertedCoinsSinceTravel: 0,
+	transferAlphaCoinBags: 0,
+	alphaCoinConvertBulkToggle: 0,
+	alphaCoinConvertBulkToggleSet: 0,
 	
 	lastSaveTime: Date.now(),
 
@@ -313,9 +319,9 @@ var gameDataBase = {
 	autoAdvertiseSpeedValueMax: 60,
 	autoAdvertiseAmountValue: 5, 
 	advertisePrice: 10,
+	advertisePriceType: 'coins',
 	isAdvertising: 0,
 	basketScarecrow: 0,
-	mainTab: 'null',
 	moreVisibleVariables: 0,
 	invertText: 0,
 	surveillanceCamera: 0,
@@ -343,6 +349,11 @@ var gameDataBase = {
 	betaCoinsExchangeRate: 2500,
 	betaCoinTransferAmount: 1,
 	alphaToBetaBar: 0,
+	basicAlphaToBetaBroker: 0,
+	basicA2BBrokerRule: 1000,
+	basicA2BBrokerAmount: 1,
+	increaseBasicA2BBrokerAmountPrice: 2,
+	textForA2BBrokerAmountToggle: 0,
 	
 	//Pie
 	pies: 0,
@@ -374,9 +385,26 @@ var gameDataBase = {
 	bellowsBar: 0,
 	bellowsCurrentlyBlowing: 0,
 	
+	upgradeNozzles: 0,
+	
+	//Pie Employee
 	pieEmployee: 0,
 	pieEmployeeSalesLeft: 0,
-	upgradeNozzles: 0,
+	
+	pieApplicantPieCoinPrice: 0,
+	pieApplicantBetaCoinPrice: 0,
+	pieApplicantMaxPay: 0,
+	pieApplicantCharm: 0,
+
+	pieMerchantPieCoinPrice: 5,
+	pieMerchantBetaCoinPrice: 0,
+	pieMerchantMaxPay: 10,
+	pieMerchantCharm: 0,
+	
+	pieApplicantPrice: 0,
+	doesHavePieMerchant: 0,
+	usingBetaCoinWage: 0,
+	pieMerchantInfoToggle: 0,
 
 
 	//Wheat
@@ -398,18 +426,30 @@ var gameDataBase = {
 	juiceAsPieIngredient: 0,
 	flourAsPieIngredient: 0,
 	pieCoins: 0,
+	advancedPieHiring: 0,
 	
 	wheatHarvesters: 0,
 	seedDrills: 0,
 	hasGottenFieldTools: 0,
 	
 	selectedWheatItem: 'seed',
+	
+	
+	//New People
+	forestWell: 0,
+	pieCoinsInWell: 0,
+	
 
     //Should be 0 for normal game, 1 if you want to go faster :)
     difficulty: 0,
 
     //default is 1 :D
     tickspeed: 1,
+	
+	mainTab: 'null',
+	marketTab: 'marketStore'
+
+	
 }
 
 
@@ -454,7 +494,7 @@ function gameStart() {
     updateValues()
 
 	tab(gameData.mainTab)
-    tabMarket("marketMain")
+    tabMarket(gameData.marketTab)
     tabStore("plebian")
     tabTasks("earn")
     tabScience("research")
@@ -535,6 +575,8 @@ function tabManager(id){
 
 function tabMarket(tabby) {
 	
+	gameData.marketTab = tabby
+
 	tabManager('marketStore')	
 	tabManager('marketMain')	
 	tabManager('hiringArea')	
@@ -611,6 +653,10 @@ function fixOverMaxedVariables(){
 
     if (gameData.coins > gameData.coinsMax) {
         gameData.coins = gameData.coinsMax
+    }
+	
+    if (gameData.alphaCoins > 1e5) {
+        gameData.alphaCoins = 1e5
     }
 	
     if (gameData.basketBar > 100) {
