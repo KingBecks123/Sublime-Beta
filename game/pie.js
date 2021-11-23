@@ -83,19 +83,10 @@ function addPieIngredient(ingredient){
 
 function addToPieBucket(ingredient){
 	
-	if(gameData[ingredient] > 0 && gameData[ingredient + 'InPieBucket'] < 20)
+	if(gameData[ingredient] > 0 && gameData[ingredient + 'InPieBucket'] < (gameData.bucketThinSteelPlating * 5 + 20))
 	{
 		gameData[ingredient + 'InPieBucket'] += 1
 		gameData[ingredient] -= 1
-	}
-}
-
-function buyAField(){
-	if(gameData.pieCoins > 20)
-	{
-		gameData.pieCoins -= 20
-		gameData.wheatFieldXDimension = 2
-
 	}
 }
 
@@ -120,12 +111,55 @@ function payPieEmployee(){
 	}
 }
 
+function closePlotManagementDiv(){
+	hide('plotManagementDiv')
+}
+
+function managePlot(){
+	if(gameData.wheatFieldArray[gameData.selectedPlotX][gameData.selectedPlotY] == 59 && gameData.pieCoins >= gameData.nextPlotPrice)
+	{
+		gameData.pieCoins -= gameData.nextPlotPrice
+		gameData.nextPlotPrice *= 2
+		gameData.wheatFieldArray[gameData.selectedPlotX][gameData.selectedPlotY] = 0
+		updateFieldTileAesthetic()
+		hide('plotManagementDiv')
+	}
+	else
+	{
+		gameData.wheatFieldArray[gameData.selectedPlotX][gameData.selectedPlotY] = 59
+		gameData.nextPlotPrice /= 2
+		gameData.pieCoins += gameData.nextPlotPrice
+		updateFieldTileAesthetic()
+		hide('plotManagementDiv')
+	}
+}
+
 function fieldTile(x, y) {
 	
 	var tileType = gameData.wheatFieldArray[x][y]
 	var tile = "fieldTile" + x + "-" + y
 
-	if(gameData.wheatFieldArray[x][y] == 50)
+	if (gameData.selectedWheatItem == 'plot')
+	{
+		gameData.selectedPlotX = x
+		gameData.selectedPlotY = y
+
+		
+		showBasicDiv('plotManagementDiv')
+		if(gameData.wheatFieldArray[x][y] == 59)
+		{
+			update("plotDetails", "Price: " + gameData.nextPlotPrice.toLocaleString() + " Pie Coins")
+			update("managePlot", "Purchase")
+		}
+		else
+		{
+			update("plotDetails", "Sell Price: " + (gameData.nextPlotPrice / 2).toLocaleString() + " Pie Coins")
+			update("managePlot", "Sell")
+		}
+	}
+	
+	
+	else if(gameData.wheatFieldArray[x][y] == 50)
 	{
 		gameData.wheat += 1
 		emptyWheatTile(x, y)
@@ -197,13 +231,12 @@ function fieldTile(x, y) {
 function updateFieldTileAesthetic(){
 	
 			
-	for (var x = 0; x < gameData.wheatFieldXDimension; x++) {
-		for (var y = 0; y < gameData.wheatFieldXDimension; y++) {
-			
+	for (var x = 0; x < 5; x++) {
+		for (var y = 0; y < 5; y++) {
 			var tile = "fieldTile" + x + "-" + y
 			var image = tile + 'img'
 			var tileType = gameData.wheatFieldArray[x][y]
-
+			
 			if(gameData.wheatFieldArray[x][y] == 0)
 			{
 				document.getElementById(image).src = "images/emptyField.png"
@@ -232,6 +265,14 @@ function updateFieldTileAesthetic(){
 			else
 				setRotation(image, 0)
 			
+			if(tileType == 59)
+			{
+				document.getElementById(image).src = "images/unpurchasedField.png"
+				document.getElementById(tile).style.backgroundColor = "#66361F";
+			}
+			else
+				document.getElementById(tile).style.backgroundColor = "#DEAD85";
+			
 		}
 	}
 }
@@ -242,6 +283,7 @@ function selectedWheatItem(id){
 }
 
 function selectedWheatItemAesthetic(id){
+	document.getElementById('plotSelectedWheatItem').style.backgroundColor = 'gray'
 	document.getElementById('seedSelectedWheatItem').style.backgroundColor = 'gray'
 	document.getElementById('seedDrillSelectedWheatItem').style.backgroundColor = 'gray'
 	document.getElementById('harvesterSelectedWheatItem').style.backgroundColor = 'gray'
@@ -343,13 +385,15 @@ function updatePieStuffSlow(){
 
 function updatePieStuff(){
 	
+	height = gameData.bucketThinSteelPlating * 5 + 20
+	
 	var elem = document.getElementById("juiceBucketBar")
-    elem.style.height = gameData.juiceInPieBucket * 5 + "%"
-    elem.innerHTML = Math.floor(gameData.juiceInPieBucket * 2.5) + "%"
+    elem.style.height = Math.floor((gameData.juiceInPieBucket * 100) / height)  + "%"
+    elem.innerHTML = Math.floor((gameData.juiceInPieBucket * 100) / height) + "%"
 	
 	var elem = document.getElementById("flourBucketBar")
-    elem.style.height = gameData.flourInPieBucket * 5 + "%"
-    elem.innerHTML = Math.floor(gameData.flourInPieBucket * 2.5) + "%"
+    elem.style.height = Math.floor((gameData.flourInPieBucket * 100) / height)  + "%"
+    elem.innerHTML = Math.floor((gameData.flourInPieBucket * 100) / height) + "%"
 	
 	var elem = document.getElementById("juiceHoleBar")
     elem.style.width = gameData.juiceBucketHoleSize * 5 + "%"
@@ -501,13 +545,6 @@ function updatePieStuff(){
 		tabs("fieldTile0-0", "inline-block")
 		showBasicDiv("fieldButton")
 		showBasicDiv("buyWheatSeeds")
-
-
-		if(gameData.wheatFieldXDimension > 1)
-			hide("buyANewField")
-		else
-			showBasicDiv("buyANewField")
-		
 		
 		if(!gameData.pieOven)
 			showBasicDiv("buyPieOven")
@@ -585,9 +622,6 @@ function updatePieStuff(){
 
 	update("pieEmployeeSalesLeft", "Employee Sales Left: " + gameData.pieEmployeeSalesLeft.toLocaleString() + " / " + gameData.pieMerchantMaxPay.toLocaleString())
 	update("payPieEmployee", "Pay Employee " + gameData.pieMerchantPieCoinPrice.toLocaleString() + " Pie Coins & " + gameData.pieMerchantBetaCoinPrice.toLocaleString() + " Beta Coins" )
-
-	
-	document.getElementById('fullField').style.width = gameData.wheatFieldXDimension * 90 + 10 + 'px'
 	
 	update("pieMerchantPieCoinPrice"     , "Pie Coin Wages: "    + gameData.pieMerchantPieCoinPrice.toLocaleString() + ".")
 	update("pieMerchantBetaCoinPrice"    , "Beta Coin Wages: "   + gameData.pieMerchantBetaCoinPrice.toLocaleString() + ".")
