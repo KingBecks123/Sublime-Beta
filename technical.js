@@ -15,13 +15,6 @@ var gameDataBase = {
     howMuchJuice: 0,
     exploreLevel: 0,
 	achievementBar: 0,
-    achievement1: 0,
-    achievement2: 0,
-    achievement3: 0,
-    achievement4: 0,
-    achievement5: 0,
-    achievement6: 0,
-    achievement7: 0,
     specialAchievement1: 0,
     specialAchievement2: 0,
 
@@ -33,9 +26,6 @@ var gameDataBase = {
     limeTypeToJuiceToggle: 0,
     lookAround: 0,
     rottenLimes: 0,
-
-	
-	
 	
     learnANewSkillBar: 0,
     learnANewSkill: -2,
@@ -377,6 +367,8 @@ var gameDataBase = {
 	
 	pieBucketNozzle: 0,	
 	pieFlourBucketNozzle: 0,
+	
+	bucketThinSteelPlating: 0,
 
 	juiceBucketHoleSize: 10,
 	flourBucketHoleSize: 10,
@@ -412,11 +404,11 @@ var gameDataBase = {
 	wheat: 0,
 	wheatSeeds: 0,
     wheatFieldArray: [
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0]
+        [59, 59, 59, 59, 59],
+        [59, 59, 59, 59, 59],
+        [59, 59, 59, 59, 59],
+        [59, 59, 59, 59, 59],
+        [59, 59, 59, 59, 59]
     ],
 	wheatFieldXDimension: 1,
 	mortarAndPestle: 0,
@@ -433,11 +425,17 @@ var gameDataBase = {
 	hasGottenFieldTools: 0,
 	
 	selectedWheatItem: 'seed',
-	
+	nextPlotPrice: 4,
+	sellPlotPrice: 0,
+	selectedPlotX: 0,
+	selectedPlotY: 0,
+
 	
 	//New People
 	forestWell: 0,
 	pieCoinsInWell: 0,
+	
+	trainTransport: 0,
 	
 
     //Should be 0 for normal game, 1 if you want to go faster :)
@@ -447,12 +445,25 @@ var gameDataBase = {
     tickspeed: 1,
 	
 	mainTab: 'null',
-	marketTab: 'marketStore'
+	marketTab: 'marketMain',
 
+	endScreen: 0,
+	soulArea: 'start',
+	trueLimes: 0,
+	
+	
+	serf: {
+		rice: 0
+	},
+
+	harvestRiceBar: 0,
 	
 }
 
-
+	for (let i = 1; i <= 7; i++) {
+		gameDataBase['achievement' + i] = 0
+	}
+	
 	for (let i = 0; i < mainSkills.length; i++) {
 		gameDataBase[mainSkills[i] + 'Bar'] = 0
 		gameDataBase[mainSkills[i] + 'SkillLevel'] = 0
@@ -462,16 +473,23 @@ var gameDataBase = {
 		gameDataBase[mainVariables[i] + 'ShowVariable'] = true
 		gameDataBase[mainVariables[i] + 'UnlockedVariable'] = false
 	}
+	
+	for (let i = 0; i < avs.length; i++) {
+		for (let j = 0; j < avs[i].v.length; j++) {
+			gameDataBase[avs[i].v[j].id + 'ShowVariable'] = true
+			gameDataBase[avs[i].v[j].id + 'UnlockedVariable'] = false
+		}
+	}
 
 
 var gameData = {}
 
 
+
 function gameStart() {
 	
 	addHTML()
-
-
+		
 	surveyingBarDoMove = 0
 	benevolenceBarDoMove = 0
 	watertightBarDoMove = 0
@@ -489,9 +507,10 @@ function gameStart() {
     mainGameLoopSlow()
 
 	addAestheticBase()
-
 	
     updateValues()
+	
+	
 
 	tab(gameData.mainTab)
     tabMarket(gameData.marketTab)
@@ -616,18 +635,6 @@ function tabStore(tabby) {
 
 }
 
-function tabScience(tabby) {
-    tabs("research", "none")
-    tabs("researchers", "none")
-	
-	colorChanger('researchButton', '#BBBBBB')
-	colorChanger('researchersButton', '#BBBBBB')		
-	
-	colorChanger(tabby + "Button", "#898989")
-	
-    document.getElementById(tabby).style.display = "block"
-}
-
 function tabOptions(tabby) {
     tabs("gameOptions", "none")
     tabs("uiOptions", "none")
@@ -646,8 +653,8 @@ function fixOverMaxedVariables(){
         gameData.juiceBulkAmountToggle = 100
     }
 
-    if (gameData.juiceBulkAmountToggle > 500) {
-        gameData.juiceBulkAmountToggle = 500
+    if (gameData.juiceBulkAmountToggle > gameData.juiceBulkAmountMax) {
+        gameData.juiceBulkAmountToggle = gameData.juiceBulkAmountMax
     }
 
 
@@ -711,11 +718,6 @@ function addHTML(){
 	
 		var name = mainSkills[i]
 		var div = document.getElementById(name + "Div")
-		var title = mainSkillsNames[i]
-		
-		
-		
-		
 		
 		var skillLevel       = document.createElement("p");
 		    skillLevel.id    = name + "SkillLevel";
@@ -728,7 +730,7 @@ function addHTML(){
 		
 		
 		var skillButtonSpan                  = document.createElement("span")
-		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + name + "Button" + '" onclick="pickCurrentSkill(&apos;' + name + '&apos;)">' + title + '</button>';
+		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + name + "Button" + '" onclick="pickCurrentSkill(&apos;' + name + '&apos;)">' + mainSkillsNames[i] + '</button>';
 		insert(div, skillButtonSpan)
 
 
@@ -747,6 +749,35 @@ function addHTML(){
 		document.getElementById('backgroundForValues').append(stat)
 	}
 	
+	for (let i = 0; i < avs.length; i++) {
+		
+		
+		var e = $("<div />", {
+			id: "backgroundForValues" + avs[i].area,
+			style: "padding:10px;background-color:#FFFFFF;width:100px;display:block;",
+		})
+
+		$(document.getElementById('soulArea' + avs[i].name + 'Width')).prepend(e);
+		
+		e = $("<button />", {
+			class: "basicButtonSize",
+			style: "width:99%;display:block;",
+			onclick: "soulArea(" + i + ")",
+			id: 'soulArea' + avs[i].name + 'WellButton'
+		})
+
+		$(document.getElementById('wellField')).append(e)
+		update('soulArea' + avs[i].name + 'WellButton', avs[i].name)
+
+
+
+		for (let j = 0; j < avs[i].v.length; j++) {
+			var avsStat = document.createElement("span")
+			avsStat.innerHTML = '<div class="stat" id="textFor' + avs[i].v[j].name + 'Div">' + avs[i].v[j].id + ' </div><div class="stat ar" id="textFor' + avs[i].v[j].name + '"  style="display:none ; ">0</div><p id="textFor' + avs[i].v[j].name + 'P"  style="display:none ; "> </p><br  id="textFor' + avs[i].v[j].name + 'Br"   style="display:none ; "/>';
+			document.getElementById('backgroundForValues' + avs[i].area).append(avsStat)
+		}
+	}
+	
 	document.getElementById('textForBetaCoinsDiv').style.textDecoration = 'underline'
 	document.getElementById('textForPieCoinsDiv').style.textDecoration = 'underline'
 
@@ -754,6 +785,15 @@ function addHTML(){
 	{
 		div.insertBefore(thing, div.firstChild);
 	}
+	
+	for (let y = 0; y < 5; y++) {	
+		for (let x = 0; x < 5; x++) {	
+			var fieldTile                  = document.createElement("span")
+			fieldTile.innerHTML            = '<button ondragstart="return false;" class="fieldTile" id="fieldTile' + x + '-' + y + '" onclick="fieldTile(' + x + ', ' + y + ')">‎‏‏‎<img style="width:70px;height:70px;" id="fieldTile' + x + '-' + y + 'img" src="images/emptyField.png"></button>'
+			document.getElementById('fullField').append(fieldTile)
+		}
+	}
+	
 
 	
 }

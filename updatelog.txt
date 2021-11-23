@@ -1,10 +1,19 @@
 Update Log
 
+21/11/19
+Gameplay:
+	Added Train delivery type
+
+21/11/17
+Gameplay:
+	Completely rewrote the code for fields
+
 21/11/15
 Gameplay:
 	Added the ability to hire pie merchant employees in the Hiring Area
 	Added the Alpha Coin to Beta Coin Broker
 	Added the Wishing Well
+	Added bucket steel plating to increase height
 Bugs / Aesthetic:
 	Changed the code for Vertical Bars
 	Changed the layout of the js files

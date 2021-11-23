@@ -12,7 +12,18 @@
 			background-color: #fff2ac;
 			background-image: linear-gradient(to right, #ffe359 0%, #fff2ac 100%);
 		}
-
+		
+		.basicDiv {
+			padding: 5px 5px 5px 5px;
+			margin: 10px 5px 10px 5px;
+		}
+		
+		.basicDivSmall {
+			padding: 5px 5px 5px 5px;
+			margin: 10px 5px 10px 5px;
+			width: 360px;
+		}
+		
 		.stat
 		{
 			 font-family: pixelated;  font-size: 20px; display:none;
@@ -61,6 +72,8 @@
             line-height: 30px;
             font-family: pixelated;
             font-size: 20px;
+			padding: 0px 0px 0px 0px;
+			background-color: #4DFE89;
         }
 		
         .skillBarColored {
@@ -69,6 +82,8 @@
             line-height: 30px;
             font-family: pixelated;
             font-size: 20px;
+			padding: 0px 0px 0px 0px;
+
         }
 
         .verticalProgress {
@@ -116,6 +131,11 @@
             position: absolute;
 
         }
+		
+        .specialAchievement {
+            display: none;
+
+        }
     </style>
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-5S0BD7ZKYH"></script>
@@ -129,11 +149,13 @@
 </head>
 
 <body id="mainBody" , onload="gameStart()">
+	
+<span id="sublimeMain">
 
 	<div style="float: left;padding: 10px;width: 100px;" id="backgroundForValues">
 		<br>
 	</div>	
-
+	
     <div class="row" id="newInfoBox" style="background-color:#bfbfbf;padding-left: 130px;display:block;height:60px;">
         <p id="newInfo" style="display:inline-block;margin-bottom:none;">You are in a lime forest.</p>
         <div style="width: 150px;height:50px;float:right;">
@@ -146,7 +168,7 @@
         <button class="basicButtonSize" id="pickUpLimes" style="width:120px" onkeydown="return event.key != 'Enter';" onclick="getLimesButton()">Collect Limes</button>
         <button class="basicButtonSize" id="lookAroundButton" onclick="lookAround()">Look Around</button>
         <button class="specialButton" id="stopActionsButton" style="width:120px" onclick="stopActions()">Stop Actions</button>
-        <button class="basicButtonSize" id="dontToggleButton" style="width:120px" onclick="switchValue('dontToggle')">Don't Toggle</button>
+        <button class="basicButtonSize" id="dontToggleButton" style="width:120px" onclick="toggle('dontToggle')">Don't Toggle</button>
 
 
     </div>
@@ -211,15 +233,15 @@
 				<button class="specialButton" onclick="changeZoomSize()">Change Zoom Size</button>
 
 
-				<button class="basicButton"   id="aestheticButton" onclick="switchValue('aesthetic')" style="display:none">Aesthetic: Modern</button>
-				<button class="specialButton" id="barPercentButton" onclick="switchValue('showBarPercent')">Bar Percent Shown</button><br>
+				<button class="basicButton"   id="aestheticButton" onclick="toggle('aesthetic')" style="display:none">Aesthetic: Modern</button>
+				<button class="specialButton" id="barPercentButton" onclick="toggle('showBarPercent')">Bar Percent Shown</button><br>
 				<button class="specialButton" onclick="changeVariablesColor()">Switch Variable Colors</button>
-				<button class="specialButton" id="hideCompletedSkillsButton" onclick="switchValue('hideCompletedSkills')">Completed Skills Shown</button><br>
-				<button class="specialButton" id="hideMaxedPurchasesButton" onclick="switchValue('hideMaxedPurchases')">Maxed Purchases Shown</button>
-				<button class="specialButton" id="desktopModeButton" onclick="switchValue('desktopMode')">In Desktop Mode</button><br>
-				<button class="specialButton" id="shiftClickOption" onclick="switchValue('shiftClickOption')">Don't Toggle: Shift Click</button>
-				<button class="specialButton" id="diseaseTileSymbolsButton" onclick="switchValue('diseaseTileSymbols')">Disease Tiles No Symbols</button>
-				<button class="specialButton" id="confirmStorageButton" onclick="switchValue('confirmStorage')">Don't Confirm x5 Storage</button><br>
+				<button class="specialButton" id="hideCompletedSkillsButton" onclick="toggle('hideCompletedSkills')">Completed Skills Shown</button><br>
+				<button class="specialButton" id="hideMaxedPurchasesButton" onclick="toggle('hideMaxedPurchases')">Maxed Purchases Shown</button>
+				<button class="specialButton" id="desktopModeButton" onclick="toggle('desktopMode')">In Desktop Mode</button><br>
+				<button class="specialButton" id="shiftClickOption" onclick="toggle('shiftClickOption')">Don't Toggle: Shift Click</button>
+				<button class="specialButton" id="diseaseTileSymbolsButton" onclick="toggle('diseaseTileSymbols')">Disease Tiles No Symbols</button>
+				<button class="specialButton" id="confirmStorageButton" onclick="toggle('confirmStorage')">Don't Confirm x5 Storage</button><br>
 
 
 			</div>
@@ -267,8 +289,8 @@
                 </div>
 				
                 <div class="basicDiv juiceMarket" , id="juiceMarket" , style="display:none;">
-                    <button class="basicButtonSizeRound" id="sellYourJuiceButton" , onclick="pickCurrentTask('sellYourJuice')">Sell Juice</button>
-                    <button class="pinButton" onclick="pin('sellYourJuiceButton')" style="display:none">+</button>
+                    <button class="basicButtonSizeRound" id="deliveryButton" , onclick="pickCurrentTask('delivery')">Sell Juice</button>
+                    <button class="pinButton" onclick="pin('deliveryButton')" style="display:none">+</button>
 
                     <p class="basicText" , id="sellYourJuicePrice">You Need 2 Coins For Delivery</p>
                     <p class="basicText" , id="sellYourJuiceAmount">You Need 1 Juice</p>
@@ -277,11 +299,12 @@
                     <button class="basicButtonSize" id="decreaseJuiceSoldButton" onclick="decreaseJuiceSold()" , style="width:120px;">Decrease Juice Sold</button>
                     <button class="basicButtonSize" id="increaseJuiceSoldButton" onclick="increaseJuiceSold()" , style="width:120px;">Increase Juice Sold</button>
 
-                    <button class="basicButtonSize" id="sellMaxJuiceButton" onclick="sellMaxJuice()" , style="width:120px;">Sell Max Juice</button>
+                    <button class="basicButtonSize" id="sellMaxJuiceButton" onclick="sellMaxJuice()" , style="width:105px;">Sell Max Juice</button>
 
                     <br>
-                    <button class="basicButtonSize" id="deliveryToggleStandardButton" , style="width:120px;" , onclick="deliveryToggleStandard()">Standard Delivery</button>
-                    <button class="basicButtonSize" id="deliveryToggleExpressButton" , style="width:120px;" , onclick="deliveryToggleExpress()">Express Delivery</button>
+                    <button class="basicButtonSize" id="deliveryToggleStandardButton" , style="width:105px;display:inline-block;" , onclick="deliveryToggleStandard()">Standard Delivery</button>
+                    <button class="basicButtonSize" id="deliveryToggleExpressButton" , style="width:105px;display:inline-block;" , onclick="deliveryToggleExpress()">Express Delivery</button>
+                    <button class="basicButtonSize" id="deliveryToggleTrainButton" , style="width:105px;display:none;" , onclick="deliveryToggleTrain()">Train Delivery</button>
 
                     <br><br>
 
@@ -327,17 +350,16 @@
 
 
 
-        <div id="marketStore" , style="display:none;width:300px;">
+        <div id="marketStore" , style="display:none;width:380px;">
 
-
-            <div class="basicDiv" id="storeTypesButtonsDiv" style="display:none;">
-                <button class="basicButtonSize" id="plebianButton" , onclick="tabStore('plebian')">Plebian Area</button>
-                <button class="basicButtonSize" id="patricianButton" , onclick="tabStore('patrician')">Patrician Area</button>
+            <div class="basicDiv" id="storeTypesButtonsDiv" style="display:none;width:360px">
+                <button class="basicButtonSize" style="width:168px" id="plebianButton" , onclick="tabStore('plebian')">Plebian Area</button>
+                <button class="basicButtonSize" style="width:168px" id="patricianButton" , onclick="tabStore('patrician')">Patrician Area</button>
             </div>
 
             <div id="plebian">
 
-                <div class="basicDiv" , id="increaseJuicePrice">
+                <div class="basicDiv" id="increaseJuicePrice">
                     <button class="basicButtonSize" id="increaseJuicePriceButton" onclick="increaseJuicePrice()">Increase Juice Price</button>
                     <button class="basicButtonSize" id="increaseJuicePricex10Button" , style="width:60px;" onclick="toggle('increaseJuicePricex10')">x10</button>
                     <p class="basicText">'Squeeze' more money from your customers</p>
@@ -426,8 +448,6 @@
                     <button class="specialButton" onclick="basicBuy('deliveryManager', 500)">Buy A Delivery Manager</button>
                     <p class="basicText">Option to deliver maximum juice</p>
                     <p class="basicText">Price: 500 Coins</p>
-
-
                 </div>
 
                 <div class="basicDiv" , id="buyThirdMapDiv">
@@ -479,14 +499,6 @@
                     <p class="basicText">Price: 10 Pie Coins</p>
                 </div>
 				
-                <div class="basicDiv" id="buyANewField" style="display:none">
-                    <button class="specialButton" onclick="buyAField()">Buy A New Field</button>
-                    <p class="basicText">Buy a new 2x2 field from a local farmer</p>
-                    <p class="basicText">Replaces your old field</p>
-
-                    <p class="basicText">Price: 20 Pie Coins</p>
-                </div>
-				
                 <div class="basicDiv" id="buyAPieConveyorBelt" style="display:none">
                     <button class="specialButton" onclick="universalBuy('pieConveyorBelt', 20, 'pieCoins')">Buy A Pie Conveyor Belt</button>
                     <p class="basicText">Automatically sends pies into the oven</p>
@@ -535,10 +547,11 @@
                     <p class="basicText">Price: 50 Pie Coins</p>
                 </div>
 				
-                <div class="basicDiv" id="bucketThinSteelPlating">
-                    <button class="specialButton" onclick="universalBuy('bucketThinSteelPlating', 20, 'betaCoins')">Buy Thin Steel Plating</button>
+                <div class="basicDiv" id="bucketThinSteelPlating" style="display:none">
+                    <button class="specialButton" onclick="universalBuy('bucketThinSteelPlating', gameData.bucketThinSteelPlating * 5 + 20, 'pieCoins')">Buy Thin Steel Plating</button>
                     <p class="basicText">Perfect for extending the height of your buckets</p>
-                    <p class="basicText">Price: 20 Pie Coins</p>
+                    <p class="basicText" id="bucketHeight">Current heights: 20 Units</p>
+                    <p class="basicText" id="bucketThinSteelPlatingPrice">Price: 20 Pie Coins</p>
                 </div>
 				
                 <div class="basicDiv" id="buyASeedDrill" style="display:none">
@@ -563,6 +576,12 @@
                     <button class="specialButton" onclick="universalBuy('forestWell', 200, 'betaCoins')">Buy A Well</button>
                     <p class="basicText">Water is the lifeblood of limes</p>
                     <p class="basicText">Price: 200 Beta Coins</p>
+                </div>
+				
+                <div class="basicDiv" id="trainTransportDiv" style="display:none">
+                    <button class="specialButton" onclick="universalBuy('trainTransport', 200, 'pieCoins')">Train Transport</button>
+                    <p class="basicText">Add a new delivery type</p>
+                    <p class="basicText">Price: 200 Pie Coins</p>
                 </div>
 				
 				
@@ -655,7 +674,7 @@
 
 					<div id="autoAdvertiseBrokerDiv">
 					
-					    <button class="basicButtonSize" id="autoAdvertiseBrokerButton" style="display:inline-block" onclick="switchValue('autoAdvertiseBroker')">Auto</button>
+					    <button class="basicButtonSize" id="autoAdvertiseBrokerButton" style="display:inline-block" onclick="toggle('autoAdvertiseBroker')">Auto</button>
 						<p class="basicText" style="display:block;">Rule:</p>
 						<p class="basicText" id="textForAdvertisingBrokerRule">Auto advertise unless speed is under 30 seconds</p>
 						<button class="specialButton" onclick="decreaseValue('autoAdvertiseSpeedValue')" style="width:168px">Decrease</button>
@@ -805,7 +824,7 @@
             </div>
 			
             <div class="basicDiv" id="juiceMarketing">
-                <button class="specialButtonTravel" onclick="basicBuyMegaCoins('nationalJuiceMarketing', 10)">National Juice Marketing</button>
+                <button class="specialButtonTravel" onclick="universalBuy('nationalJuiceMarketing', 10, 'megaCoins')">National Juice Marketing</button>
                 <p class="basicText" style="display:block;">Convince the country that juice can be added to anything!</p>
                 <p class="basicText" style="display:block;">Doubles juice sale price</p>
                 <p class="basicText" style="display:block;">Price: 10 Mega Coins</p>
@@ -827,7 +846,7 @@
             </div>
 			
             <div class="basicDiv" id="earnBachelorFinance">
-                <button class="specialButton" onclick="basicBuyMegaCoins('bachelorsDegreeFinance', 20)">'Earn' A Bachelors Degree In Finance</button>
+                <button class="specialButton" onclick="universalBuy('bachelorsDegreeFinance', 20, 'megaCoins')">'Earn' A Bachelors Degree In Finance</button>
                 <p class="basicText" style="display:block;">Access the Currency Exchange market</p>
                 <p class="basicText" style="display:block;">Price: 20 Mega Coins</p>
             </div>
@@ -1177,9 +1196,13 @@
 		
         <div class="basicDiv" id="forestWellDiv" style="display:none;">
             <button class="specialButton" id="throwPieCoinsWell" onclick="throwPieCoinsWell()">Throw Pie Coins In The Well</button>
+            <button class="basicButtonSize" id="enterTheWell" style="background-color:#000000;color:#FFFFFF;" onclick="enterTheWell()">Enter</button>
+
             <div class="verticalProgress" id="wellProgress">
                 <div class="verticalBar" id="wellBar" style="background-color:#C67848;">0%</div>
-            </div>
+            </div>			
+			
+			
         </div>
 		
 		
@@ -1253,7 +1276,7 @@
 				<button class="specialButton" onclick="addPieIngredient('flour')" style="width:168px">Add Flour</button>
 				<button class="specialButton" onclick="bakePie()" style="width:168px">Bake Pie</button>
 				
-				<button class="basicButtonSize" id="pieConveyorBeltOnButton" onclick="switchValue('pieConveyorBeltOn')" style="width:168px;display:none;">Conveyor Belt</button>
+				<button class="basicButtonSize" id="pieConveyorBeltOnButton" onclick="toggle('pieConveyorBeltOn')" style="width:168px;display:none;">Conveyor Belt</button>
 
 				<p class="basicText" id="currentPieIngredients" >Current Ingredients: 0 Flour + 0 Juice</p>
 
@@ -1277,41 +1300,49 @@
 
     </div>
 
-    <div id="field" style="width:380px;">
-        <div class="basicDiv">
-            <p class="basicText" id="wheatSeedsNumber"></p>
-            <p class="basicText" id="wheatNumber"></p>
-            <p class="basicText" id="flourNumber"></p>
-			
-			<div id="wheatMachines" style="display:none;">
-				<p class="basicText" id="wheatHarvesterNumber"></p>
-				<p class="basicText" id="seedDrillNumber"></p>
+    <div id="field" style="width:855px;position:relative;">
+		<div style="width:380px;display:inline-block;position:absolute;">
+			<div class="basicDiv">
+				<p class="basicText" id="wheatSeedsNumber"></p>
+				<p class="basicText" id="wheatNumber"></p>
+				<p class="basicText" id="flourNumber"></p>
+				
+				<div id="wheatMachines" style="display:none;">
+					<p class="basicText" id="wheatHarvesterNumber"></p>
+					<p class="basicText" id="seedDrillNumber"></p>
+				</div>
+				
+				<!--<p class="basicText">Resources slowly overflow and disappear when you dont have enough storage for them<p>-->
+
+
+				<button class="basicButtonSize" id="winnowWheat" onclick="winnowWheat()">Winnow Wheat</button>
+				<button class="basicButtonSize" id="grindFlour" onclick="grindFlour()">Grind Seeds Into Flour</button>
+
+
+			</div>
+
+			<div class="basicDiv" id="plotManagementDiv" style="display:none;">
+				<p class="basicText" id="plotDetails"></p>
+				<button class="specialButton" id="managePlot" onclick="managePlot()"></button>
+				<button class="specialButton" onclick="closePlotManagementDiv()">Close</button>
 			</div>
 			
-			<!--<p class="basicText">Resources slowly overflow and disappear when you dont have enough storage for them<p>-->
+			<div class="basicDiv" id="fieldPlacementOptions">
+				<button class="basicButtonSize" style="background-color:gray" id="plotSelectedWheatItem" onclick="selectedWheatItem('plot')">Manage Plot</button>
+				<button class="basicButtonSize" style="background-color:gray" id="seedSelectedWheatItem" onclick="selectedWheatItem('seed')">Seed</button>
+				<button class="basicButtonSize" style="background-color:gray" id="seedDrillSelectedWheatItem" onclick="selectedWheatItem('seedDrill')">Seed Drill</button>
+				<button class="basicButtonSize" style="background-color:gray" id="harvesterSelectedWheatItem" onclick="selectedWheatItem('harvester')">Harvester</button>
+				<button class="basicButtonSize" style="background-color:gray" id="rotateSelectedWheatItem" onclick="selectedWheatItem('rotate')">Rotate</button>
+			</div>
+		
+			
+			
+		</div>
+	
+        <div class="basicDivSize" id="fullField" style="height:460px;width:460px;margin:0px 0px 0px 0px;padding: 0px 0px 0px 0px;display:inline-block;position:absolute;right:0px;top:-5px;"></div>
 
-
-			<button class="basicButtonSize" id="winnowWheat" onclick="winnowWheat()">Winnow Wheat</button>
-			<button class="basicButtonSize" id="grindFlour" onclick="grindFlour()">Grind Seeds Into Flour</button>
-
-
-        </div>
-        <div class="basicDivSize" id="fullField">
-            <button ondragstart="return false;" class="fieldTile" id="fieldTile0-0" onclick="fieldTile(0, 0)">‎‏‏‎<img style="width:70px;height:70px;" id="fieldTile0-0img" src="images/emptyField.png"></button>
-            <button ondragstart="return false;" class="fieldTile" id="fieldTile1-0" onclick="fieldTile(1, 0)">‎‏‏‎<img style="width:70px;height:70px;" id="fieldTile1-0img" src="images/emptyField.png"></button>
-            <button ondragstart="return false;" class="fieldTile" id="fieldTile0-1" onclick="fieldTile(0, 1)">‎‏‏‎<img style="width:70px;height:70px;" id="fieldTile0-1img" src="images/emptyField.png"></button>
-            <button ondragstart="return false;" class="fieldTile" id="fieldTile1-1" onclick="fieldTile(1, 1)">‎‏‏‎<img style="width:70px;height:70px;" id="fieldTile1-1img" src="images/emptyField.png"></button>
-        </div>
-        <div class="basicDiv" id="fieldPlacementOptions" style="display:none" >
-
-			<button class="basicButtonSize" style="background-color:gray" id="seedSelectedWheatItem" onclick="selectedWheatItem('seed')">Seed</button>
-			<button class="basicButtonSize" style="background-color:gray"id="seedDrillSelectedWheatItem" onclick="selectedWheatItem('seedDrill')">Seed Drill</button>
-			<button class="basicButtonSize" style="background-color:gray"id="harvesterSelectedWheatItem" onclick="selectedWheatItem('harvester')">Harvester</button>
-			<button class="basicButtonSize" style="background-color:gray"id="rotateSelectedWheatItem" onclick="selectedWheatItem('rotate')">Rotate</button>
-
-
-        </div>
     </div>
+	
 
     <div id="megaCoinUpgrades" style="width:380px">
 
@@ -1441,7 +1472,7 @@
 
 
                 <button class="specialButton" id="startDiseaseTask" style="display:inline-block" onclick="diseaseControlTask()">Start Task</button>
-                <button class="basicButtonSize" id="autoStartTaskButton" style="display:inline-block" onclick="switchValue('autoStartTask')">Auto</button>
+                <button class="basicButtonSize" id="autoStartTaskButton" style="display:inline-block" onclick="toggle('autoStartTask')">Auto</button>
                 <button class="basicButtonSize" id="limeDiseaseControlInfoButton" , onclick="toggle('limeDiseaseControlInfoToggle')">Info</button>
 
 
@@ -1461,19 +1492,19 @@
                 <p class="basicText" id="numberOfCivilians">Number of civilians: 2</p>
 				
 				<div id="autoPlaceACivilianDiv" style="display:none;">
-					<button class="basicButtonSize" id="autoPlaceACivilianButton" style="display:inline-block" onclick="switchValue('autoPlaceACivilian')">Auto Place A Civilian</button><br>
+					<button class="basicButtonSize" id="autoPlaceACivilianButton" style="display:inline-block" onclick="toggle('autoPlaceACivilian')">Auto Place A Civilian</button><br>
 					<p class="basicText">Rule: Random empty spot</p>
 				</div>
 
                 <button class="specialButton" onclick="startSimulation()" style="width:150px">Start Simulation</button>
-                <button class="basicButtonSize" id="autoStartSimulationButton" style="display:inline-block" onclick="switchValue('autoStartSimulation')">Auto</button>
+                <button class="basicButtonSize" id="autoStartSimulationButton" style="display:inline-block" onclick="toggle('autoStartSimulation')">Auto</button>
                 <button class="specialButton" onclick="diseaseControlReset()">Reset</button>
                 <button class="specialButton" onclick="diseaseControlQuit()">Quit</button>
 
 				<br>
 				
                 <button class="basicButtonSize" id="checkResultsButton" style="width:150px" onclick="checkResults()">Check Results</button>
-                <button class="basicButtonSize" id="autoCheckSimulationButton" style="display:inline-block" onclick="switchValue('autoCheckSimulation')">Auto</button>
+                <button class="basicButtonSize" id="autoCheckSimulationButton" style="display:inline-block" onclick="toggle('autoCheckSimulation')">Auto</button>
                 <button class="basicButtonSize" id="limeDiseaseInfoButton" , onclick="toggle('limeDiseaseInfoToggle')">Info</button>
 
             </div>
@@ -1628,7 +1659,7 @@
 				
 				<div class="basicDiv" id="benevolenceDiv">
 
-					<button class="specialButton" onclick="barStartGranular('benevolence')">Benevolence</button>
+					<button class="specialButton" onclick="barStart('benevolence')">Benevolence</button>
 					
 					<p class="basicTextSize" id="textForBenevolenceResearchers" style="color:#00AAFF;background-color:#000000">0 Researchers</p>
 					
@@ -1667,7 +1698,7 @@
 				
 				
                 <div class="basicDiv">
-                    <button class="specialButtonTravel" onclick="hireResearcher('megaCoins')">Pay with mega coins</button>
+                    <button class="specialButtonTravel" onclick="hireResearcher()">Pay with mega coins</button>
                     <p class="basicText" >Price: 1 Mega Coin</p>
                 </div>	
 
@@ -1678,7 +1709,7 @@
 
 
     <div id="skills" style="position: relative;">
-		<div id="skillsSection1" style="width:380px;">
+		<div id="skillsSection1" style="width:380px;display:inline-block;">
 
 		
 		
@@ -1726,7 +1757,7 @@
             </div>
         </div>
     </div>
-    <div id="skillsSection2" style="width:380px">	
+    <div id="skillsSection2" style="width:380px;display:inline-block;">	
 	
 	
 	
@@ -1796,18 +1827,57 @@
 		
     </div>
     </div>
+	</span>	
+	
+	
+    <div id="endScreen" style="background-color:#000000;width:100%;height:100%;position: absolute;top:0px;left:0px;color:#FFFFFF;display:none;">
+		<p>You completed Sublime!! Good job! :)<br>
+		You can keep playing and expanding your lime empire while you wait for new updates.<p>
+		<p id="endStats"><p>
+        <button class="basicButtonSize" style="width:99%;display:block;" onclick="toggle('endScreen')">Continue</button>
+        <!-- <button class="basicButtonSize" style="width:99%;display:block;" onclick="soulArea('wellField')">Explore Deeper...</button> -->
+
+	</div>
+
+    <div id="wellField" style="background-color:#000000;width:100%;height:100%;position: absolute;top:0px;left:0px;color:#FFFFFF;display:none;">
+		<p>Your soul hangs in a void with a field of wells.
+		Enter one.<p>
+		<p id="trueLimes" style="color:#4DFE89;text-align:center;font-size:40px;"></p>
+		
+        <button class="basicButtonSize" style="width:99%;display:block;" onclick="soulArea('start')">Sublime</button>
+
+	</div>
+
+    <div id="soulAreaSerf">
+		<div id="soulAreaSerfWidth" style="width:380px;">
+
+			<div class="basicDiv" style="display:block;">
+
+				<button class="specialButton" onclick="harvestRice()">Harvest Rice</button>
+				<div class="skillProgress" id="harvestRiceProgress"><div class="skillBar" id="harvestRiceBar"></div></div>
+				
+			</div>
+
+			<button class="basicButtonSize" style="width:370px;display:block;" onclick="soulArea('wellField')">Enter The Well</button>
+		</div>	
+	</div>
+	
+	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	
-    <script src="aesthetic.js?v=               129" charset="utf-8" type="text/javascript"></script>
-    <script src="myfunctions.js?v=             129" charset="utf-8" type="text/javascript"></script>
-    <script src="main.js?v=                    129" charset="utf-8" type="text/javascript"></script>
-    <script src="technical.js?v=               129" charset="utf-8" type="text/javascript"></script>
-    <script src="bars.js?v=                    129" charset="utf-8" type="text/javascript"></script>
-    <script src="update.js?v=                  129" charset="utf-8" type="text/javascript"></script>
+    <script src="aesthetic.js?v=               132" charset="utf-8" type="text/javascript"></script>
+    <script src="myfunctions.js?v=             132" charset="utf-8" type="text/javascript"></script>
+    <script src="main.js?v=                    132" charset="utf-8" type="text/javascript"></script>
+    <script src="technical.js?v=               132" charset="utf-8" type="text/javascript"></script>
+    <script src="bars.js?v=                    132" charset="utf-8" type="text/javascript"></script>
+    <script src="update.js?v=                  132" charset="utf-8" type="text/javascript"></script>
 	
-    <script src="game/diseasetask.js?v=        129" charset="utf-8" type="text/javascript"></script>
-    <script src="game/pie.js?v=                129" charset="utf-8" type="text/javascript"></script>
-    <script src="game/hiringarea.js?v=         129" charset="utf-8" type="text/javascript"></script>
+    <script src="game/diseasetask.js?v=        132" charset="utf-8" type="text/javascript"></script>
+    <script src="game/pie.js?v=                132" charset="utf-8" type="text/javascript"></script>
+    <script src="game/hiringarea.js?v=         132" charset="utf-8" type="text/javascript"></script>
+    <script src="game/science.js?v=            132" charset="utf-8" type="text/javascript"></script>
+    <script src="game/brokers.js?v=            132" charset="utf-8" type="text/javascript"></script>
+    <script src="game/serf.js?v=               132" charset="utf-8" type="text/javascript"></script>
 
 
 
