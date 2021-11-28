@@ -10,12 +10,63 @@ mainVariablesNames  = ['Limes'  , 'Rotten Limes', 'Peeled Limes', 'Juice'  , 'Co
 
 mainVariablesColor  = ['#00B300', '#00B300'     , '#72B301'     , '#00B33D', '#AEB301', '#B40001'   , '#B37700'    , '#AEB301'   , '#964D1A', '#964D1A'  , '#AEB301'     ];
 mainVariablesColor2 = ['#00FF01', '#00FF01'     , '#A0FF01'     , '#00FF55', '#F8FF01', '#FE0000'   , '#FFAA01'    , '#F8FF01'   , '#C67848', '#C67848'  , '#F8FF01'     ];
+	
+skills = [ 
+/*
+	{
+		id: 'id',
+		name: 'Full Name',
+		maxLevel: 20 //default is 20
+		description: '' //default is blank
+		speed: 'slow', //default is 'normal'
+	},
+*/
+	{
+		id: 'keenEye',
+		name: 'Keen Eye',
+		maxLevel: 20,
+		description: 'gameData.keenEyeSkillLevel * 5 + "% Chance"',
+	},
+	{
+		id: 'rottenWisdom',
+		name: 'Rotten Wisdom',
+		maxLevel: 50,
+		description: '100 * gameData.rottenWisdomSkillLevel / gameData.rottenWisdomSkillLevelMax + "% Chance"',
+	},
+	{
+		id: 'limebidextrous',
+		maxLevel: 50,
+		description: 'gameData.limebidextrous + "% Chance"',
+	},
+	{
+		id: 'intelligence',
+		maxLevel: 20,
+		description: 'Math.floor(((gameData.intelligenceSkillLevel * 2) / gameData.intelligenceSkillLevelMax) * 100) + "% Faster"',
+	},
+	{
+		id: 'knifebidextrous',
+		maxLevel: 20,
+		description: 'gameData.knifebidextrous * 2.5 + "% Chance"',
+	},
+	{
+		id: 'motivation',
+		maxLevel: 100,
+	},
+	{
+		id: 'ambidextrous',
+		maxLevel: 20,
+		speed: 'slow',
+	},
+	{
+		id: 'bitterSpeed',
+		maxLevel: 200,
+		name: 'Bitter Speed',
+	}
+]
 
-mainSkills =      ['keenEye' , 'rottenWisdom' , 'limebidextrous', 'intelligence', 'knifebidextrous', 'motivation', 'ambidextrous', 'bitterSpeed' ];
-mainSkillsNames = ['Keen Eye', 'Rotten Wisdom', 'Limebidextrous', 'Intelligence', 'Knifebidextrous', 'Motivation', 'Ambidextrous', 'Bitter Speed'];
-
-//Area Based Variables
-avs       = [ 
+//Area Variables
+avs = 
+[ 
 	{
 		area: 'serf',
 		name: 'Serf',
@@ -29,22 +80,18 @@ avs       = [
 				darkColor: '#BBBBBB',
 
 			},
+			{
+				id: 'coins',
+				name: 'Coins',
+				mainColor: '#B37700',
+				darkColor: '#B37700',
+
+			},
 		],
 	},
 ]
 
-
-//Uses: Restart bar after reloading. Sets the level to the max level if it somehow goes above. Updates test for level / levelMax. Updates aesthetic for the skill's button. Creates HTML for the skill.
-//Order is used for showing skills.
-
 function mainGameLoopSlow() {
-
-	startCurrentTask(gameData.currentTask)	
-	startCurrentTask(gameData.currentTask2)	
-
-	
-	if(gameData.currentSkill !== 'none')
-		barStartGranularSkillBasic(gameData.currentSkill, false)
 
 	
 	if(gameData.maps > 4)
@@ -128,9 +175,13 @@ function mainGameLoop() {
 		loopNumberGoldenLimes = 0
 
     }
-	
+	   
 	setTimeout(mainGameLoop, 50)
-    updateValues()
+}
+
+function mainGameLoopFast() {
+	updateValues()
+	setTimeout(mainGameLoopFast, 15)
 }
 
 function calculateOfflineProgress(){
@@ -235,50 +286,48 @@ function getLimesButton() {
 		gameData.collectLimesAtBeginning += 1
 	
 	switch (gameData.collectLimesAtBeginning) {
-	  case 10:
+	  case 5:
         update("newInfo", "Maybe you should try looking around!")
 		break;
-	  case 20:
+	  case 10:
         update("newInfo", "Seriously you aren't going to find anything.")
 		break;
-	  case 30:
+	  case 15:
         update("newInfo", "Do you see the Look Around button?")
 		break;
-	  case 40:
+	  case 20:
         update("newInfo", "There doesn't seem to be any limes here.")
 		break;
-	  case 50:
+	  case 25:
         update("newInfo", "Is that a lime?")
+		break;
+	  case 30:
+        update("newInfo", "Nope, it's dirt.")
+		break;
+	  case 35:
+        update("newInfo", "I would suggest looking around more.")
+		break;
+	  case 40:
+        update("newInfo", "You aren't getting a secret achievement.")
+		break;
+	  case 45:
+        update("newInfo", "This is literally just a waste of time.")
+		break;
+	  case 50:
+        update("newInfo", "Can you please play the game correctly?")
+		break;
+	  case 55:
+        update("newInfo", "Is that something priceless in the distance?")
 		break;
 	  case 60:
         update("newInfo", "Nope, it's dirt.")
 		break;
-	  case 70:
-        update("newInfo", "I would suggest looking around more.")
-		break;
-	  case 80:
-        update("newInfo", "You aren't getting a secret achievement.")
-		break;
-	  case 90:
-        update("newInfo", "This is literally just a waste of time.")
-		break;
-	  case 100:
-        update("newInfo", "Can you please play the game correctly?")
-		break;
-	  case 110:
-        update("newInfo", "Is that something priceless in the distance?")
-		break;
-	  case 120:
-        update("newInfo", "Nope, it's dirt.")
-		break;
-	  case 130:
+	  case 65:
         update("newInfo", "I'm leaving.")
 
 	}
 	
-    if (gameData.autoCollectingBar == 0 || gameData.autoCollectingBar == (gameData.nourishment + 1) * 100) {
-        getLimes()
-    }
+    getLimes()
 
 }
 
@@ -286,46 +335,37 @@ function getLimes() {
 	if( beckyRandom(gameData.keenEyeSkillLevelMax) <= gameData.keenEyeSkillLevel)
 	{
 		if (gameData.keenEyeSkillLevel != gameData.keenEyeSkillLevelMax)
-		{
 			update("newInfo", "You found something!")
-		}
 		
-		
-		if (Math.random() <= (gameData.rottenWisdomSkillLevel / gameData.rottenWisdomSkillLevelMax)) {
-			if (Math.random() <= (gameData.limebidextrous / 100)) {
-				gameData.limes += gameData.limesPerClick
-				if (gameData.teachBar > 0 && gameData.teachBar < 100) {
-					gameData.employeeCurrentSpeed += (gameData.limesPerClick * gameData.employeeSpeed) / 10
-				}
-			}
-			gameData.limes += gameData.limesPerClick
-			if (gameData.teachBar > 0 && gameData.teachBar < 100) {
-				gameData.employeeCurrentSpeed += (gameData.limesPerClick * gameData.employeeSpeed) / 10
-			}
-		} else {
-			gameData.rottenLimes += gameData.limesPerClick
-		}
-		
+		limesPerClick = 2 * gameData.bigGloves + gameData.difficulty * 5
+
+		if (Math.random() <= gameData.rottenWisdomSkillLevel / gameData.rottenWisdomSkillLevelMax) {
+			if (Math.random() <= gameData.limebidextrous / 100)
+				uwu()
+			uwu()
+		} else
+			gameData.rottenLimes += limesPerClick
 	}
-	else
-	{
-		if ((gameData.lookAround < 1 && gameData.collectLimesAtBeginning < 10) || gameData.lookAround >= 1)
+	else if ((gameData.lookAround < 1 && gameData.collectLimesAtBeginning < 5) || gameData.lookAround >= 1)
 			update("newInfo", "Couldn't find any limes...")
+	
+	function uwu() {
+		gameData.limes += limesPerClick
+		if (gameData.teachBar > 0 && gameData.teachBar < 100) {
+			gameData.employeeCurrentSpeed += (limesPerClick * gameData.employeeSpeed) / 10
+		}
 	}
-		
-    updateValues()
 }
 
 function peelLime() {
-    if (gameData.limes >= 1) {
+    if (gameData.limes) {
         gameData.limes -= 1
-        if (Math.floor((Math.random() * 40) / gameData.knifebidextrous) == 0) {
+        if (!Math.floor((Math.random() * 40) / gameData.knifebidextrous)) {
             gameData.peeledLimes += 1
             gameData.limes -= 1
         }
         gameData.peeledLimes += 1
     }
-    updateValues()
 }
 
 function buyTome() {
@@ -343,7 +383,6 @@ function buyTome() {
 			gameData.tomes = 2
 		}
 	}
-    updateValues()
 }
 
 function buyAFork() {
@@ -352,7 +391,6 @@ function buyAFork() {
         gameData.fork = 1
         gameData.eatBar = 0
     }
-    updateValues()
 }
 
 function buyARobe() {
@@ -361,7 +399,6 @@ function buyARobe() {
         gameData.silkRobe = 1
         gameData.respect += 50
     }
-    updateValues()
 }
 
 function increaseCreditScore() {
@@ -369,7 +406,6 @@ function increaseCreditScore() {
         gameData.megaCoins -= 2
         gameData.megaCoinsInBankMax += 30
     }
-    updateValues()
 }
 
 function increaseCreditScore2() {
@@ -379,7 +415,6 @@ function increaseCreditScore2() {
         gameData.creditScore2 = 1
 
     }
-    updateValues()
 }
 
 function increaseCreditScore3() {
@@ -389,7 +424,6 @@ function increaseCreditScore3() {
         gameData.creditScore3 = 1
 
     }
-    updateValues()
 }
 
 function buyABiggerWallet() {
@@ -398,7 +432,6 @@ function buyABiggerWallet() {
         gameData.coinsMax += 1e6
 
     }
-    updateValues()
 }
 
 function buyMegaCoins() {
@@ -407,25 +440,13 @@ function buyMegaCoins() {
         gameData.megaCoinsInBank += 5
 		gameData.buyMegaCoinsTimes += 1
     }
-    updateValues()
 }
 
 function buyMegaCoinsWithAlphaCoins(amount) {
-	if(amount == 1)
-	{
-		if (gameData.alphaCoins >= 10 && gameData.megaCoinsInBank < gameData.megaCoinsInBankMax) {
-			gameData.alphaCoins -= 10
-			gameData.megaCoinsInBank += 1
-		}
+	if (gameData.alphaCoins >= amount * 10 && gameData.megaCoinsInBank + amount <= gameData.megaCoinsInBankMax) {
+		gameData.alphaCoins -= amount * 10
+		gameData.megaCoinsInBank += amount
 	}
-	else
-	{
-		if (gameData.alphaCoins >= 100 && gameData.megaCoinsInBank + 10 <= gameData.megaCoinsInBankMax) {
-			gameData.alphaCoins -= 100
-			gameData.megaCoinsInBank += 10
-		}
-	}
-    updateValues()
 }
 
 
@@ -434,52 +455,32 @@ function buyBetterTraining() {
         gameData.megaCoins -= gameData.betterTraining
         gameData.betterTraining += 1
     }
-    updateValues()
 }
 
 function upgradeMoreStorage() {
     if (gameData.megaCoins >= upgradeMoreStoragePrice) {
-		
         gameData.megaCoins -= upgradeMoreStoragePrice
-
 		gameData.juicersMax +=  500
 		gameData.peelersMax +=  2500
-
 		gameData.upgradeMoreStorage += 1
-
-
     }
-    updateValues()
 }
 
 function travelToNextVillage() {
     if (window.prompt("Are you sure? Type 'yes' if you are") == "yes") {
-		
 		if (gameData.increaseJuicePricePermanance == 1) {
 			saveBeforeWipe('juicePricePrice')
 		    saveBeforeWipe('juicePriceCents')
 		} 
-		
-		if (gameData.manuscripts > 0) {
+		if (gameData.manuscripts > 0)
 			saveBeforeWipe('respectMilestone1000')
-		} 
-		
-		if (gameData.saveAlphaCoinsUnlock) {
+		if (gameData.saveAlphaCoinsUnlock)
 			saveBeforeWipe('alphaCoins')
-		} 
-		
 		saveBeforeWipe('saveAlphaCoinsUnlock')
         saveBeforeWipe('manuscripts')
-		
         saveBeforeWipe('lightRobe')
-
-		
         saveBeforeWipe('increaseJuicePricePermanance')
-
-		
         megaCoinsNow = gameData.megaCoinsInBank
-		
-		
 		for (i = 1; i <= numberOfBasicAchievements; i++) {
 			saveBeforeWipe('achievement' + i)
 		}
@@ -487,43 +488,16 @@ function travelToNextVillage() {
 			saveBeforeWipe('specialAchievement' + i)	
 		}
 		
-		saveWipeValues = [
-		'surveillanceCamera2', 
-		'versionNumber', 
-		'nationalJuiceMarketing', 
-		'creditScore2', 
-		'creditScore3', 
-		'coinsMax', 
-		'respectMilestone10000', 
-		'unlockBenevolence', 
-		'nationalTradeCert', 
-		'bigGloves', 
-		'desktopMode', 
-		'nutritionists', 
-		'megaCoinsInBankMax', 
-		'betterTraining', 
-		'showBarPercent', 
-		'hideCompletedSkills', 
-		'hideMaxedPurchases', 
-		'researchers', 
-		'upgradeMoreStorage', 
-		'changeResearchersBy10Unlock', 
-		'rottenActualWisdom', 
-		'timePlayed'];
-
+		saveWipeValues = ['surveillanceCamera2', 'versionNumber', 'nationalJuiceMarketing', 'unlockBenevolence', 'nationalTradeCert', 'bigGloves', 'desktopMode', 'nutritionists', 'megaCoinsInBankMax', 'betterTraining', 'showBarPercent', 'hideCompletedSkills', 'hideMaxedPurchases', 'researchers', 'upgradeMoreStorage', 'changeResearchersBy10Unlock', 'rottenActualWisdom', 'tickspeed', 'timePlayed'];
+		
 		for (let i = 0; i < saveWipeValues.length; i++) {
 			saveBeforeWipe(saveWipeValues[i])		
 		}
-
-
-
-
+		
 		//Before Travel
 			Object.assign(gameData, gameDataBase)
         //After Travel
-
-
-
+		
 		saveAfterWipe('saveAlphaCoinsUnlock')
 		saveAfterWipe('megaCoins')	
 
@@ -567,7 +541,7 @@ function travelToNextVillage() {
 			gameData.respect += 50
 		} 
 		
-		if(rottenActualWisdom)
+		if(rottenActualWisdomNow)
 			gameData.rottenWisdomSkillLevelMax = 25
 
 
@@ -603,19 +577,19 @@ function lookAround() {
     }
 
     if (gameData.lookAround == 0) {
-        if (gameData.lookAroundNumber == 10 || gameData.difficulty >= 1) {
+        if (gameData.lookAroundNumber >= 5) {
             update("newInfo", "You see a nearby market.")
             gameData.lookAround = 1
 
         }
     } else if (gameData.lookAround == 1) {
-        if (gameData.lookAroundNumber == 20 || gameData.difficulty >= 1) {
+        if (gameData.lookAroundNumber >= 10) {
             update("newInfo", "You find a merchant willing to buy limes.")
             gameData.lookAround = 2
 
         }
     } else if (gameData.lookAround == 2) {
-        if (gameData.lookAroundNumber == 30 || gameData.difficulty >= 1) {
+        if (gameData.lookAroundNumber >= 15) {
             update("newInfo", "You find a merchant selling various items.")
             gameData.lookAround = 3
         }
@@ -626,67 +600,33 @@ function lookAround() {
 function buyAMap() {
     if (gameData.coins >= 20 && gameData.maps == 0) {
         gameData.coins -= 20
-        gameData.maps = 1
+        gameData.maps += 1
     } else if (gameData.coins >= 200 && gameData.maps == 1) {
         gameData.coins -= 200
-        gameData.maps = 2
+        gameData.maps += 1
     } else if (gameData.coins >= 2000 && gameData.maps == 2) {
         gameData.coins -= 2000
-        gameData.maps = 3
+        gameData.maps += 1
     } else if (gameData.coins >= 2e5 && gameData.maps == 3) {
         gameData.coins -= 2e5
-        gameData.maps = 4
+        gameData.maps += 1
 		if(thisTownDeliveries < 2)
-		{
 			gameData.specialAchievement2 = 1
-		}
     } else if (gameData.coins >= 2e5 && gameData.maps == 4) {
         gameData.coins -= 2e5
-        gameData.maps = 5
+        gameData.maps += 1
     }
-    updateValues()
 }
 
-
-function storageJuicersUnlock() {
-	
-	if(gameData.confirmStorage)
-	{
-		if (window.prompt("Are you sure? Type 'yes' if you are") == "yes")
-			storageJuicersUnlockDo()
-	}
-	else
-		storageJuicersUnlockDo()
+function storageUnlock(id){
+	window['storageUnlockDo'](id)
 }
 
-function storageJuicersUnlockDo() {
+function storageUnlockDo(id){
 	if (gameData.coins >= 100) {
 		gameData.coins -= 100
-		gameData.storageJuicersUnlock = 1
-		gameData.juicersMax *= 5
-		if (gameData.upgradeMoreStorage > 0)
-		{
-			gameData.specialAchievement1 = 1
-		}
-	}
-}
-
-function storagePeelersUnlock() {
-	if(gameData.confirmStorage)
-	{
-		if (window.prompt("Are you sure? Type 'yes' if you are") == "yes")
-			storagePeelersUnlock()
-	}
-	else
-		storagePeelersUnlock()
-    updateValues()
-}
-
-function storagePeelersUnlock() {
-	if (gameData.coins >= 100) {
-		gameData.coins -= 100
-		gameData.storagePeelersUnlock = 1
-		gameData.peelersMax *= 5
+		gameData['storage' + jsUcfirst(id) + 'Unlock'] = 1
+		gameData[id + 'Max'] *= 5
 		if (gameData.upgradeMoreStorage > 0)
 		{
 			gameData.specialAchievement1 = 1
@@ -699,32 +639,25 @@ function changeZoomSize() {
 	if (gameData.changeZoomSize == 150)
 	{
 		gameData.changeZoomSize = 100
-		document.body.style.zoom=1.0;
+		document.body.style.zoom = 1.0
 	}
 	else
 	{
 		gameData.changeZoomSize += 10
-		document.body.style.zoom= gameData.changeZoomSize / 100;
+		document.body.style.zoom = gameData.changeZoomSize / 100
 	}
 	
     updateValues()
 }
 
-function juiceLimesToggle() {
-    gameData.limeTypeToJuice = 0
-    updateValues()
+function juiceToggle(x) {
+    gameData.limeTypeToJuice = x
 }
 
 function benevolenceToggle(){
 	if (gameData.diseaseControlFinished)
 		toggle('benevolenceToggle')
 }
-
-function juicePeeledLimesToggle() {
-    gameData.limeTypeToJuice = 1
-    updateValues()
-}
-
 
 function increaseJuicePrice() {
 	if(gameData.increaseJuicePricex10){
@@ -743,20 +676,16 @@ function increaseJuicePrice() {
 			gameData.juicePriceCents += 1
 		}
 	}
-    updateValues()
 }
 
 
 function decreaseJuiceSold() {
     if (gameData.juiceBulkAmountToggle >= 1) {
-        if (gameData.juiceBulkAmountToggle > 100) {
+        if (gameData.juiceBulkAmountToggle > 100)
             gameData.juiceBulkAmountToggle -= 10
-        } else {
+        else
             gameData.juiceBulkAmountToggle -= 1
-        }
     }
-
-    updateValues()
 }
 
 function increaseJuiceSold() {
@@ -767,7 +696,6 @@ function increaseJuiceSold() {
     } else if (gameData.juiceBulkAmountToggle < 2000 && gameData.deliveryTypeToggle == 3) {
         gameData.juiceBulkAmountToggle += 10
     }
-    updateValues()
 }
 
 function moveBasket() {
@@ -776,19 +704,8 @@ function moveBasket() {
     elem.innerHTML = Math.floor(gameData.basketBar) + "%";
 }
 
-function moveAutoCollecting() {
-
-    var elem = document.getElementById("autoCollectingBar");
-    var x = Math.floor(gameData.autoCollectingBar / (gameData.nourishment + 1))
-    var x2 = gameData.autoCollectingBar / (gameData.nourishment + 1)
-
-    elem.style.width = x2 + "%";
-    elem.innerHTML = x + "%";
-}
-
 
 function buyABasket() {
-
     gameData.basketBar -= gameData.basketBar / (gameData.baskets + 1)
     bulkableBuyMax('baskets', 2)
 }
@@ -804,7 +721,6 @@ function throwPieCoinsWell(){
 		gameData.pieCoinsInWell = 200
 		gameData.pieCoins -= (200 - gameData.pieCoinsInWell)
 	}
-
 	moveWell()
 }
 

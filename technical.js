@@ -19,7 +19,6 @@ var gameDataBase = {
     specialAchievement2: 0,
 
     thisTownDeliveries: 0,
-    limesPerClick: 1,
     knife: 0,
     peeledLimes: 0,
     limeTypeToJuice: 0,
@@ -52,7 +51,6 @@ var gameDataBase = {
     deliveryType: 0,
     deliveryTypeToggle: 0,
     deliveryPrice: 2,
-    deliveryOngoing: 0,
     juiceBulkAmountToggle: 1,
     tomes: 0,
 
@@ -62,6 +60,10 @@ var gameDataBase = {
 
     eat: 0,
     eatBar: 0,
+    eatBarRunning: false,
+    juicerBarRunning: false,
+    peelerBarRunning: false,
+
 
     autoCollectingBar: 0,
 
@@ -136,6 +138,8 @@ var gameDataBase = {
     limeDiseaseControlInfoToggle: 1,
     limeDiseaseLakes: 0,
     limeDiseaseLakesCurrent: 0,
+    limeDiseaseLakesSet: 0,
+
 
     hasAdvertised: 0,
 
@@ -156,7 +160,7 @@ var gameDataBase = {
     benevolenceBar: 0,
     benevolenceResearchers: 0,
     unlockBenevolence: 0,
-	benevolenceToggle: 0,
+	benevolenceToggle: 1,
 
 
 
@@ -192,10 +196,6 @@ var gameDataBase = {
 	
     fork: 0,
     shoes: 0,
-	
-	isCurrentlyJuicing: 0,
-	isCurrentlyExchangingAlpha: 0,
-
 
     pin: "none",
     pinUnlock: 0,
@@ -210,23 +210,13 @@ var gameDataBase = {
     currentTask: "none",
     currentTask2: "none",
 
-
-	keenEyeSkillLevelMax:         20,
-	intelligenceSkillLevelMax:    20,
-	limebidextrousSkillLevelMax:  50,
-	knifebidextrousSkillLevelMax: 20,
-	rottenWisdomSkillLevelMax:    50,
-	motivationSkillLevelMax:     100,
-	ambidextrousSkillLevelMax:   20,
-	bitterSpeedSkillLevelMax:   200,
-
 		
 	knifebidextrous: 0,
     limebidextrous: 0,
 	
 	
     desktopMode: 1,
-	shiftClickOption: 1,
+	shiftClickOption: 0,
 	dontToggle: 0,
 	
 	isAutoCollecting: 0,
@@ -254,7 +244,6 @@ var gameDataBase = {
 	coinsToAlphaBar: 0,
 	isCoinsToAlphaBar: 0,
 	currencyBrokerHireBar: 0,
-	confirmStorage: 0,
 	smarterAdvertisingManagerBroker: 0,
 	convertedCoinsSinceTravel: 0,
 	transferAlphaCoinBags: 0,
@@ -310,7 +299,6 @@ var gameDataBase = {
 	autoAdvertiseAmountValue: 5, 
 	advertisePrice: 10,
 	advertisePriceType: 'coins',
-	isAdvertising: 0,
 	basketScarecrow: 0,
 	moreVisibleVariables: 0,
 	invertText: 0,
@@ -357,7 +345,6 @@ var gameDataBase = {
 	hasSoldPie: 0,
 	pieConveyorBelt : 0,
 	pieConveyorBeltOn: 0,
-	isPieBaking: 0,
 	
 	pieBucket: 0,
 	pieFlourBucket: 0,
@@ -410,7 +397,6 @@ var gameDataBase = {
         [59, 59, 59, 59, 59],
         [59, 59, 59, 59, 59]
     ],
-	wheatFieldXDimension: 1,
 	mortarAndPestle: 0,
 	flour: 0,
 	pieOven: 0,
@@ -453,20 +439,37 @@ var gameDataBase = {
 	
 	
 	serf: {
-		rice: 0
+		rice: 0,
+		coins: 0,
+		lordsRice: 1000000000,
+		lordsCoins: 1000000000,
+		health: 20,
+		riceOwed: 5,
+
 	},
 
 	harvestRiceBar: 0,
-	
+	serfHealthBar: 0,
+	newBakerySerf: 0,
+
 }
+
 
 	for (let i = 1; i <= 7; i++) {
 		gameDataBase['achievement' + i] = 0
 	}
 	
-	for (let i = 0; i < mainSkills.length; i++) {
-		gameDataBase[mainSkills[i] + 'Bar'] = 0
-		gameDataBase[mainSkills[i] + 'SkillLevel'] = 0
+	for (let i = 0; i < skills.length; i++) {
+		gameDataBase[skills[i].id + 'Bar'] = 0
+		gameDataBase[skills[i].id + 'SkillLevel'] = 0
+		
+		maxLevel = 20
+		if (skills[i].maxLevel)
+			maxlevel = skills[i].maxLevel
+		
+		
+		gameDataBase[skills[i].id + 'SkillLevel'] = maxLevel
+		gameDataBase[skills[i].id + 'BarRunning'] = false
 	}
 
 	for (let i = 0; i < mainVariables.length; i++) {
@@ -476,15 +479,13 @@ var gameDataBase = {
 	
 	for (let i = 0; i < avs.length; i++) {
 		for (let j = 0; j < avs[i].v.length; j++) {
-			gameDataBase[avs[i].v[j].id + 'ShowVariable'] = true
-			gameDataBase[avs[i].v[j].id + 'UnlockedVariable'] = false
+			gameDataBase[avs[i].area][avs[i].v[j].id + 'ShowVariable'] = true
+			gameDataBase[avs[i].area][avs[i].v[j].id + 'UnlockedVariable'] = false
 		}
 	}
 
 
 var gameData = {}
-
-
 
 function gameStart() {
 	
@@ -495,16 +496,14 @@ function gameStart() {
 	watertightBarDoMove = 0
 	findPieCustomersBarDoMove = 0
 
+    loadStuff(JSON.parse(localStorage.getItem("mathAdventureSave")))
 
-
-    Object.assign(gameData, gameDataBase)
-	
-
-    loadGame()
 	
     mainGameLoop()
 	
     mainGameLoopSlow()
+	
+    mainGameLoopFast()
 
 	addAestheticBase()
 	
@@ -526,18 +525,18 @@ function tab(tabby) {
 	gameData.mainTab = tabby
     update("exportCode", "")
 
-    tabs("options", "none")
-    tabs("market", "none")
-    tabs("inventory", "none")
-    tabs("achievements", "none")
-    tabs("skills", "none")
-    tabs("megaCoinUpgrades", "none")
-    tabs("tasks", "none")
-    tabs("company", "none")
-    tabs("forest", "none")
-    tabs("science", "none")
-    tabs("bakery", "none")
-    tabs("field", "none")
+    hide("options")
+    hide("market")
+    hide("inventory")
+    hide("achievements")
+    hide("skills")
+    hide("megaCoinUpgrades")
+    hide("tasks")
+    hide("company")
+    hide("forest")
+    hide("science")
+    hide("bakery")
+    hide("field")
 
 
 	
@@ -613,8 +612,8 @@ function tabMarket(tabby) {
 }
 
 function tabTasks(tabby) {
-    tabs("earn", "none")
-    tabs("milestones", "none")
+    hide("earn")
+    hide("milestones")
 	
 	colorChanger('earnButton', '#BBBBBB')
 	colorChanger('milestonesButton', '#BBBBBB')	
@@ -624,8 +623,8 @@ function tabTasks(tabby) {
 }
 
 function tabStore(tabby) {
-    tabs("plebian", "none")
-    tabs("patrician", "none")
+    hide("plebian")
+    hide("patrician")
 	
 	colorChanger('plebianButton', '#BBBBBB')
 	colorChanger('patricianButton', '#BBBBBB')
@@ -636,9 +635,9 @@ function tabStore(tabby) {
 }
 
 function tabOptions(tabby) {
-    tabs("gameOptions", "none")
-    tabs("uiOptions", "none")
-    tabs("statsOptions", "none")
+    hide("gameOptions")
+    hide("uiOptions")
+    hide("statsOptions")
 
 	
     document.getElementById(tabby).style.display = "block"
@@ -664,6 +663,14 @@ function fixOverMaxedVariables(){
 	
     if (gameData.alphaCoins > 1e5) {
         gameData.alphaCoins = 1e5
+    }
+	
+    if (gameData.eat > 100) {
+        gameData.eat = 100
+    }
+	
+    if (gameData.limes < 0) {
+        gameData.limes = 0
     }
 	
     if (gameData.basketBar > 100) {
@@ -714,32 +721,41 @@ function fixOverMaxedVariables(){
 
 function addHTML(){
 	
-	for (let i = 0; i < mainSkills.length; i++) {
+	for (let i = 0; i < skills.length; i++) {
 	
-		var name = mainSkills[i]
-		var div = document.getElementById(name + "Div")
+		var id = skills[i].id
+		var div = document.getElementById(id + "Div")
+		var name = jsUcfirst(id)
+		
+		if (skills[i].name)
+			name = skills[i].name
 		
 		var skillLevel       = document.createElement("p");
-		    skillLevel.id    = name + "SkillLevel";
+		    skillLevel.id    = id + "SkillLevel";
 		    skillLevel.classList.add("basicText");
 		    div.appendChild(skillLevel);
 			
 		var skillProgressSpan                = document.createElement("span")
-		skillProgressSpan.innerHTML          = '<div class="skillProgress" id="' + name + 'Progress"><div class="skillBar" , id="' + name + 'Bar">0%</div></div>';
+		skillProgressSpan.innerHTML          = '<div class="skillProgress" id="' + id + 'Progress"><div class="skillBar" , id="' + id + 'Bar">0%</div></div>';
 		insert(div, skillProgressSpan)
 		
 		
 		var skillButtonSpan                  = document.createElement("span")
-		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + name + "Button" + '" onclick="pickCurrentSkill(&apos;' + name + '&apos;)">' + mainSkillsNames[i] + '</button>';
+		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + id + "Button" + '" onclick="pickCurrentSkill(&apos;' + id + '&apos;)">' + name + '</button>';
 		insert(div, skillButtonSpan)
 
 
 	}
 
 	for (let i = 1; i < mainVariables.length; i++) {	
-		var showVariableButton                  = document.createElement("span")
-		showVariableButton.innerHTML            = '<button class="specialButton" id="currencyDisplay(' + i + ')" onclick="currencyDisplay(' + i + ')"  style="width:167px;">Show ' + mainVariablesNames[i] + '</button>';
-		document.getElementById('backpackDiv').append(showVariableButton)
+		var e = $("<button />", {
+			class: "specialButton",
+			id: "currencyDisplay(" + i + ")",
+			onclick: "currencyDisplay(" + i + ")",
+			style: "width:167px;"
+		})
+		$(document.getElementById('backpackDiv')).append(e)
+		update("currencyDisplay(" + i + ")", "Show " + mainVariablesNames[i])
 	}
 	
 	for (let i = 0; i < mainVariables.length; i++) {	
@@ -754,10 +770,10 @@ function addHTML(){
 		
 		var e = $("<div />", {
 			id: "backgroundForValues" + avs[i].area,
-			style: "padding:10px;background-color:#FFFFFF;width:100px;display:block;",
+			style: "padding:10px;background-color:#000000;width:100px;display:inline-block;",
 		})
 
-		$(document.getElementById('soulArea' + avs[i].name + 'Width')).prepend(e);
+		$(document.getElementById('soulArea' + avs[i].name)).prepend(e);
 		
 		e = $("<button />", {
 			class: "basicButtonSize",
@@ -773,7 +789,8 @@ function addHTML(){
 
 		for (let j = 0; j < avs[i].v.length; j++) {
 			var avsStat = document.createElement("span")
-			avsStat.innerHTML = '<div class="stat" id="textFor' + avs[i].v[j].name + 'Div">' + avs[i].v[j].id + ' </div><div class="stat ar" id="textFor' + avs[i].v[j].name + '"  style="display:none ; ">0</div><p id="textFor' + avs[i].v[j].name + 'P"  style="display:none ; "> </p><br  id="textFor' + avs[i].v[j].name + 'Br"   style="display:none ; "/>';
+			var fullName = avs[i].name + avs[i].v[j].name
+			avsStat.innerHTML = '<div class="stat" id="textFor' + fullName + 'Div">' + avs[i].v[j].name + ' </div><div class="stat ar" id="textFor' + fullName + '"  style="display:none ; ">0</div><p id="textFor' + fullName + 'P"  style="display:none ; "> </p><br  id="textFor' + fullName + 'Br"   style="display:none ; "/>';
 			document.getElementById('backgroundForValues' + avs[i].area).append(avsStat)
 		}
 	}

@@ -1,12 +1,32 @@
-function loadStuff(savegame) {
+function importGame() {
+	var savegame = JSON.parse(atob(prompt("Import Code: ")))
 	if (savegame !== null) {
-		Object.assign(gameData, savegame);
+		loadStuff(savegame)
+		console.log('loaded')
+		saveGame()
+		console.log('saved')
+		location.reload();
+	}
+}
+
+function loadStuff(savegame) {
+	Object.assign(gameData, gameDataBase)
+	if (savegame !== null) {
+		Object.assign(gameData, savegame)
+		
+		gameData.serf = JSON.parse(JSON.stringify(gameDataBase.serf))
+		Object.assign(gameData.serf, savegame.serf)
+		
 		backwardsCompatibility(gameData.versionNumber)
-		gameData.versionNumber = 132
+		gameData.versionNumber = 164
 		updateAfterLoad()
 	} else {
 		update("newInfo", "Save File Empty.")
 	}
+}
+
+function saveGame() {
+	localStorage.setItem('mathAdventureSave', JSON.stringify(gameData))
 }
 
 function preventNegative(id) {
@@ -19,22 +39,16 @@ function setRotation(id, number) {
 	document.getElementById(id).style.transform = 'rotate(' + number + 'deg)'
 }
 
-function ifMaxDarkGray(x) {
-	button = "buyA" + jsUcfirst(x) + "Button"
-
-	if (gameData[x + 's'] == gameData[x + 'sMax']) {
-		colorChanger(button, grayAccent)
-	} else {
-		colorChanger(button, accent4)
-	}
-}
-
 function hide(x) {
 	tabs(x, "none")
 }
 
-function showBasicDiv(x) {
-	tabs(x, "block")
+function show(x, type) {
+	if (type == 'inline')
+		tabs(x, "inline-block")
+	else
+		tabs(x, "block")
+
 }
 
 function pin(x) {
@@ -48,33 +62,35 @@ function pin(x) {
 }
 
 function normalizeButtons() {
-	$(".juiceMarket").prepend(document.getElementById("deliveryButton"))
-	document.getElementById("deliveryButton").style.width = "120px"
-	document.getElementById("deliveryButton").style.margin = "5px"
+	
+	var x = document.getElementById("deliveryButton")
+	$(".juiceMarket").prepend(x)
+	x.style.width = "120px"
+	x.style.margin = "5px"
 
-	$(".autoCollectingDiv").prepend(document.getElementById("autoCollectingButton"))
-	document.getElementById("autoCollectingButton").style.width = "150px"
-	document.getElementById("autoCollectingButton").style.margin = "5px"
+	x = document.getElementById("autoCollectingButton")
+	$(".autoCollectingDiv").prepend(x)
+	x.style.width = "150px"
+	x.style.margin = "5px"
 
 }
 
 function pinButton() {
 	if (gameData.pin !== "none") {
-		$(".navigateButtons").append(document.getElementById(gameData.pin))
+		var x = document.getElementById(gameData.pin)
+		$(".navigateButtons").append(x)
 
-		document.getElementById(gameData.pin).style.width = "120px"
-		document.getElementById(gameData.pin).style.margin = "0px"
-		document.getElementById(gameData.pin).style.padding = "0px";
+		x.style.width = "120px"
+		x.style.margin = "0px"
+		x.style.padding = "0px"
 	}
-
-	updateValues()
 }
 
 function pickCurrentTask(x) {
 	taskOne = gameData.currentTask
 	taskTwo = gameData.currentTask2
 
-	if (!event.shiftKey && !gameData.dontToggle) {
+	if (!event.shiftKey && gameData.dontToggle) {
 
 		if (gameData.ambidextrousSkillLevel == gameData.ambidextrousSkillLevelMax) {
 			if (taskOne == x && taskOne !== "none" && taskTwo !== x) {
@@ -99,11 +115,10 @@ function pickCurrentTask(x) {
 		startCurrentTask(x)
 	}
 
-	updateValues()
 }
 
 function pickCurrentSkill(x) {
-	if (!gameData.dontToggle && !event.shiftKey && gameData.multitasking) {
+	if (gameData.dontToggle && !event.shiftKey && gameData.multitasking) {
 		if (gameData.currentSkill == x && gameData.currentSkill !== "none") {
 			gameData.currentSkill = "none"
 		} else {
@@ -115,53 +130,23 @@ function pickCurrentSkill(x) {
 }
 
 function startCurrentTask(x) {
-
-	if (x == 'eatFood') {
-		eat()
-	} else if (x == 'delivery') {
-		delivery()
-	} else if (x == 'makeMaxJuice') {
-		makeMaxJuice()
-	} else if (x == 'makeJuice') {
-		makeJuice()
-	} else if (x == 'usePeelers') {
-		peelerPeel()
-	} else if (x == 'useMaxPeelers') {
-		peelerPeelMax()
-	} else if (x == 'autoCurrencyConversionBuy') {
-		coinsToAlphaClick()
-	} else if (x == 'alphaToBeta') {
-		alphaToBetaClick()
-	} else if (x == 'findPieCustomers') {
-		findPieCustomers()
-	}
-
+	if(x !== 'none')
+		eval(x + '()')
 }
 
 function showOrHideSkill(x) {
 	div = x + "Div"
 
-	if (gameData.hideCompletedSkills == 1 && gameData[x + 'skillLevel'] == gameData[x + 'skillLevelMax']) {
-		tabs(div, "none")
-	} else {
-		tabs(div, "block")
-	}
+	if (gameData.hideCompletedSkills == 1 && gameData[x + 'SkillLevel'] == gameData[x + 'SkillLevelMax'])
+		hide(div)
+	else
+		show(div)
 
 }
 
 function overMaximum(x) {
 	if (gameData[x] > gameData[x + 'Max']) {
 		gameData[x] = gameData[x + 'Max']
-	}
-}
-
-function showOrHideClass(input) {
-	classToChange = document.getElementsByClassName(input)
-	for (i = 0; i < classToChange.length; i++) {
-		if (gameData[input])
-			classToChange[i].style.display = "block";
-		else
-			classToChange[i].style.display = "none";
 	}
 }
 
@@ -286,28 +271,7 @@ function beckyRandomMinMax(min, max) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 
-//Recurring function for continuing a loading bar.
-function basicBarSkill(variable, speed) {
 
-	variableBar = variable + "Bar"
-
-	if (gameData[variableBar] <= 99.5) {
-
-		gameData[variableBar] += 0.5
-
-		if (speed == 'slow')
-			setTimeout(variableBar + "()", (1000 / (gameData.intelligenceSkillLevel * 2 / 20 + 1)) / gameData.tickspeed)
-		else
-			setTimeout(variableBar + "()", (100 / (gameData.intelligenceSkillLevel * 2 / 20 + 1)) / gameData.tickspeed)
-
-	} else {
-
-		gameData[variable + "SkillLevel"] += 1
-		gameData[variable] += 2
-
-	}
-	moveBar(variable)
-}
 
 function sleep(milliseconds) {
 	const date = Date.now();
@@ -315,40 +279,6 @@ function sleep(milliseconds) {
 	do {
 		currentDate = Date.now();
 	} while (currentDate - date < milliseconds);
-}
-
-function restartBar(x) {
-	if (gameData[x + "Bar"] < 100 && gameData[x + "Bar"] != 0) {
-		eval(x + "Bar()")
-	}
-}
-
-function restartBarNoMovement(x) {
-	if (gameData[x + 'Bar'] < 100 && gameData[x + 'Bar'] != 0) {
-		eval(x + "Bar(0)")
-	}
-}
-
-function barStart(variable) {
-	variableBar = variable + "Bar"
-	if (gameData[variableBar] == 100 || gameData[variableBar] == 0) {
-		gameData[variableBar] = 0
-		eval(variableBar + "()")
-	}
-}
-
-//Starts a granular loading bar for basic skills.
-function barStartGranularSkillBasic(variable, useSkillTrainer) {
-	variableBar = variable + "Bar"
-	if ((gameData[variableBar] == 100 || gameData[variableBar] == 0) && (gameData[variable + "SkillLevel"] < gameData[variable + "SkillLevelMax"] && gameData.eat >= gameData[variable + "SkillLevel"])) {
-		gameData.eat -= gameData[variable + "SkillLevel"]
-		if (gameData.skillTrainer == 1 && useSkillTrainer == true) {
-			gameData[variableBar] = 100
-		} else {
-			gameData[variableBar] = 0
-		}
-		eval(variableBar + "()")
-	}
 }
 
 function update(id, content) {
@@ -365,10 +295,10 @@ function updateNumber(id) {
 		val = valRaw.toLocaleString()
 
 	if ((gameData[id + 'UnlockedVariable'] && gameData[id + 'ShowVariable']) || id == 'limes') {
-		showBasicDiv(elem + 'Div')
-		showBasicDiv(elem + 'Br')
-		showBasicDiv(elem + 'P')
-		showBasicDiv(elem)
+		show(elem + 'Div')
+		show(elem + 'Br')
+		show(elem + 'P')
+		show(elem)
 	} else {
 		hide(elem + 'Div')
 		hide(elem + 'Br')
@@ -384,21 +314,19 @@ function updateAreaNumbers() {
 	for (let i = 0; i < avs.length; i++) {
 		for (let j = 0; j < avs[i].v.length; j++) {
 			id = avs[i].v[j].id
-			elem = "textFor" + avs[i].v[j].name
+			elem = "textFor" + avs[i].name + avs[i].v[j].name
 			valRaw = gameData[avs[i].area][avs[i].v[j].id]
-
-
 
 			if (valRaw > 1e9)
 				val = valRaw.toExponential(3)
 			else
 				val = valRaw.toLocaleString()
 
-			if ((gameData[id + 'UnlockedVariable'] && gameData[id + 'ShowVariable']) || id == 'limes') {
-				showBasicDiv(elem + 'Div')
-				showBasicDiv(elem + 'Br')
-				showBasicDiv(elem + 'P')
-				showBasicDiv(elem)
+			if ((gameData[id + 'UnlockedVariable'] && gameData[id + 'ShowVariable']) || j == 0) {
+				show(elem + 'Div')
+				show(elem + 'Br')
+				show(elem + 'P')
+				show(elem)
 			} else {
 				hide(elem + 'Div')
 				hide(elem + 'Br')
@@ -442,20 +370,18 @@ function colorChangerText(id, content) {
 
 function checkShow(i, n, txt) {
 	if (i >= n) {
-		tabs(txt, "block")
+		show(txt)
 	}
 }
 
 function checkHide(i, txt) {
-	if (i > 0) {
+	if (i > 0)
 		hide(txt)
-	}
 }
 
 function checkShow(i, txt) {
-	if (i >= 1) {
-		tabs(txt, "block")
-	}
+	if (i >= 1)
+		show(txt)
 }
 
 function increaseValue(id) {
@@ -472,25 +398,25 @@ function decreaseValue(id) {
 
 function checkShowOrHide(i, txt) {
 	if (i >= 1) {
-		tabs(txt, "block")
+		show(txt)
 	} else {
-		tabs(txt, "none")
+		hide(txt)
 	}
 }
 
 function checkShowSmart(i, txt) {
 	if (gameData[i] >= 1) {
-		tabs(txt, "block")
+		show(txt)
 	} else {
-		tabs(txt, "none")
+		hide(txt)
 	}
 }
 
 function checkHideOrShow(i, txt) {
 	if (i >= 1) {
-		tabs(txt, "none")
+		hide(txt)
 	} else {
-		tabs(txt, "block")
+		show(txt)
 	}
 }
 
@@ -502,27 +428,8 @@ function saveAfterWipe(id) {
 	eval('gameData.' + id + '=' + id + 'Now')
 }
 
-function saveGame() {
-	localStorage.setItem('mathAdventureSave', JSON.stringify(gameData))
-}
-
 function exportGame() {
 	update("exportCode", btoa(JSON.stringify(gameData)))
-}
-
-function importGame() {
-	var savegame = JSON.parse(atob(prompt("Import Code: ")))
-	if (savegame !== null) {
-		Object.assign(gameData, gameDataBase)
-		loadStuff(savegame)
-		saveGame()
-		location.reload();
-	}
-}
-
-function loadGame() {
-	var savegame = JSON.parse(localStorage.getItem("mathAdventureSave"))
-	loadStuff(savegame)
 }
 
 function resetGame() {
@@ -534,46 +441,20 @@ function resetGame() {
 }
 
 function backwardsCompatibility(versionNumber) {
-	if (versionNumber == undefined || versionNumber < 30) {
-
-		gameData.basketsMax = 50
-		gameData.juicersMax = 100
-		gameData.peelersMax = 500
-		gameData.intelligenceSkillLevelMax = 20
-	}
-	if (versionNumber < 78) {
-
-		gameData.diseaseArray = [
-			[0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0],
-			[0, 0, 0, 0, 0]
-		]
-		diseaseControlQuit()
-	}
-	
 	if (gameData.pin == 'sellYourJuiceButton')
 		gameData.pin = 'deliveryButton'
+	
+	if (gameData.versionNumber < 142)
+	{
+		gameData.currentTask = 'none'
+		gameData.currentTask2 = 'none'
+	}
 }
 
 function setValue(id, amount) {
 	gameData[id] = amount
 }
 
-function barMover(id, amount, time){
-	gameData[id + 'Bar'] += amount;
-	moveBar(id)
-	setTimeout(eval(id + 'Bar'), time / gameData.tickspeed)
-}
-
-function barMoverAdvanced(id, amount, time){
-	if (gameData[id + 'Bar'] < 100) {
-		barMover(id, amount, time)
-	} else {
-		if (gameData[id + 'Bar'] > 100)
-			gameData[id + 'Bar'] = 100
-		eval(id + 'BarEnd()')
-	}
-
+function addTo(e, where){
+	$(document.getElementById(where)).append(e)
 }
