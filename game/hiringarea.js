@@ -100,26 +100,22 @@ function buyAdvertisingManager() {
 }
 
 function advertise() {
-	if ((gameData.advertiseBar == 100 || gameData.advertiseBar == 0) && gameData.isAdvertising == 0) {
-		if ((gameData.coins >= gameData.advertisePrice && gameData.advertisePriceType == 'coins') || (gameData.betaCoins >= gameData.advertisePrice && gameData.advertisePriceType == 'betaCoins')) {
-			gameData[gameData.advertisePriceType] -= gameData.advertisePrice
-			gameData.typeToHire = gameData.typeToHireToggle
-			gameData.advertiseBar = 0
-			gameData.isAdvertising = 1
-			advertiseBar()
-		}
+	if (canStartBar('advertise') && gameData[gameData.advertisePriceType] >= gameData.advertisePrice) {
+		gameData[gameData.advertisePriceType] -= gameData.advertisePrice
+		gameData.typeToHire = gameData.typeToHireToggle
+		barStart('advertise')
 	}
 }
 
 function advertiseBar() {
-	barMoverAdvanced('advertise', 0.5, 100 / (gameData.advertisingLevel2 * 2 * gameData.advertisingLevel3 + gameData.advertisingLevel2 + 2 * gameData.advertisingLevel3 + 1))
+	barMoverAdvanced('advertise', 100 / (gameData.advertisingLevel2 * 2 * gameData.advertisingLevel3 + gameData.advertisingLevel2 + 2 * gameData.advertisingLevel3 + 1))
 }
 
 function advertiseBarEnd() {
 	gameData.applicationReady = 1
 	gameData.hasAdvertised = 1
 	randomizeApplication()
-	gameData.isAdvertising = 0
+	gameData.advertiseBarRunning = false
 }
 
 function updateHiringArea() {
@@ -134,7 +130,7 @@ function updateHiringArea() {
 				"Hunger: " + gameData.applicantHunger.toLocaleString() + " Limes Per Second." + "<br>" +
 				"<br>"
 			)
-			showBasicDiv("applicationInfo")
+			show("applicationInfo")
 		} else if (gameData.applicationType == 1) {
 
 			update("application",
