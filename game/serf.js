@@ -11,7 +11,7 @@ function harvestRice(){
 }
 
 function harvestRiceBar(){
-	barMoverAdvanced('harvestRice', 15, 1)
+	barMoverAdvanced('harvestRice', 1, 15)
 }
 
 function harvestRiceBarEnd(){
@@ -86,7 +86,7 @@ function updateSerfStuff(){
 
 	
 	if(gameData.serf.health == 0)
-		show('acceptLordsFood')
+		showBasicDiv('acceptLordsFood')
 	else
 		hide('acceptLordsFood')
 	

@@ -1,62 +1,101 @@
+var diseaseArrayDimensions = 5;
+
 function startSimulation() {
+
 	if (gameData.civiliansPlaced == gameData.civiliansTotal) {
-		for (x = 0; x < 5; x++)
-			for (y = 0; y < 5; y++)
-				if (gameData.diseaseArray[x][y] == 1 || gameData.diseaseArray[x][y] == 3)
-					for (xSpread = x - 1; xSpread < x + 2; xSpread++)
-						for (ySpread = y - 1; ySpread < y + 2; ySpread++)
-							if ((xSpread < 5 && xSpread >= 0 && ySpread < 5 && ySpread >= 0) && !(x == xSpread && y == ySpread)) {
+
+		for (x = 0; x < diseaseArrayDimensions; x++) {
+
+			for (y = 0; y < diseaseArrayDimensions; y++) {
+
+				if (gameData.diseaseArray[x][y] == 1 || gameData.diseaseArray[x][y] == 3) {
+					
+					for (xSpread = x - 1; xSpread < x + 2; xSpread++) {
+
+						for (ySpread = y - 1; ySpread < y + 2; ySpread++) {
+
+							if ((xSpread < diseaseArrayDimensions && xSpread >= 0 && ySpread < diseaseArrayDimensions && ySpread >= 0) && !(x == xSpread && y == ySpread)) {
+								
 								if (gameData.diseaseArray[xSpread][ySpread] == 0)
 									gameData.diseaseArray[xSpread][ySpread] = 2
+								
 								else if (gameData.diseaseArray[xSpread][ySpread] == 1)
 									gameData.diseaseArray[xSpread][ySpread] = 3
+								
 							}
+						}
+					}
+				}
+			}
+		}
 		gameData.simulationTime = 1
+
 		if (gameData.autoCheckSimulation)
 			checkResults()
-		updateMapTileAesthetic()
+		else
+			updateMapTileAesthetic()
 	}
 }
 
 function diseaseControlQuit() {
 	diseaseControlFailed = 1
-	gameData.diseaseControlFinished = 1
-	diseaseControlReset()
-	countPointsForDiseaseTask()
+	countPoints(1)
 }
 
 function checkResults() {
-	if (gameData.civiliansPlaced == gameData.civiliansTotal && gameData.simulationTime) {
+
+	if (gameData.civiliansPlaced == gameData.civiliansTotal && gameData.simulationTime == 1) {
 		diseaseControlFailed = 0
-		for (x = 0; x < 5; x++)
-			for (y = 0; y < 5; y++)
-				if (gameData.diseaseArray[x][y] == 3)
+		for (x = 0; x < diseaseArrayDimensions; x++) {
+
+			for (y = 0; y < diseaseArrayDimensions; y++) {
+
+				if (gameData.diseaseArray[x][y] == 3) {
+
 					diseaseControlFailed = 1
-		gameData.diseaseControlFinished = 1
-		diseaseControlReset()
-		countPointsForDiseaseTask()
+				}
+			}
+		}
+		
+		countPoints(diseaseControlFailed)
 	}
 }
 
-function countPointsForDiseaseTask() {
-	points = 1 + gameData.limeDiseaseLakesSet + gameData.respectBillboard
-	
-	if (gameData.limeDiseaseLakes < 10)
+function countPoints(diseaseControlFailed) {
+
+	if (gameData.limeDiseaseLakesSet < 10)
 		benevolenceRespectIncrease = 0
 	else
-		benevolenceRespectIncrease = (Math.pow(2, gameData.limeDiseaseLakes - 10)) * gameData.benevolence
+		benevolenceRespectIncrease = (Math.pow(2, gameData.limeDiseaseLakesSet - 10)) * gameData.benevolence
+	
+	
+	
 	
 	if (gameData.benevolenceToggle)
-		points += benevolenceRespectIncrease 
-	if (diseaseControlFailed)
-		points *= (-1)
-	gameData.respect += points
-	if (gameData.autoStartTask == 1)
+		points = gameData.limeDiseaseLakesSet + 1 + benevolenceRespectIncrease + gameData.respectBillboard
+	else
+		points = gameData.limeDiseaseLakesSet + 1 + gameData.respectBillboard
+
+	points += gameData.wisdomUpgradecriticalAcclaimLevel
+	
+	if (diseaseControlFailed) 
+		gameData.respect -= points
+	else
+		gameData.respect += points
+
+
+	gameData.diseaseControlFinished = 1
+	
+	diseaseControlReset()
+	
+	if (gameData.autoStartTask)
 		diseaseControlTask()
+	
 	updateMapTileAesthetic()
 }
 
 function mapTile(x, y) {
+
 	if (!gameData.diseaseControlFinished) {
 		if (gameData.diseaseArray[x][y] == 0 && gameData.civiliansPlaced < gameData.civiliansTotal) {
 			gameData.diseaseArray[x][y] = 1
@@ -66,8 +105,10 @@ function mapTile(x, y) {
 			gameData.civiliansPlaced -= 1
 		}
 	}
+	
 	if (gameData.autoStartSimulation)
 		startSimulation()
+
 	updateMapTileAesthetic()
 }
 
@@ -75,13 +116,14 @@ function diseaseControlTask() {
 
 	if (gameData.diseaseControlFinished) {
 		gameData.diseaseControlFinished = 0
-		gameData.limeDiseaseLakesSet = gameData.limeDiseaseLakes
 		gameData.civiliansTotal = beckyRandom(4)
 
 		tiles = gameData.numberOfTiles - 16
+		
+		gameData.limeDiseaseLakesSet = gameData.limeDiseaseLakes
 
 
-		for (gameData.limeDiseaseLakesCurrent = 0; gameData.limeDiseaseLakesCurrent < gameData.limeDiseaseLakesSet; gameData.limeDiseaseLakesCurrent) {
+		for (gameData.limeDiseaseLakesCurrent = 0; gameData.limeDiseaseLakesCurrent < gameData.limeDiseaseLakes; gameData.limeDiseaseLakesCurrent) {
 
 			x = beckyRandom(5) - 1
 			y = beckyRandom(5) - 1
@@ -92,7 +134,7 @@ function diseaseControlTask() {
 			}
 		}
 
-		if (gameData.autoPlaceACivilian == 1 && gameData.numberOfTiles !== gameData.limeDiseaseLakesSet) {
+		if (gameData.autoPlaceACivilian == 1 && gameData.numberOfTiles !== gameData.limeDiseaseLakes) {
 
 			for (i = 0; gameData.civiliansPlaced < 1; i) {
 
@@ -110,10 +152,11 @@ function diseaseControlTask() {
 }
 
 function diseaseControlReset() {
+
 	for (x = 0; x < 5; x++)
 		for (y = 0; y < 5; y++)
-				gameData.diseaseArray[x][y] = 0
-
+			gameData.diseaseArray[x][y] = 0
+		
 	gameData.civiliansPlaced = 0
 	gameData.simulationTime = 0
 	updateMapTileAesthetic()
@@ -125,42 +168,41 @@ function changeLakeAmount(x) {
 }
 
 function updateMapTileAesthetic() {
-
 	for (x = 0; x < 5; x++) {
 		for (y = 0; y < 5; y++) {
 
-			id = "mapTile-" + x + "-" + y
+			whichButton = "mapTile-" + x + "-" + y
 			tileType = (gameData.diseaseArray[x][y])
 
 
 			if (tileType == 0) { //Blank
-				colorChanger(id, accent4)
+				colorChanger(whichButton, accent4)
 				if (gameData.diseaseTileSymbols)
-					update(id, "‏‏‎ ‎‏‏‎ ‎‎")
+					update(whichButton, "‏‏‎ ‎‏‏‎ ‎‎")
 			} else if (tileType == 1) { //Civillian
-				colorChanger(id, limesRelatedAccent)
+				colorChanger(whichButton, limesRelatedAccent)
 				if (gameData.diseaseTileSymbols)
-					update(id, ":)")
+					update(whichButton, ":)")
 
 			} else if (tileType == 2) { //Disease
-				colorChanger(id, "#FF999A")
+				colorChanger(whichButton, "#FF999A")
 				if (gameData.diseaseTileSymbols)
-					update(id, " +")
+					update(whichButton, " +")
 
 			} else if (tileType == 3) { //Dead Civillian
-				colorChanger(id, "#565656")
+				colorChanger(whichButton, "#565656")
 				if (gameData.diseaseTileSymbols)
-					update(id, ":(")
+					update(whichButton, ":(")
 
-			} else { //Lake
-				colorChanger(id, "#4DFFFF")
+			} else if (tileType == 4) { //Lake
+				colorChanger(whichButton, "#4DFFFF")
 				if (gameData.diseaseTileSymbols)
-					update(id, "_")
+					update(whichButton, "_")
 
 			}
 
 			if (!gameData.diseaseTileSymbols)
-				update(id, "‎‎‎‏‏‎")
+				update(whichButton, "‎‎‎‏‏‎")
 
 		}
 	}
@@ -168,11 +210,27 @@ function updateMapTileAesthetic() {
 
 function updateDiseaseStuffSlow(){
 	
-	for (let i = 0; i <= 3; i++) {
-		if(gameData.numberOfTiles >= 17 + i)
-			show('mapTile-4-' + i, 'inline')
+	if(gameData.numberOfTiles >= 17)
+	{
+		tabs('mapTile-4-0', 'inline-block')
 	}
-
+	if(gameData.numberOfTiles >= 18)
+	{
+		tabs('mapTile-4-1', 'inline-block')
+	}
+	if(gameData.numberOfTiles >= 19)
+	{
+		tabs('mapTile-4-2', 'inline-block')
+	}
+	if(gameData.numberOfTiles >= 20)
+	{
+		tabs('mapTile-4-3', 'inline-block')
+	}
+	if(gameData.numberOfTiles >= 21)
+	{
+		gameData.numberOfTiles = 20
+	}
+	
 	if (gameData.autoStartSimulation)
 		startSimulation()
 	
