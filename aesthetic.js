@@ -3,7 +3,7 @@ background = "#3C3C3C"; //Background Color
 
 accent0 = "#222222"; //Main Color
 accent1 = "#4DFE89"; //Accent Color
-accent2 = "gray"; //When buttons are toggled off
+accent2 = "#898989"; //When buttons are toggled off
 accent3 = "#4DFE89"; //When buttons are toggled on
 accent4 = "#DEAD85"; //Special Buttons
 accent4Dark = "#C67848"; //Special Buttons Dark
@@ -17,15 +17,15 @@ yellowAccent = "#FCFF4E";
 function addAesthetic() {
 	var one = document.getElementById('skillsSection1')
 	var two = document.getElementById('skillsSection2')
-	var skillsuwu = document.getElementById('skills')
+	var skills = document.getElementById('skills')
 	
 	if (gameData.desktopMode == 0) {
-		skillsuwu.style.width = '380px'
+		skills.style.width = '380px'
 		one.style.position = 'relative'
 		two.style.position = 'relative'
 		update("desktopModeButton", "In Mobile Mode")
 	} else {
-		skillsuwu.style.width = '760px'
+		skills.style.width = '760px'
 		one.style.top = '0'
 		one.style.position = 'absolute'
 		two.style.position = 'absolute'
@@ -65,7 +65,7 @@ function addAesthetic() {
 	toggleAesthetic("autoAdvertiseBroker")
 	toggleAesthetic("increaseJuicePricex10")
 	toggleAesthetic("pieConveyorBeltOn")
-	toggleAesthetic("dontToggle")
+	toggleAesthetic("toggleActions")
 	toggleAesthetic("textForA2BBrokerAmountToggle")
 
 	currentTaskAesthetic('peelerPeel')
@@ -75,6 +75,8 @@ function addAesthetic() {
 	currentTaskAesthetic('eat')
 	currentTaskAesthetic('delivery')
 	currentTaskAesthetic('findPieCustomers')
+	currentTaskAesthetic('scavenge')
+
 
 	ifMaxDarkGray("basket")
 	ifMaxDarkGray("juicer")
@@ -207,10 +209,18 @@ function addAesthetic() {
 			colorChanger(button, accent4)
 	}
 
+	function currentSkillAesthetic(x) {
+		button = x + "Button"
+		if (gameData.currentSkill == x)
+			colorChanger(button, accent4Dark)
+		else
+			colorChanger(button, accent4)
+	}
+
 	if (gameData.lookAround == 3)
 		hide('lookAroundButton')
 	else
-		show('lookAroundButton', "inline")
+		tabs('lookAroundButton', "inline-block")
 
 	if (gameData.juiceBulkAmountToggle == 100 && gameData.deliveryTypeToggle < 2)
 		colorChanger('increaseJuiceSoldButton', grayAccent)
@@ -228,12 +238,8 @@ function addAesthetic() {
 			x[i].style['padding'] = "1px 10px 1px 10px";
 			x[i].style['border-radius'] = "12px";
 		}
-		for (let i = 0; i < skills.length; i++) {
-			button = skills[i].id + "Button"
-			if (gameData.currentSkill == skills[i].id)
-				colorChanger(button, accent4Dark)
-			else
-				colorChanger(button, accent4)
+		for (let i = 0; i < mainSkills.length; i++) {
+			currentSkillAesthetic(mainSkills[i])
 		}
 	} else {
 		for (i = 0; i < x.length; i++) {
@@ -272,6 +278,7 @@ function addAestheticBase() {
 	selectedWheatItemAesthetic(gameData.selectedWheatItem)
 	changeVariablesColorAesthetic()
 	updateFieldTileAesthetic()
+	updateScavengeTileAesthetic()
 	normalizeButtons()
 	pinButton()
 }

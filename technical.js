@@ -19,6 +19,7 @@ var gameDataBase = {
     specialAchievement2: 0,
 
     thisTownDeliveries: 0,
+    limesPerClick: 1,
     knife: 0,
     peeledLimes: 0,
     limeTypeToJuice: 0,
@@ -63,6 +64,7 @@ var gameDataBase = {
     eatBarRunning: false,
     juicerBarRunning: false,
     peelerBarRunning: false,
+    autoCollectingBarRunning: false,
 
 
     autoCollectingBar: 0,
@@ -210,6 +212,16 @@ var gameDataBase = {
     currentTask: "none",
     currentTask2: "none",
 
+
+	keenEyeSkillLevelMax:         20,
+	intelligenceSkillLevelMax:    20,
+	limebidextrousSkillLevelMax:  50,
+	knifebidextrousSkillLevelMax: 20,
+	rottenWisdomSkillLevelMax:    50,
+	motivationSkillLevelMax:     100,
+	ambidextrousSkillLevelMax:   20,
+	bitterSpeedSkillLevelMax:   200,
+
 		
 	knifebidextrous: 0,
     limebidextrous: 0,
@@ -217,7 +229,7 @@ var gameDataBase = {
 	
     desktopMode: 1,
 	shiftClickOption: 0,
-	dontToggle: 0,
+	toggleActions: 0,
 	
 	isAutoCollecting: 0,
 	
@@ -299,6 +311,7 @@ var gameDataBase = {
 	autoAdvertiseAmountValue: 5, 
 	advertisePrice: 10,
 	advertisePriceType: 'coins',
+	isAdvertising: 0,
 	basketScarecrow: 0,
 	moreVisibleVariables: 0,
 	invertText: 0,
@@ -339,12 +352,13 @@ var gameDataBase = {
 	piePrice: 1,
 	findPieCustomersBar: 0,
 	couldFindCustomer: 2,
-	isFindingPieCustomers: 0,
 	isThereACustomer: 0,
+	findPieCustomersBarRunning: false,
 	customerWaitTime: 0,
 	hasSoldPie: 0,
 	pieConveyorBelt : 0,
 	pieConveyorBeltOn: 0,
+	bakePieBarRunning: false,
 	
 	pieBucket: 0,
 	pieFlourBucket: 0,
@@ -401,6 +415,7 @@ var gameDataBase = {
 	flour: 0,
 	pieOven: 0,
 	bakePieBar: 0,
+	bakePieBarRunning: false,
 	juiceAsPieIngredient: 0,
 	flourAsPieIngredient: 0,
 	pieCoins: 0,
@@ -451,44 +466,75 @@ var gameDataBase = {
 	harvestRiceBar: 0,
 	serfHealthBar: 0,
 	newBakerySerf: 0,
+	
+    scavengeUnlocked: 0,
+	scavengeBar: 0,
+	scavengeBarRunning: false,
+	scavengeLoot: [],
+	scavengeLootSelected: -1,
+	scavengeRing: 'empty',
+	scavengeRingPowerLevel: 0,
+	
+	enlightenmentUnlocked: 0,
+	diseaseControlTaskShown: false,
+	enlightenmentTaskShown: false,
+	currentEnlightenment: 'none',
+	currentEnlightenmentHinderance: 'none',
+	enlightenmentEntrepreneurialCompletions: 0,
+	realLimes: 0,
+	wisdom: 0,
+	allWisdom: 0,
+	buyWisdomPieCoinsPrice: 100,
+	buyWisdomBetaCoinsPrice: 100,
+	buyWisdomRespectPrice: 10000,
+	enlightenmentSelected: 'none',
+	enlightenmentHinderanceSelected: 'none',
+
 
 }
 
 
-	for (let i = 1; i <= 7; i++) {
-		gameDataBase['achievement' + i] = 0
-	}
-	
-	for (let i = 0; i < skills.length; i++) {
-		gameDataBase[skills[i].id + 'Bar'] = 0
-		gameDataBase[skills[i].id + 'SkillLevel'] = 0
-		
-		maxLevel = 20
-		if (skills[i].maxLevel)
-			maxlevel = skills[i].maxLevel
-		
-		
-		gameDataBase[skills[i].id + 'SkillLevel'] = maxLevel
-		gameDataBase[skills[i].id + 'BarRunning'] = false
-	}
+for (let i = 1; i <= 7; i++) {
+	gameDataBase['achievement' + i] = 0
+}
 
-	for (let i = 0; i < mainVariables.length; i++) {
-		gameDataBase[mainVariables[i] + 'ShowVariable'] = true
-		gameDataBase[mainVariables[i] + 'UnlockedVariable'] = false
-	}
-	
-	for (let i = 0; i < avs.length; i++) {
-		for (let j = 0; j < avs[i].v.length; j++) {
-			gameDataBase[avs[i].area][avs[i].v[j].id + 'ShowVariable'] = true
-			gameDataBase[avs[i].area][avs[i].v[j].id + 'UnlockedVariable'] = false
-		}
-	}
+for (let i = 0; i < mainSkills.length; i++) {
+	gameDataBase[mainSkills[i] + 'Bar'] = 0
+	gameDataBase[mainSkills[i] + 'SkillLevel'] = 0
+	gameDataBase[mainSkills[i] + 'BarRunning'] = false
+}
 
+for (let i = 0; i < mainVariables.length; i++) {
+	gameDataBase[mainVariables[i] + 'ShowVariable'] = true
+	gameDataBase[mainVariables[i] + 'UnlockedVariable'] = false
+}
+
+for (let i = 0; i < avs.length; i++) {
+	for (let j = 0; j < avs[i].v.length; j++) {
+		gameDataBase[avs[i].area][avs[i].v[j].id + 'ShowVariable'] = true
+		gameDataBase[avs[i].area][avs[i].v[j].id + 'UnlockedVariable'] = false
+	}
+}
+
+for (let i = 0; i < 4; i++) {
+	gameDataBase.scavengeLoot[i] = {name: 'empty'}
+}
+
+for (let i = 0; i < enlightenments.length; i++) {
+	gameDataBase['enlightenmentCompletions' + enlightenments[i].id] = 0
+}
+
+for (let i = 0; i < wisdomUpgrades.length; i++) {
+	gameDataBase['wisdomUpgrade' + wisdomUpgrades[i].id + 'Level'] = 0
+	gameDataBase['wisdomUpgrade' + wisdomUpgrades[i].id + 'Price'] = wisdomUpgrades[i].initialPrice
+}
 
 var gameData = {}
 
+ableToSave = true
+
 function gameStart() {
-	
+		
 	addHTML()
 		
 	surveyingBarDoMove = 0
@@ -513,7 +559,6 @@ function gameStart() {
 
 	tab(gameData.mainTab)
     tabMarket(gameData.marketTab)
-    tabStore("plebian")
     tabTasks("earn")
     tabScience("research")
 	tabOptions("gameOptions")
@@ -525,18 +570,18 @@ function tab(tabby) {
 	gameData.mainTab = tabby
     update("exportCode", "")
 
-    hide("options")
-    hide("market")
-    hide("inventory")
-    hide("achievements")
-    hide("skills")
-    hide("megaCoinUpgrades")
-    hide("tasks")
-    hide("company")
-    hide("forest")
-    hide("science")
-    hide("bakery")
-    hide("field")
+    tabs("options", "none")
+    tabs("market", "none")
+    tabs("inventory", "none")
+    tabs("achievements", "none")
+    tabs("skills", "none")
+    tabs("megaCoinUpgrades", "none")
+    tabs("tasks", "none")
+    tabs("company", "none")
+    tabs("forest", "none")
+    tabs("science", "none")
+    tabs("bakery", "none")
+    tabs("field", "none")
 
 
 	
@@ -554,35 +599,34 @@ function tab(tabby) {
 	colorChanger('fieldButton', '#C67848')
 
 
+	if( tabby !== "null") {
+		if (tabby == "options") {
+			if (!gameData.isOptionsOpen) {
+				gameData.isOptionsOpen = 1
+				document.getElementById(tabby).style.display = "inline-block"
+				colorChanger(tabby + "Button", "#898989")
+			} else
+				gameData.isOptionsOpen = 0
 
-    if (tabby == "options" && tabby !== "null") {
-        if (gameData.isOptionsOpen == 0) {
-            gameData.isOptionsOpen = 1
-            document.getElementById(tabby).style.display = "inline-block"
+
+		} else {
+
+			gameData.isOptionsOpen = 0
+			document.getElementById(tabby).style.display = "inline-block"
+
 			colorChanger(tabby + "Button", "#898989")
+			
+			if(tabby == 'science')
+				colorChanger(tabby + "Button", "#4D88FE")
+			if(tabby == 'tasks')
+				colorChanger(tabby + "Button", "#FF4DFF")
+			if(tabby == 'megaCoinUpgrades')
+				colorChanger(tabby + "Button", "#FF4D4D")
+			if(tabby == 'field')
+				colorChanger(tabby + "Button", "#964D1A")
 
-
-        } else if (gameData.isOptionsOpen == 1) {
-            gameData.isOptionsOpen = 0
-        }
-
-
-    } else if (tabby !== "options" && tabby !== "null") {
-
-        gameData.isOptionsOpen = 0
-        document.getElementById(tabby).style.display = "inline-block"
-		colorChanger(tabby + "Button", "#898989")
-		
-		if(tabby == 'science')
-			colorChanger(tabby + "Button", "#4D88FE")
-		if(tabby == 'tasks')
-			colorChanger(tabby + "Button", "#FF4DFF")
-		if(tabby == 'megaCoinUpgrades')
-			colorChanger(tabby + "Button", "#FF4D4D")
-		if(tabby == 'field')
-			colorChanger(tabby + "Button", "#964D1A")
-
-    }
+		}
+	}
 
 }
 
@@ -595,7 +639,6 @@ function tabMarket(tabby) {
 	
 	gameData.marketTab = tabby
 
-	tabManager('marketStore')	
 	tabManager('marketMain')	
 	tabManager('hiringArea')	
 	tabManager('travel')	
@@ -612,8 +655,8 @@ function tabMarket(tabby) {
 }
 
 function tabTasks(tabby) {
-    hide("earn")
-    hide("milestones")
+    tabs("earn", "none")
+    tabs("milestones", "none")
 	
 	colorChanger('earnButton', '#BBBBBB')
 	colorChanger('milestonesButton', '#BBBBBB')	
@@ -622,22 +665,10 @@ function tabTasks(tabby) {
     document.getElementById(tabby).style.display = "block"
 }
 
-function tabStore(tabby) {
-    hide("plebian")
-    hide("patrician")
-	
-	colorChanger('plebianButton', '#BBBBBB')
-	colorChanger('patricianButton', '#BBBBBB')
-	
-    document.getElementById(tabby).style.display = "block"
-	colorChanger(tabby + "Button", "#898989")
-
-}
-
 function tabOptions(tabby) {
-    hide("gameOptions")
-    hide("uiOptions")
-    hide("statsOptions")
+    tabs("gameOptions", "none")
+    tabs("uiOptions", "none")
+    tabs("statsOptions", "none")
 
 	
     document.getElementById(tabby).style.display = "block"
@@ -721,27 +752,23 @@ function fixOverMaxedVariables(){
 
 function addHTML(){
 	
-	for (let i = 0; i < skills.length; i++) {
+	for (let i = 0; i < mainSkills.length; i++) {
 	
-		var id = skills[i].id
-		var div = document.getElementById(id + "Div")
-		var name = jsUcfirst(id)
-		
-		if (skills[i].name)
-			name = skills[i].name
+		var name = mainSkills[i]
+		var div = document.getElementById(name + "Div")
 		
 		var skillLevel       = document.createElement("p");
-		    skillLevel.id    = id + "SkillLevel";
+		    skillLevel.id    = name + "SkillLevel";
 		    skillLevel.classList.add("basicText");
 		    div.appendChild(skillLevel);
 			
 		var skillProgressSpan                = document.createElement("span")
-		skillProgressSpan.innerHTML          = '<div class="skillProgress" id="' + id + 'Progress"><div class="skillBar" , id="' + id + 'Bar">0%</div></div>';
+		skillProgressSpan.innerHTML          = '<div class="skillProgress" id="' + name + 'Progress"><div class="skillBar" , id="' + name + 'Bar">0%</div></div>';
 		insert(div, skillProgressSpan)
 		
 		
 		var skillButtonSpan                  = document.createElement("span")
-		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + id + "Button" + '" onclick="pickCurrentSkill(&apos;' + id + '&apos;)">' + name + '</button>';
+		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + name + "Button" + '" onclick="pickCurrentSkill(&apos;' + name + '&apos;)">' + mainSkillsNames[i] + '</button>';
 		insert(div, skillButtonSpan)
 
 
@@ -758,12 +785,24 @@ function addHTML(){
 		update("currencyDisplay(" + i + ")", "Show " + mainVariablesNames[i])
 	}
 	
-	for (let i = 0; i < mainVariables.length; i++) {	
+	for (let i = 0; i < mainVariables.length; i++) {
 		var id = jsUcfirst(mainVariables[i])
 		var stat                  = document.createElement("span")
 		stat.innerHTML            = '<div class="stat" id="textFor' + id + 'Div">' + mainVariablesNames[i] + ' </div><div class="stat ar" id="textFor' + id + '"  style="display:none ; ">0</div><p id="textFor' + id + 'P"  style="display:none ; "> </p><br  id="textFor' + id + 'Br"   style="display:none ; "/>';
-		document.getElementById('backgroundForValues').append(stat)
+		if (i == 11)
+			document.getElementById('backgroundForValues').prepend(stat)
+		else
+			document.getElementById('backgroundForValues').append(stat)
 	}
+
+	var stat                  = document.createElement("span")
+	stat.innerHTML            = '<br>'
+	document.getElementById('backgroundForValues').prepend(stat)
+
+
+	document.getElementById('textForCoins').classList.add("tooltip");
+	document.getElementById('textForAlphaCoins').classList.add("tooltip");
+
 	
 	for (let i = 0; i < avs.length; i++) {
 		
@@ -811,6 +850,11 @@ function addHTML(){
 		}
 	}
 	
-
+	for (let i = 0; i < 4; i++) {	
+			var scavengeLoot                  = document.createElement("span")
+			scavengeLoot.innerHTML            = '<button style="width:80px;height:80px;margin:5px;background-color:black;" onclick="selectScavengedLoot(' + i + ')" id="scavengeLoot' + i + '"></button>'
+			document.getElementById('forestScavengeInventory').append(scavengeLoot)
+	}
 	
+	addEnlightenments()
 }
