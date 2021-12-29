@@ -24,18 +24,23 @@ function quitEnlightenment (id) {
 	didWin = false
 	whatTask = ''
 	
-	for (let i = 0; i < enlightenments.length; i++) {
-		if (gameData.currentEnlightenment == enlightenments[i].id && eval(enlightenments[i].goal)) {
-			didWin = true
-			whatTask = 'enlightenmentCompletions' + enlightenments[i].id
-		}
+	i = indexing ('enlightenments', 'currentEnlightenment')
+	j = indexing ('enlightenmentHinderances', 'currentEnlightenmentHinderance')
+
+	if (eval(enlightenments[i].goal)) {
+		didWin = true
+		whatTask = 'enlightenmentCompletions' + enlightenments[i].id + enlightenmentHinderances[j].id
 	}
+	
     loadStuff(JSON.parse(localStorage.getItem('baseSublimeGameData')))
 	
 	if (didWin) {
 		gameData.wisdom += 1
 		gameData.allWisdom += 1
-		gameData[whatTask] += 1
+		if (gameData[whatTask] == undefined)
+			gameData[whatTask] = 1
+		else
+			gameData[whatTask] += 1
 	}
 }
 
@@ -67,10 +72,8 @@ function buyWisdom (id) {
 }
 
 function updateEnlightenmentStuff() {
-	if (gameData.enlightenmentUnlocked || gameData.maps < 5 || gameData.currentEnlightenment != 'none')
-		hide('enlightenmentUnlockDiv')
-	else
-		show('enlightenmentUnlockDiv')
+	
+
 	
 	if (gameData.enlightenmentTaskShown) {
 		hide('allEnlightenmentTask')
@@ -92,8 +95,12 @@ function updateEnlightenmentStuff() {
 	
 	if (gameData.currentEnlightenment == 'none') {
 		for (let i = 0; i < enlightenments.length; i ++) {
-			update ('enlightenmentTask' + enlightenments[i].id + 'Text', 'Completions: ' + gameData['enlightenmentCompletions' + enlightenments[i].id] + ' / 25')
-			update ('enlightenmentTask' + enlightenments[i].id + 'Goal', goalName(i))
+			level = gameData['enlightenmentCompletions' + enlightenments[i].id + gameData.enlightenmentHinderanceSelected]
+			if (level == undefined)
+				level = 0
+
+			update ('enlightenmentTask' + enlightenments[i].id + 'Text', 'Completions: ' + level)
+			update ('enlightenmentTask' + enlightenments[i].id + 'Goal', goalName(i, level))
 		}
 		hide ('quitEnlightenment')
 		hide ('newInfoEnlightenment')
@@ -105,7 +112,12 @@ function updateEnlightenmentStuff() {
 		show ('quitEnlightenment', 'inline')
 		show ('newInfoEnlightenment', 'inline')
 		hide ('newInfo')
-		updateText = 'You are in the ' + enlightenments[i].name + ' task. Goal: ' + goalName(i) + '.'
+		
+		level = gameData['enlightenmentCompletions' + gameData.currentEnlightenment + gameData.enlightenmentHinderanceSelected]
+		if (level == undefined)
+			level = 0
+		
+		updateText = 'You are in the ' + enlightenments[i].name + ' task. Goal: ' + goalName(i, level) + '.'
 		colorChanger('newInfoBox', '#FF99FF')
 		goalAmount = goalAmountCalc(i)
 		
@@ -172,13 +184,25 @@ function updateEnlightenmentStuff() {
 	if (gameData.wisdomUpgradebuyAWellLevel)
 		gameData.forestWell = 1
 	
-	function goalAmountCalc(i) {
-		return Math.pow(enlightenments[i].perCompletionDifficulty, gameData['enlightenmentCompletions' + enlightenments[i].id] + 1)
+	function goalAmountCalc(i, level) {
+		return Math.pow(enlightenments[i].perCompletionDifficulty, level + 1)
 	}
 	
-	function goalName(i) {
-		return enlightenments[i].goalName + goalAmountCalc(i).toLocaleString() + enlightenments[i].goalName2
+	function goalName(i, level) {
+		return enlightenments[i].goalName + goalAmountCalc(i, level).toLocaleString() + enlightenments[i].goalName2
 	}
+}
+
+enlightenmentColumns = {
+	enlightenmentTexts: [
+		'Goal', 'Text', 'FirstCompletion', 'PerCompletion'
+	],
+	hinderanceTexts: [
+		'Text', 'Multiplier'
+	],
+	wisdomTexts: [
+		'Description', 'Price', 'Level'
+	],
 }
 
 function addEnlightenments() {
@@ -191,34 +215,15 @@ function addEnlightenments() {
 			style: 'width:360px;'
 		}), 'allEnlightenmentTasks')
 
-		add ($ ("<button />", {
+		addTo ($ ("<button />", {
 			class: "enlightenmentButton",
 			onclick: "select('enlightenment', '" + enlightenments[i].id + "')",
 			id: 'enlightenmentButton' + enlightenments[i].id
-		}))
-		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: id + 'Goal'
-		}))
-		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: id + 'Text'
-		}))
-		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: id + 'FirstCompletion'
-		}))
-		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: id + 'PerCompletion'
-		}))
+		}), id)
 
-		function add (x) {
-			addTo (x, id)
+		
+		for (let j = 0; j < enlightenmentColumns.enlightenmentTexts.length; j++) {
+			addText (id + enlightenmentColumns.enlightenmentTexts[j], id)
 		}
 		
 		update ('enlightenmentButton' + enlightenments[i].id, enlightenments[i].name)
@@ -244,25 +249,15 @@ function addEnlightenments() {
 			style: 'width:360px;'
 		}), 'allEnlightenmentHinderances')
 		
-		add ($ ("<button />", {
+		addTo ($ ("<button />", {
 			class: "specialButton",
 			style: "background-color:#FE99BB;",
 			id: id + 'Button',
 			onclick: "select('enlightenmentHinderance', '" + enlightenmentHinderances[i].id + "')",
-		}))
-
-		add ($ ("<p />", {
-			class: "basicText",
-			id: id + 'Text',
-		}))
-		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: id + 'Multiplier',
-		}))
-		
-		function add (x) {
-			addTo (x, id)
+		}), id)
+	
+		for (let j = 0; j < enlightenmentColumns.hinderanceTexts.length; j++) {
+			addText (id + enlightenmentColumns.hinderanceTexts[j], id)
 		}
 		
 		update (id + 'Button', enlightenmentHinderances[i].name)
@@ -270,42 +265,35 @@ function addEnlightenments() {
 		update (id + 'Multiplier', 'Multiplier: ' + enlightenmentHinderances[i].multiplier + 'x')
 	}
 	for (let i = 0; i < wisdomUpgrades.length; i++) {
-		id = wisdomUpgrades[i].id
-		upgradeId = 'wisdomUpgrade' + id
+		id = 'wisdomUpgrade' + wisdomUpgrades[i].id
 		
 		addTo ($ ("<Div />", {
 			class: "basicDiv",
-			id: 'wisdomUpgradeDiv' + id,
+			id: id + 'Div',
 			style: 'width:360px;'
 		}), 'allWidsomUpgrades')
 
-		add ($ ("<button />", {
+		addTo ($ ("<button />", {
 			class: "specialButton",
 			style: "background-color:#99DEFF;",
-			id: upgradeId + 'Button',
+			id: id + 'Button',
 			onClick: "buyWisdomUpgrade('" + i + "')"
-		}))
+		}), id + 'Div')
+	
 		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: upgradeId + 'Description'
-		}))
-		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: upgradeId + 'Price'
-		}))
-		
-		add ($ ("<p />", {
-			class: "basicText",
-			id: upgradeId + 'Level'
-		}))
-		
-		update (upgradeId + 'Button', wisdomUpgrades[i].name)
-		update (upgradeId + 'Description', wisdomUpgrades[i].description)
-		
-		function add (x) {
-			addTo (x, 'wisdomUpgradeDiv' + id)
+		for (let j = 0; j < enlightenmentColumns.wisdomTexts.length; j++) {
+			addText (id + enlightenmentColumns.wisdomTexts[j], id + 'Div')
 		}
+		
+		update (id + 'Button', wisdomUpgrades[i].name)
+		update (id + 'Description', wisdomUpgrades[i].description)
+
+	}
+	
+	function addText (id, where) {
+		addTo ($ ("<p />", {
+			class: "basicText",
+			id: id
+		}), where)
 	}
 }

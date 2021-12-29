@@ -1,212 +1,82 @@
-mainSciences = ['watertight', 'surveying', 'benevolence'];
-//Uses: Updates time to complete science. Updates number of researchers allocated.
-
-
 function updateScience() {
-	
-	if(isNaN(gameData.respect))
-		gameData.respect = 0
-	
-	if (gameData.limeDiseaseLakes < 10)
-		benevolenceRespectIncreaseText = 0
-	else
-		benevolenceRespectIncreaseText = (Math.pow(2, gameData.limeDiseaseLakes - 10)) * gameData.benevolence
-	
-	
-	benevolenceEquation = Math.pow(2, gameData.benevolence * 2)
-	watertightEquation = Math.pow(10, 6 - gameData.peeledLimesPerJuice)
-	surveyingEquation = Math.pow(2, gameData.numberOfTiles - 15)
-	
-	if (gameData.respectMilestone1000) {
-
-		update("watertightText", "Currently: " + gameData.peeledLimesPerJuice + " Peeled Limes -> 1 Juice")
-		update("surveyingText", "Currently: " + gameData.numberOfTiles + " / 20 Tiles")
-		update("benevolenceText", "Currently: Level " + gameData.benevolence)
-
-		update("textForResearchers", researchersAvailable + " Available Researchers")
-
-		update("benevolenceRespectIncrease", "Respect increase:  " + benevolenceRespectIncreaseText.toLocaleString())
-		
-		researchersAvailable = gameData.researchers
-
-		checkShowOrHide(gameData.benevolence, "benevolence")
-		checkShowOrHide(gameData.unlockBenevolence, "benevolenceDiv")
-
-		//Adds the properties of all sciences.
-		for (let i = 0; i < mainSciences.length; i++) {
-
-			//Shows how many researchers are currently working on the science.
-			update("textFor" + jsUcfirst(mainSciences[i]) + "Researchers", gameData[mainSciences[i] + "Researchers"] + " Researchers")
-
-			//Shows the estimated time to complete the science by multiplying the time for half a bar by 200.
-			eval([mainSciences[i] + 'ResearchTime'] + " = Math.floor(200 * " + [mainSciences[i] + 'Equation'] + "/ gameData[mainSciences[i] + 'Researchers'])")
-			
-			
-			//Converts time to seconds or minutes or infinity depending on size.
-			timeToShowScience(mainSciences[i])
-
-			//Updates the amount of researchers available.
-			researchersAvailable -= gameData[mainSciences[i] + "Researchers"]
-		}
-	}
-	
-	if (!gameData.unlockBenevolence && gameData.respectMilestone1000) {
-		showBasicDiv("unlockBenevolence")
-	} else {
-		hide("unlockBenevolence")
-	}
-	
+	update("textForResearchers", researchersAvailable + " Available Researchers")
+	researchersAvailable = gameData.researchers
 	checkHide(gameData.surveillanceCamera2, "offlineScience")
 	checkShow(gameData.surveillanceCamera2, "upgradeHighTechSurveillance")
-}
-
-function watertight() {
-    if (gameData.peeledLimesPerJuice > 1) {
+	for (let i = 0; i < science.length; i++) {
+		name = science[i].id
 		
+		if(science[i].requirement != 'none')
+			checkShowOrHide(eval(science[i].requirement), name + "Div")
 		
-		barStart('watertight')
+		update(name + 'Text', eval(science[i].text))
+		update("textFor" + jsUcfirst(name) + "Researchers", gameData[name + "Researchers"] + " Researchers")
+		window[name + 'ResearchTime'] = Math.floor(200 * eval(science[i].equation) / gameData[science[i].id + 'Researchers'])
+		timeToShowScience(name)
+		researchersAvailable -= gameData[name + "Researchers"]
 	}
 }
 
-function watertightBar() {
-    if (gameData.watertightBar < 100) {
-		if (gameData.watertightResearchers > 0)
-		{
-			if(watertightBarDoMove)
-				gameData.watertightBar += 0.5;
-			
-			watertightBarDoMove = 1
-			
-			setTimeout(watertightBar, (1e4 * Math.pow(10, 5 - gameData.peeledLimesPerJuice)) / gameData.watertightResearchers)
-		}
-		
-		moveBar("watertight")
-        } else {
-			gameData.peeledLimesPerJuice -= 1
-		}
-}
-
-function surveying() {
-    if (gameData.numberOfTiles < 20) {
-		barStart('surveying')
-	}
-}
-
-
-
-
-function surveyingBar() {
-    if (gameData.surveyingBar < 100) {
-		if (gameData.surveyingResearchers > 0)
-		{
-			if(surveyingBarDoMove)
-				gameData.surveyingBar += 0.5;
-			
-			surveyingBarDoMove = 1
-			setTimeout(surveyingBar, (1e3 * Math.pow(2, gameData.numberOfTiles - 15)) / gameData.surveyingResearchers)
-		}
-		
-		moveBar("surveying")
-		
-        } else {
-			gameData.numberOfTiles += 1
-			
-			diseaseControlQuit()
-		}
-}
-
-function benevolenceBar() {
-	benevolenceEquation = Math.pow(2, gameData.benevolence * 2)
-    if (gameData.benevolenceBar < 100) {
-		if (gameData.benevolenceResearchers > 0)
-		{
-			if(benevolenceBarDoMove)
-				gameData.benevolenceBar += 0.5;
-			
-			benevolenceBarDoMove = 1
-			setTimeout(benevolenceBar, (1e3 * benevolenceEquation) / gameData.benevolenceResearchers)
-		}
-		
-		moveBar("benevolence")
-		
-        } else {
-			gameData.benevolence += 1
-		}
-}
-
-function surveillanceCamera2(){
-		if(gameData.surveillanceCamera2 && secondsOffline > 60)
-	{
-		
-		for (let i = 0; i < mainSciences.length; i++) {
-			
-			var barFilled   = gameData[mainSciences[i] + "Bar"]
-			var researchers = gameData[mainSciences[i] + "Researchers"]
-			
-			if (researchers > 0 && barFilled != 0)
-			{
-				if (mainSciences[i] == 'benevolence')
-					x = benevolenceEquation
-				if (mainSciences[i] == 'surveying')
-					x = surveyingEquation
-				if (mainSciences[i] == 'watertight')
-					x = watertightEquation
-
-				//0.5 makes it add half a bar.
-
-				amountToAdd = Math.floor(secondsOffline * 0.5 * researchers / x)
-				
-				if(barFilled + amountToAdd < 100)
-				{
-					gameData[mainSciences[i] + "Bar"] += amountToAdd
-				}
-				else
-				{
-					gameData[mainSciences[i] + "Bar"] = 0
-					
-					if (mainSciences[i] == 'surveying' && gameData.numberOfTiles < 20)
-						gameData.numberOfTiles += 1
-					else if (mainSciences[i] == 'watertight' && gameData.peeledLimesPerJuice > 1)
-						gameData.peeledLimesPerJuice -= 1
-					else
-						gameData[mainSciences[i]] += 1
-
-				}
-				moveBar(mainSciences[i])
+function scienceMover(i) {
+	id = science[i].id
+	if (science[i].limit == 'none' || eval(science[i].limit)) {
+		if (gameData[id + 'Bar'] < 100) {
+			if (gameData[id + 'Researchers'] > 0) {
+				if(window[id + 'BarDoMove'])
+					gameData[id + 'Bar'] += 0.5
+				window[id + 'BarDoMove'] = 1
+				setTimeout(scienceMover, 1e3 * eval(science[i].equation) / gameData[id + 'Researchers'], i)
 			}
-	
+			moveBar(id)
+		} else {
+			eval(science[i].end)
+			gameData[id + 'Bar'] = 0
 		}
-	
+	}
+}
+
+function surveillanceCamera2() {
+	if (gameData.surveillanceCamera2 && secondsOffline > 60) {
+		for (let i = 0; i < science.length; i++) {
+			var barFilled   = gameData[science[i].id + "Bar"]
+			var researchers = gameData[science[i].id + "Researchers"]
+			if (researchers > 0 && barFilled != 0) {
+				amountToAdd = Math.floor(secondsOffline * 0.5 * researchers / eval(science[i].id + 'Equation'))
+				if(barFilled + amountToAdd < 100)
+					gameData[science[i].id + "Bar"] += amountToAdd
+				else {
+					gameData[science[i].id + "Bar"] = 100
+					eval(science[i].end)
+				}
+				moveBar(science[i].id)
+			}
+		}
 	}
 }
 
 function timeToShowScience(id) {
 	var researchTime = eval(id + 'ResearchTime')
-	var time = id + 'Time'
-	if (gameData[id + 'Researchers'] == 0) {
-		update(time, "Estimated Time: Infinite Seconds")
-	} else if (researchTime <= 200) {
-		update(time, "Estimated Time: " + researchTime.toLocaleString() + " Seconds")
-	} else {
-		update(time, "Estimated Time: " + Math.floor(researchTime / 60).toLocaleString() + " Minutes")
-	}
+	if (gameData[id + 'Researchers'] == 0)
+		time = 'Infinite Seconds'
+	else if (researchTime <= 200)
+		time = researchTime.toLocaleString() + " Seconds"
+	else
+		time = Math.floor(researchTime / 60).toLocaleString() + " Minutes"
+	
+	update(id + 'Time', "Estimated Time: " + time)
 }
 
 function tabScience(tabby) {
     tabs("research", "none")
     tabs("researchers", "none")
-	
 	colorChanger('researchButton', '#BBBBBB')
 	colorChanger('researchersButton', '#BBBBBB')		
-	
 	colorChanger(tabby + "Button", "#898989")
-	
     document.getElementById(tabby).style.display = "block"
 }
 
 function addResearchers(id, amount) {
 	x = id + "Researchers"
-	
 	if (amount > 0) {
 		if (researchersAvailable - amount >= 0)
 			gameData[x] += amount
@@ -224,5 +94,87 @@ function hireResearcher() {
 	if (gameData.megaCoins >= 1) {
 		gameData.megaCoins -= 1
 		gameData.researchers += 1
+	}
+}
+
+function addSciences () {
+	for (let i = 0; i < science.length; i++) {
+		name = science[i].id
+		
+		addTo ($ ("<div />", {
+				class: "basicDiv",
+				id: name + 'Div'
+		}), 'research')
+		
+		
+		add($("<button />", {
+			class: "specialButton",
+			onclick: 'scienceMover(' + i + ')',
+			html: jsUcfirst(name)
+		}))
+		
+		add($("<p />", {
+			class: "basicTextSize",
+			style: 'color:#00AAFF;background-color:#000000',
+			id: "textFor" + jsUcfirst(name) + "Researchers",
+		}))
+
+		add($("<button />", {
+			class: "changeResearchersBy10",
+			style: 'width:30px;',
+			onclick: "addResearchers('" + name + "', -1)",
+			html: '-'
+		}))
+
+		add($("<button />", {
+			class: "changeResearchersBy10",
+			style: 'width:50px;',
+			onclick: "addResearchers('" + name + "', -10)",
+			html: '-10'
+		}))
+
+		add($("<button />", {
+			class: "changeResearchersBy10",
+			style: 'width:30px;',
+			onclick: "addResearchers('" + name + "', 1)",
+			html: '+'
+		}))
+
+		add($("<button />", {
+			class: "changeResearchersBy10",
+			style: 'width:50px;',
+			onclick: "addResearchers('" + name + "', 10)",
+			html: '+10'
+		}))
+		
+		add($("<div />", {
+			class: "scienceInfo",
+			html: '<p class="basicText">' + science[i].description + '</p>'
+		}))
+
+		
+		add($("<div />", {
+			class: "skillProgress",
+			id: name + "Progress",
+		}))
+		
+		addTo($("<div />", {
+			class: "skillBar",
+			id: name + "Bar",
+		}), name + 'Progress')
+		
+		add($("<p />", {
+			class: "basicText",
+			id: name + "Text",
+		}))
+
+		add ($("<p />", {
+			class: "basicText",
+			id: name + "Time",
+		}))
+
+		function add(e){
+			addTo(e, name + 'Div')
+		}
 	}
 }

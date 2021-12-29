@@ -177,32 +177,23 @@ function updateMapTileAesthetic() {
 
 			if (tileType == 0) { //Blank
 				colorChanger(whichButton, accent4)
-				if (gameData.diseaseTileSymbols)
-					update(whichButton, "‏‏‎ ‎‏‏‎ ‎‎")
+				update(whichButton, "‏‏‎ ‎‏‏‎ ‎‎")
 			} else if (tileType == 1) { //Civillian
 				colorChanger(whichButton, limesRelatedAccent)
-				if (gameData.diseaseTileSymbols)
-					update(whichButton, ":)")
+				update(whichButton, ":)")
 
 			} else if (tileType == 2) { //Disease
 				colorChanger(whichButton, "#FF999A")
-				if (gameData.diseaseTileSymbols)
-					update(whichButton, " +")
+				update(whichButton, " +")
 
 			} else if (tileType == 3) { //Dead Civillian
 				colorChanger(whichButton, "#565656")
-				if (gameData.diseaseTileSymbols)
-					update(whichButton, ":(")
+				update(whichButton, ":(")
 
 			} else if (tileType == 4) { //Lake
 				colorChanger(whichButton, "#4DFFFF")
-				if (gameData.diseaseTileSymbols)
-					update(whichButton, "_")
-
+				update(whichButton, "_")
 			}
-
-			if (!gameData.diseaseTileSymbols)
-				update(whichButton, "‎‎‎‏‏‎")
 
 		}
 	}

@@ -167,18 +167,12 @@ function updateFieldStuff() {
 		show("fieldTile0-0", "inline")
 		showBasicDiv("fieldButton")
 		showBasicDiv("buyWheatSeeds")
-		showBasicDiv("buyAWheatHarvester")
 		showBasicDiv("buyASeedDrill")
 		
-		if(!gameData.pieOven)
-			showBasicDiv("buyPieOven")
-		
 		if (gameData.mortarAndPestle) {
-			hide("buyMortarAndPestle")
 			showBasicDiv("grindFlour")
 		}
 		else {
-			show("buyMortarAndPestle")
 			hide("grindFlour")
 		}
 		

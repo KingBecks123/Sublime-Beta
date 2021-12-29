@@ -1,39 +1,61 @@
-function updateBrokers(){
+basicBrokerStats = [
+	{
+		id: 'speed',
+		description: 'Speed',
+		type: 'Seconds'
+	},
+	{
+		id: 'amount',
+		description: 'Alpha Coins Per Transfer',
+		type: 'Alpha Coins'
+	},
+	{
+		id: 'fee',
+		description: 'Transfer Fee',
+		type: 'Coins'
+	},
+]
+
+function updateBrokers() {
 	if (gameData.bachelorsDegreeFinance) {
 		
+		if (gameData.basicAlphaToBetaBroker && gameData.betaCoinsExchangeRate < gameData.basicA2BBrokerRule)
+			alphaToBetaClick()
+		
+		if (gameData.autoAdvertiseBroker && (gameData.currencyApplicantSpeed > gameData.autoAdvertiseSpeedValue || (gameData.smarterAdvertisingManagerBroker && gameData.currencyApplicantTransferAmount < gameData.autoAdvertiseAmountValue)))
+			advertise()
+	
 		tabs('tradeButton', 'inline-block')
 		showBasicDiv('alphaCoinToMegaCoinDiv')
 		
-		update("textForBrokerApplicantSpeed", "Currently " + gameData.minBrokerApplicantSpeed.toLocaleString() + " - " + gameData.maxBrokerApplicantSpeed.toLocaleString() + " Seconds")
-		update("textForBrokerApplicantAmount", "Currently " + gameData.minBrokerApplicantAmount.toLocaleString() + " - " + gameData.maxBrokerApplicantAmount.toLocaleString() + " Coins")
+		for (let i = 0; i < basicBrokerStats.length; i++) {
+			id = jsUcfirst(basicBrokerStats[i].id)
+			type = ' ' + basicBrokerStats[i].type
+			
+			update("textForBrokerApplicant" + id, "Currently " + gameData['minBrokerApplicant' + id].toLocaleString() + " - " + gameData['maxBrokerApplicant' + id].toLocaleString() + type)
+			update("brokerApplicant" + id + 'Price', "Price: " + gameData['brokerApplicant' + id + 'Price'].toLocaleString() + " Alpha Coins")
+			update("currencyBroker" + id, basicBrokerStats[i].description + ": " + gameData['currencyBroker' + id].toLocaleString() + type + ".")
+		}
+		
+		
 		update("textForAdvertisingBrokerRule", "Auto advertise if speed is over " + gameData.autoAdvertiseSpeedValue.toLocaleString() + " seconds")
 		update("textForSmarterAdvertisingBrokerRule", "And if transfer amount is under " + gameData.autoAdvertiseAmountValue.toLocaleString())
-		update("textForBrokerApplicantFee", "Currently " + gameData.minBrokerApplicantFee.toLocaleString() + " - " + gameData.maxBrokerApplicantFee.toLocaleString() + " Coins")
-		update("brokerApplicantSpeedPrice", "Price: " + gameData.brokerApplicantSpeedPrice.toLocaleString() + " Alpha Coins")
-		update("brokerApplicantFeePrice", "Price: " + gameData.brokerApplicantFeePrice.toLocaleString() + " Alpha Coins")
-		update("brokerApplicantAmountPrice", "Price: " + gameData.brokerApplicantAmountPrice.toLocaleString() + " Alpha Coins")
 
 		update("textForA2BBrokerRule", "Converts Alpha Coins to Beta Coins if the conversion rate is below " + gameData.basicA2BBrokerRule.toLocaleString())
-
 		update("textForA2BBrokerAmountToggleButton", "Bulk convert amount: " + gameData.basicA2BBrokerAmount.toLocaleString())
 		update("textForA2BBrokerPrice", "Increase for " + gameData.increaseBasicA2BBrokerAmountPrice.toLocaleString() + " Pie Coins")
-		
-		update("currencyBrokerTransferAmount", "Speed: " + gameData.currencyBrokerSpeed.toLocaleString() + " Seconds.")
-		update("currencyBrokerFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + ".")
-		update("currencyBrokerSpeed", "Alpha Coins Per Transfer: " + gameData.currencyBrokerTransferAmount.toLocaleString() + ".")
 		update("alphaCoinTransactionFee", "Transfer Fee: " + gameData.currencyBrokerFee.toLocaleString() + " Coins Per Alpha Coin")
 
-		alphaCoinTotalPrice = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount
+		alphaCoinTotalPrice = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerAmount
 
-		if (!gameData.alphaCoinConvertBulkToggle) {
-			update("alphaCoinExhangeRate", "Exchange Rate: " + gameData.alphaCoinsExchangeRate.toLocaleString() + " Coins -> 1 Alpha Coin")
-			update("alphaCoinTotalPrice", "Total Price: " + alphaCoinTotalPrice.toLocaleString() + " Coins")
-			update("coinsToAlphaClickButton", "Convert Coins to " + gameData.currencyBrokerTransferAmount.toLocaleString() + " Alpha Coins")
-		} else {
-			update("alphaCoinExhangeRate", "Exchange Rate: " + (gameData.alphaCoinsExchangeRate * 10).toLocaleString() + " Coins -> 10 Alpha Coins")
-			update("alphaCoinTotalPrice", "Total Price: " + (alphaCoinTotalPrice * 10).toLocaleString() + " Coins")
-			update("coinsToAlphaClickButton", "Convert Coins to " + (gameData.currencyBrokerTransferAmount * 10).toLocaleString() + " Alpha Coins")
-		}
+		if (gameData.alphaCoinConvertBulkToggle)
+			bulk = 10
+		else
+			bulk = 1
+		
+		update("alphaCoinExhangeRate", "Exchange Rate: " + (gameData.alphaCoinsExchangeRate * bulk).toLocaleString() + " Coins -> 10 Alpha Coins")
+		update("alphaCoinTotalPrice", "Total Price: " + (alphaCoinTotalPrice * bulk).toLocaleString() + " Coins")
+		update("coinsToAlphaClickButton", "Convert Coins to " + (gameData.currencyBrokerAmount * bulk).toLocaleString() + " Alpha Coins")
 
 	} else {
 
@@ -73,42 +95,27 @@ function updateBrokers(){
 	
 	if (gameData.transferAlphaCoinBags)
 		tabs("alphaCoinConvertBulkButton", "inline-block")
+
 	checkHide(gameData.transferAlphaCoinBags, "transferAlphaCoinBagsUnlock")
 	checkShow(gameData.transferAlphaCoinsBulkUnlock, "transferAlphaCoinsBulk")
 	checkHide(gameData.transferAlphaCoinsBulkUnlock, "transferAlphaCoinsBulkUnlock")	
 	checkHide(gameData.saveAlphaCoinsUnlock, "saveAlphaCoinsUnlock")
 	checkShow(gameData.saveAlphaCoinsUnlock, "upgradeSaveAlphaCoinsUnlock")	
 	
+	
 	if (gameData.advertisePriceType == 'coins')
-		update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Coins")
+		advertisePriceType = " Coins"
 	else if (gameData.advertisePriceType == 'betaCoins')
-		update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + " Beta Coins")
+		advertisePriceType = " Beta Coins"
 	
-}
-
-
-function updateBrokerStuffSlow(){
-	if (gameData.basicAlphaToBetaBroker && gameData.betaCoinsExchangeRate < gameData.basicA2BBrokerRule)
-		alphaToBetaClick()
-	
-	if (gameData.autoAdvertiseBroker && (gameData.currencyApplicantSpeed > gameData.autoAdvertiseSpeedValue || (gameData.smarterAdvertisingManagerBroker && gameData.currencyApplicantTransferAmount < gameData.autoAdvertiseAmountValue)))
-		advertise()
-	
-	if(gameData.bachelorsDegreeFinance) {
-		if(beckyRandom(2) == 1 && gameData.alphaCoinsExchangeRate < 200)
-			gameData.alphaCoinsExchangeRate += 1
-		else if (gameData.alphaCoinsExchangeRate > 50)
-			gameData.alphaCoinsExchangeRate -= 1
-	}
-
+	update("advertisePrice", "Price: " + gameData.advertisePrice.toLocaleString() + advertisePriceType)
 }
 
 function brokerApplicant(id, type, amount) {
 	min = 'minBrokerApplicant' + id
 	max = 'maxBrokerApplicant' + id
 	
-	if(gameData.alphaCoins >= gameData['brokerApplicant'+ id + 'Price'])
-	{
+	if(gameData.alphaCoins >= gameData['brokerApplicant'+ id + 'Price']) {
 		if (type == 'max') {
 			if (amount > 0 || (gameData[max] > gameData[min]))
 				buy(max)
@@ -125,23 +132,12 @@ function brokerApplicant(id, type, amount) {
 
 }
 
-function decreaseBasicA2BBrokerRule(){
-	if(gameData.basicA2BBrokerRule > 0)
-		gameData.basicA2BBrokerRule -= 50
-}
-
-function increaseBasicA2BBrokerRule(){
-	gameData.basicA2BBrokerRule += 50
-}
-
-function increaseBasicA2BBrokerAmount(){
-	if(gameData.pieCoins >= gameData.increaseBasicA2BBrokerAmountPrice)
-	{
+function increaseBasicA2BBrokerAmount() {
+	if (gameData.pieCoins >= gameData.increaseBasicA2BBrokerAmountPrice) {
 		gameData.pieCoins -= gameData.increaseBasicA2BBrokerAmountPrice
 		gameData.basicA2BBrokerAmount += 1
 		gameData.increaseBasicA2BBrokerAmountPrice *= 2
 	}
-	
 }
 
 function searchForACurrencyBroker() {
@@ -152,14 +148,18 @@ function searchForACurrencyBroker() {
 }
 
 function coinsToAlphaStart() {
-	if(gameData.autoCurrencyConversionBuy)
+	if (gameData.autoCurrencyConversionBuy)
 		pickCurrentTask('coinsToAlphaClick')
 	else
 		coinsToAlphaClick()
 }
 
-function coinsToAlphaClick(){
-	price = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerTransferAmount * (gameData.alphaCoinConvertBulkToggle * 9 + 1)
+function coinsToAlphaClick() {
+	price = (gameData.alphaCoinsExchangeRate + gameData.currencyBrokerFee) * gameData.currencyBrokerAmount
+	
+	if (gameData.alphaCoinConvertBulkToggle)
+		price *= 10
+	
 	if (gameData.coins >= price && canStartBar('coinsToAlpha')) {
 		gameData.alphaCoinConvertBulkToggleSet = gameData.alphaCoinConvertBulkToggle
 		gameData.coins -= price
@@ -169,24 +169,23 @@ function coinsToAlphaClick(){
 }
 
 function coinsToAlphaBar() {
-	if (gameData.currencyBrokerSpeed == 1)
-		barMoverAdvanced('coinsToAlpha', 1.5, 15)
-	else
-		barMoverAdvanced('coinsToAlpha', 0.5, 5 * gameData.currencyBrokerSpeed * gameData.doesHaveCurrencyBroker + !gameData.doesHaveCurrencyBroker * 100)
+	barMoverAdvanced('coinsToAlpha', 1.5 / gameData.currencyBrokerSpeed, 15)
 }
 
-function coinsToAlphaBarEnd(){
-	if(gameData.alphaCoinConvertBulkToggleSet == 0)
-		gameData.alphaCoins += gameData.currencyBrokerTransferAmount
-	else
-		gameData.alphaCoins += gameData.currencyBrokerTransferAmount * 10
+function coinsToAlphaBarEnd() {
+	amount = gameData.currencyBrokerAmount
+	
+	if (gameData.alphaCoinConvertBulkToggleSet == 1)
+		amount *= 10
+	
+	gameData.alphaCoins += amount
 }
 
-function alphaToBetaClick(){
-	if(gameData.textForA2BBrokerAmountToggle == 0)
-		price = gameData.betaCoinsExchangeRate
-	else
-		price = gameData.betaCoinsExchangeRate * gameData.basicA2BBrokerAmount
+function alphaToBetaClick() {
+	price = gameData.betaCoinsExchangeRate
+	
+	if (gameData.textForA2BBrokerAmountToggle == 1)
+		price *= gameData.basicA2BBrokerAmount
 
 	if (gameData.alphaCoins >= price && canStartBar('alphaToBeta')) {
 		gameData.alphaCoins -= price
@@ -201,8 +200,10 @@ function alphaToBetaBar() {
 }
 
 function alphaToBetaBarEnd() {
-	if(gameData.a2BBrokerAmountSet == 0)
-		gameData.betaCoins += 1 * (gameData.wisdomUpgradebetaTestingLevel + 1)
-	else
-		gameData.betaCoins += gameData.basicA2BBrokerAmount * (gameData.wisdomUpgradebetaTestingLevel + 1)
+	amount = gameData.wisdomUpgradebetaTestingLevel + 1
+	
+	if(gameData.a2BBrokerAmountSet != 0)
+		amount *= gameData.basicA2BBrokerAmount
+	
+	gameData.betaCoins += amount
 }

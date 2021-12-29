@@ -1,58 +1,5 @@
-scavengeItems = [
-	{
-		name: 'Lime',
-		symbol: 'O',
-		backgroundColor: '#4DFE89',
-		weight: 20,
-		type: 'resource',
-		description: '',
-		onCollection: 'gameData.limes += 1',
-	},
-	{
-		name: 'Limes',
-		symbol: 'OO',
-		backgroundColor: '#4DFE89',
-		weight: 10,
-		type: 'resource',
-		description: '',
-		onCollection: 'gameData.limes += 2',
-	},
-	{
-		name: 'Nutrition',
-		symbol: 'R',
-		backgroundColor: '#884DFF',
-		weight: 5,
-		type: 'ring',
-		powerLevelRange: 20,
-		description: 'Increases auto collect length by ',
-		description2: ' seconds',
-		onCollection: '',
-	},
-	{
-		name: 'Nutrition Rate',
-		symbol: 'R',
-		backgroundColor: '#884DFF',
-		weight: 5,
-		type: 'ring',
-		powerLevelRange: 2,
-		description: 'Increases auto collect rate by ',
-		description2: ' per second',
-		onCollection: '',
-	},
-	{
-		name: 'Smart Seller',
-		symbol: 'R',
-		backgroundColor: '#884DFF',
-		weight: 5,
-		type: 'ring',
-		description: 'Stops delivering juice once coins have reached the maximum',
-		onCollection: '',
-	},
-]
-
 function scavenge() {
-    if(canStartBar('scavenge'))
-	{
+    if (canStartBar('scavenge')) {
 		gameData.scavengeBar = 0
 		scavengeBar()
 	}
@@ -66,8 +13,7 @@ function scavengeBarEnd() {
 	hasAddedSomething = false
 	hasFoundEmptyTile = false
 	for (let i = 0; i < gameData.scavengeLoot.length && hasFoundEmptyTile == false; i++) {
-		if(gameData.scavengeLoot[i].name == 'empty')
-		{
+		if (gameData.scavengeLoot[i].name == 'empty') {
 			hasFoundEmptyTile = true
 			totalWeight = 0
 			
@@ -114,32 +60,28 @@ function updateScavengeTileAesthetic() {
 	for (let i = 0; i < gameData.scavengeLoot.length; i++) {
 		document.getElementById('scavengeLoot' + i).style.border = ''
 
-		if(gameData.scavengeLoot[i].name == 'empty')
-		{
+		if(gameData.scavengeLoot[i].name == 'empty') {
 			update('scavengeLoot' + i, '‎‎‎‏‏‎ ‎')
 			colorChanger('scavengeLoot' + i, '#66361F')
 		}
+		
 		for (let j = 0; j < scavengeItems.length; j++) {
-			if (scavengeItems[j].name == gameData.scavengeLoot[i].name)
-			{
+			if (scavengeItems[j].name == gameData.scavengeLoot[i].name) {
 				update('scavengeLoot' + i, scavengeItems[j].symbol)
 				colorChanger('scavengeLoot' + i, scavengeItems[j].backgroundColor)
 				
-				if(gameData.scavengeLootSelected == i)
-				{
+				if(gameData.scavengeLootSelected == i) {
 					show('scavengeName')
 					update('scavengeName', scavengeItems[j].name)
 					if (scavengeItems[j].description == '')
 						hide('scavengeDescription')
-					else
-					{
+					else {
 						show('scavengeDescription')
 						if (scavengeItems[j].type == 'resource')
 							update('scavengeDescription', scavengeItems[j].description)
 						else
 							ringDescription(j, i)
 					}
-					
 					couldUpdateDescription = true
 				}
 			}
@@ -154,8 +96,7 @@ function updateScavengeTileAesthetic() {
 	if (gameData.scavengeLootSelected >= 0)
 		border ('scavengeLoot' + gameData.scavengeLootSelected)
 	
-	if (gameData.scavengeLootSelected == 'ring')
-	{
+	if (gameData.scavengeLootSelected == 'ring') {
 		border ('scavengeRingSlot')
 		update('scavengeDescription', gameData.scavengeRing + gameData.scavengeRingPowerLevel)
 		show('scavengeDescription')
@@ -166,20 +107,19 @@ function updateScavengeTileAesthetic() {
 		}
 	}
 	else
-	{
 		border ('scavengeRingSlot', '')
+	
+	if (gameData.scavengeRing == 'empty') {
+		ringSlotBackground = '#BBBBBB'
+		ringSlotText = '#898989'
+	}
+	else {
+		ringSlotBackground = '#884DFF'
+		ringSlotText = '#000000'
 	}
 	
-	if (gameData.scavengeRing == 'empty')
-	{
-		document.getElementById('scavengeRingSlot').style.backgroundColor = '#BBBBBB'
-		document.getElementById('scavengeRingSlot').style.color = '#898989'
-	}
-	else
-	{
-		document.getElementById('scavengeRingSlot').style.backgroundColor = '#884DFF'
-		document.getElementById('scavengeRingSlot').style.color = '#000000'
-	}
+		document.getElementById('scavengeRingSlot').style.backgroundColor = ringSlotBackground
+		document.getElementById('scavengeRingSlot').style.color = ringSlotText
 
 
 	function ringDescription(j, i) {
@@ -208,8 +148,7 @@ function scavengeAddToInventory() {
 	for (let i = 0; i < scavengeItems.length; i++) {
 		if (gameData.scavengeLoot[gameData.scavengeLootSelected].name == scavengeItems[i].name)
 		{
-			if (scavengeItems[i].type == 'ring')
-			{
+			if (scavengeItems[i].type == 'ring') {
 				gameData.scavengeRing = scavengeItems[i].name
 				gameData.scavengeRingPowerLevel = gameData.scavengeLoot[gameData.scavengeLootSelected].powerLevel
 			}

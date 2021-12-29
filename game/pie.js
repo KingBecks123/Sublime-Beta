@@ -2,31 +2,12 @@ var pieOvenColor = 0
 var juiceInPieBucketLeak = 0
 var flourInPieBucketLeak = 0
 
-
-function decreasePiePrice() {
-	decreaseValue('piePrice')
-	changePiePrice()
-}
-
-function increasePiePrice() {
-	increaseValue('piePrice')
-	changePiePrice()
-}
-
-function changePiePrice() {
-	gameData.findPieCustomersBarRunning = false
-	gameData.findPieCustomersBar = 0.1
-	gameData.isThereACustomer = 0
-	moveBar('findPieCustomers')
-}
-
 function sellPieToCustomer() {
 	if (gameData.isThereACustomer && gameData.pies > 0) {
 		gameData.isThereACustomer = 0
 		gameData.pies -= 1
 		gameData.pieCoins += gameData.piePrice
 		gameData.hasSoldPie = 1
-		update("couldFindCustomer", "Sold!")
 	}
 }
 
@@ -45,14 +26,10 @@ function addToPieBucket(ingredient) {
 }
 
 function bucketHoleSize(amount, id) {
-	if (amount == '1' && gameData[id + 'BucketHoleSize'] < 20)
-		gameData[id + 'BucketHoleSize'] += 2 - gameData.upgradeNozzles
-	else if (amount == '-1' && gameData[id + 'BucketHoleSize'] > 0)
-		gameData[id + 'BucketHoleSize'] -= 2 - gameData.upgradeNozzles
+	size = id + 'BucketHoleSize'
+	change = 2 - gameData.upgradeNozzles
 	
-	
-	if (gameData[id + 'BucketHoleSize'] < 0)
-		gameData[id + 'BucketHoleSize'] = 0
+	smartChange(id + 'BucketHoleSize', change, 20)
 }
 
 function payPieEmployee() {
@@ -106,51 +83,21 @@ function updatePieStuff() {
 	if (gameData.pieFlourBucket) {
 		divVisibility('flourBucketProgress', 'visible')
 		divVisibility('addToPieFlourBucket', 'visible')
-		hide("buyAPieFlourBucket")
-		
 		if (gameData.pieFlourBucketNozzle) {
-			hide("buyAPieFlourBucketNozzle")
 			divVisibility("flourMinusNozzle", "visible")
 			divVisibility("flourPlusNozzle", "visible")
 		}
-		else
-			showBasicDiv("buyAPieFlourBucketNozzle")
-	}
-	else {
-		if (gameData.pieBucket)
-			showBasicDiv("buyAPieFlourBucket")
-		else
-			hide("buyAPieFlourBucket")
 	}
 
 	if (gameData.pieBucketNozzle) {
-		hide("buyAPieBucketNozzle")
 		showBasicDiv("bucketHoleChanger")
-		
-		if(gameData.pieFlourBucketNozzle && !gameData.upgradeNozzles)
-			showBasicDiv("upgradeNozzles")
-		else
-			hide("upgradeNozzles")
 	}
-	else
-		checkShow(gameData.pieBucket, "buyAPieBucketNozzle")
 
 	if (gameData.pieOven) {
-		hide("buyPieOven")
-		
 		tabs("pieOvenDiv", "inline-block")
 		
-		if(!gameData.pieBucket)
-			showBasicDiv("buyAPieBucket")
-		else
-			hide("buyAPieBucket")
-		
-		if(gameData.bellows) {
-			hide("buyBellows")
+		if(gameData.bellows)
 			showBasicDiv("bellowsDiv")
-		}
-		else
-			showBasicDiv("buyBellows")
 	}
 	
 	if (gameData.bakePieBar !== 100) {
@@ -170,29 +117,14 @@ function updatePieStuff() {
 	document.getElementById('bellowsBar').style.backgroundColor = '#99DEFF'
 
 	
-	if (gameData.pieConveyorBelt) {
-		hide("buyAPieConveyorBelt")
+	if (gameData.pieConveyorBelt)
 		tabs("pieConveyorBeltOnButton", "inline-block")
-	}
-	else
-		checkShow(gameData.pieOven, "buyAPieConveyorBelt")
 
 	
-	if (gameData.pieEmployee) {
-		hide("buyPieEmployee")
+	if (gameData.pieEmployee)
 		showBasicDiv("payPieEmployeeDiv")
-		if (gameData.advancedPieHiring) {
-			hide("advancedPieHiring")
-			showBasicDiv("hirePieMerchantToggleButton")
-		}
-		else
-			showBasicDiv("advancedPieHiring")
-	}
-	else {
-		checkShow(gameData.hasSoldPie, "buyPieEmployee")
+	else
 		hide("payPieEmployeeDiv")
-		hide("advancedPieHiring")
-	}
 	
 	if(gameData.wheatHarvesters || gameData.seedDrills)
 		gameData.hasGottenFieldTools = 1
@@ -212,23 +144,28 @@ function updatePieStuff() {
 	update("pieEmployeeSalesLeft", "Employee Sales Left: " + gameData.pieEmployeeSalesLeft.toLocaleString() + " / " + gameData.pieMerchantMaxPay.toLocaleString())
 	update("payPieEmployee", "Pay Employee " + gameData.pieMerchantPieCoinPrice.toLocaleString() + " Pie Coins & " + gameData.pieMerchantBetaCoinPrice.toLocaleString() + " Beta Coins" )
 	
-	update("pieMerchantPieCoinPrice"     , "Pie Coin Wages: "    + gameData.pieMerchantPieCoinPrice.toLocaleString() + ".")
-	update("pieMerchantBetaCoinPrice"    , "Beta Coin Wages: "   + gameData.pieMerchantBetaCoinPrice.toLocaleString() + ".")
-	update("pieMerchantMaxPay"           , "Max Wage Advances: " + gameData.pieMerchantMaxPay.toLocaleString() + ".")
-	update("pieMerchantCharm"            , "Charm: "             + gameData.pieMerchantCharm.toLocaleString() + ".")
 
 	if(gameData.doesHavePieMerchant)
 		showBasicDiv('pieMerchant')
 	else
 		hide('pieMerchant')
+	
+	if (!gameData.isThereACustomer)
+		update("customerButton", "  ")
+	else if (gameData.customerWaitTime < 5)
+		update("customerButton", ":)")
+	else if (gameData.customerWaitTime >= 5 && gameData.customerWaitTime < 10)
+		update("customerButton", ":l")
+	else if (gameData.customerWaitTime >= 10 && gameData.customerWaitTime < 15)
+		update("customerButton", ":(")
 }
 
 function useBellows() {
-	if (gameData.bellowsBar < 0.5) {	
-		gameData.bellowsBar = 100
-		bellowsBar()
-	}
 	gameData.bellowsBar = 100
+	
+	if (gameData.bellowsBar < 0.5)
+		bellowsBar()
+
 	gameData.bellowsCurrentlyBlowing = 1
 }
 
@@ -237,9 +174,8 @@ function bellowsBar() {
         gameData.bellowsBar -= 0.5;
 		moveBar("bellows")
         setTimeout(bellowsBar, 100)
-    } else {
+    } else
 		gameData.bellowsCurrentlyBlowing = 0
-    }
 }
 
 function bakePie() {
@@ -267,40 +203,47 @@ function findPieCustomers() {
     if (canStartBar('findPieCustomers')) {
         gameData.findPieCustomersBar = 0
 		gameData.findPieCustomersBarRunning = true	
-		update("couldFindCustomer", "Waiting for customers...")		
         findPieCustomersBar()
     }
 }
 
-function findPieCustomersBar() {
-    if (gameData.findPieCustomersBar < 100) {
-		
-		if(findPieCustomersBarDoMove)
-			gameData.findPieCustomersBar += 0.5;
-		
-		findPieCustomersBarDoMove = 1
-		moveBar("findPieCustomers")
-		time = (Math.pow(2 - gameData.pieMerchantCharm / 20, gameData.piePrice) + 10 + gameData.piePrice - gameData.pieMerchantCharm)
-		if (time > 1e9)
-			time = 1e9
-		
-		if (time < 15)
-			time = 15
-    }
-	
-	if (gameData.findPieCustomersBar == 100) {
-		gameData.couldFindCustomer = 1
-		gameData.isThereACustomer = 1
-		gameData.customerWaitTime = 0
+function changePiePrice(x) {
+	gameData.piePrice += x
+	if (gameData.findPieCustomersBarRunning) {
 		gameData.findPieCustomersBarRunning = false
-		update("couldFindCustomer", "Found a customer!")
-		
-		if (gameData.pieEmployeeSalesLeft > 0) {
-			gameData.pieEmployeeSalesLeft -= 1
-			sellPieToCustomer()
-		}
+		gameData.isThereACustomer = 0
+		gameData.findPieCustomersBar = 0
+		gameData.stopSellingPie = true
+		moveBar("findPieCustomers")
 	}
-	else
-		setTimeout(findPieCustomersBar, time / gameData.tickspeed)
+}
+
+function findPieCustomersBar() {
+	if (gameData.stopSellingPie)
+		gameData.stopSellingPie = false
+	else {
+		if (gameData.findPieCustomersBar < 100) {
+			if (findPieCustomersBarDoMove)
+				gameData.findPieCustomersBar += 5 / (Math.pow(2 - gameData.pieMerchantCharm / 20, gameData.piePrice) + 10 + gameData.piePrice - gameData.pieMerchantCharm)
+			
+			gameData.findPieCustomersBarRunning = true
+			findPieCustomersBarDoMove = 1
+			moveBar("findPieCustomers")
+		}
+		
+		if (gameData.findPieCustomersBar == 100) {
+			gameData.couldFindCustomer = 1
+			gameData.isThereACustomer = 1
+			gameData.customerWaitTime = 0
+			gameData.findPieCustomersBarRunning = false
+			
+			if (gameData.pieEmployeeSalesLeft > 0) {
+				gameData.pieEmployeeSalesLeft -= 1
+				sellPieToCustomer()
+			}
+		}
+		else
+			setTimeout(findPieCustomersBar, 15 / gameData.tickspeed)
+	}
 
 }

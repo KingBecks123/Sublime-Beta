@@ -103,10 +103,4 @@ function updateSerfStuff(){
 	
 	update('serfHealthText', 'You are ' + serfHealth)
 	update('riceOwed', 'Rice owed: ' + gameData.serf.riceOwed)
-		
-	if(gameData.newBakerySerf)
-		hide('newBakerySerfDiv')
-	else
-		checkShowOrHide(gameData.serf.coinsUnlockedVariable, 'newBakerySerfDiv')
-
 }
