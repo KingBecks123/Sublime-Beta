@@ -36,17 +36,19 @@ var gameDataBase = {
     advertiseBar: 0,
     advertise: 0,
     maps: 0,
-    applicantSpeed: 20,
-    applicantPrice: 10,
-    applicantWage: 10,
-    applicantHunger: 5,
+	
+    employeeSpeedOnApplication: 20,
+    employeeHungerOnApplication: 10,
+    employeePriceOnApplication: 10,
+    employeeWageOnApplication: 5,
+	
     employeeSpeed: 20,
     employeeHunger: 5,
     employeePrice: 10,
     employeeWage: 10,
+	
     employeeCurrentSpeed: 0,
     employees: 0,
-    maxEmployees: 1,
     employeeWorking: 0,
     employeeWorkingMax: 10,
     deliveryType: 0,
@@ -65,6 +67,7 @@ var gameDataBase = {
     juicerBarRunning: false,
     peelerBarRunning: false,
     autoCollectingBarRunning: false,
+    advertiseBarRunning: false,
 
 
     autoCollectingBar: 0,
@@ -226,8 +229,6 @@ var gameDataBase = {
 	knifebidextrous: 0,
     limebidextrous: 0,
 	
-	
-    desktopMode: 1,
 	shiftClickOption: 0,
 	toggleActions: 0,
 	
@@ -246,8 +247,6 @@ var gameDataBase = {
 	respectMilestone500: 0,
 	respectMilestone1000: 0,
 	respectMilestone10000: 0,
-
-	diseaseTileSymbols: 1,
 
 	alphaCoins: 0,
 	alphaCoinsExchangeRate: 100,
@@ -280,16 +279,16 @@ var gameDataBase = {
 	typeToHireToggle: 0,
 	doesHaveCurrencyBroker: 0,
 	convertCoinsNowBar: 0,
-
-	currencyApplicantFee: 0,
-	currencyApplicantSpeed: 0,
-	currencyApplicantPrice: 0,
-	currencyApplicantTransferAmount: 0,
+	
+	currencyBrokerFeeOnApplication: 0,
+	currencyBrokerSpeedOnApplication: 0,
+	currencyBrokerPriceOnApplication: 0,
+	currencyBrokerAmountOnApplication: 0,
 	
 	currencyBrokerFee: 200000,
 	currencyBrokerSpeed: 20,
 	currencyBrokerPrice: 0,
-	currencyBrokerTransferAmount: 1,
+	currencyBrokerAmount: 1,
 	
 	minBrokerApplicantSpeed: 20,
 	maxBrokerApplicantSpeed: 60,
@@ -311,7 +310,6 @@ var gameDataBase = {
 	autoAdvertiseAmountValue: 5, 
 	advertisePrice: 10,
 	advertisePriceType: 'coins',
-	isAdvertising: 0,
 	basketScarecrow: 0,
 	moreVisibleVariables: 0,
 	invertText: 0,
@@ -359,6 +357,7 @@ var gameDataBase = {
 	pieConveyorBelt : 0,
 	pieConveyorBeltOn: 0,
 	bakePieBarRunning: false,
+	stopSellingPie: false,
 	
 	pieBucket: 0,
 	pieFlourBucket: 0,
@@ -383,11 +382,11 @@ var gameDataBase = {
 	//Pie Employee
 	pieEmployee: 0,
 	pieEmployeeSalesLeft: 0,
-	
-	pieApplicantPieCoinPrice: 0,
-	pieApplicantBetaCoinPrice: 0,
-	pieApplicantMaxPay: 0,
-	pieApplicantCharm: 0,
+
+	pieMerchantPieCoinPriceOnApplication: 0,
+	pieMerchantBetaCoinPriceOnApplication: 0,
+	pieMerchantMaxPayOnApplication: 0,
+	pieMerchantCharmOnApplication: 0,
 
 	pieMerchantPieCoinPrice: 5,
 	pieMerchantBetaCoinPrice: 0,
@@ -490,7 +489,6 @@ var gameDataBase = {
 	enlightenmentSelected: 'none',
 	enlightenmentHinderanceSelected: 'none',
 
-
 }
 
 
@@ -498,15 +496,15 @@ for (let i = 1; i <= 7; i++) {
 	gameDataBase['achievement' + i] = 0
 }
 
-for (let i = 0; i < mainSkills.length; i++) {
-	gameDataBase[mainSkills[i] + 'Bar'] = 0
-	gameDataBase[mainSkills[i] + 'SkillLevel'] = 0
-	gameDataBase[mainSkills[i] + 'BarRunning'] = false
+for (let i = 0; i < skills.length; i++) {
+	gameDataBase[skills[i].id + 'Bar'] = 0
+	gameDataBase[skills[i].id + 'SkillLevel'] = 0
+	gameDataBase[skills[i].id + 'BarRunning'] = false
 }
 
 for (let i = 0; i < mainVariables.length; i++) {
-	gameDataBase[mainVariables[i] + 'ShowVariable'] = true
-	gameDataBase[mainVariables[i] + 'UnlockedVariable'] = false
+	gameDataBase[mainVariables[i].id + 'ShowVariable'] = true
+	gameDataBase[mainVariables[i].id + 'UnlockedVariable'] = false
 }
 
 for (let i = 0; i < avs.length; i++) {
@@ -529,12 +527,20 @@ for (let i = 0; i < wisdomUpgrades.length; i++) {
 	gameDataBase['wisdomUpgrade' + wisdomUpgrades[i].id + 'Price'] = wisdomUpgrades[i].initialPrice
 }
 
+gameDataBase.enlightenmentData = []
+for (let i = 0; i < enlightenments.length; i++) {
+	gameDataBase.enlightenmentData[enlightenments[i].id] = {}
+	for (let j = 0; j < enlightenmentHinderances.length; j++) {
+		gameDataBase.enlightenmentData[enlightenments[i].id][enlightenmentHinderances[j].id] = 0
+	}
+}
+
 var gameData = {}
 
 ableToSave = true
 
 function gameStart() {
-		
+	
 	addHTML()
 		
 	surveyingBarDoMove = 0
@@ -544,6 +550,10 @@ function gameStart() {
 
     loadStuff(JSON.parse(localStorage.getItem("mathAdventureSave")))
 
+	addHiringAreaButtons()
+	addSciences()
+	
+	updateAfterLoad()
 	
     mainGameLoop()
 	
@@ -554,7 +564,6 @@ function gameStart() {
 	addAestheticBase()
 	
     updateValues()
-	
 	
 
 	tab(gameData.mainTab)
@@ -752,9 +761,9 @@ function fixOverMaxedVariables(){
 
 function addHTML(){
 	
-	for (let i = 0; i < mainSkills.length; i++) {
+	for (let i = 0; i < skills.length; i++) {
 	
-		var name = mainSkills[i]
+		var name = skills[i].id
 		var div = document.getElementById(name + "Div")
 		
 		var skillLevel       = document.createElement("p");
@@ -768,7 +777,7 @@ function addHTML(){
 		
 		
 		var skillButtonSpan                  = document.createElement("span")
-		skillButtonSpan.innerHTML            = '<button class="skillButton" id="' + name + "Button" + '" onclick="pickCurrentSkill(&apos;' + name + '&apos;)">' + mainSkillsNames[i] + '</button>';
+		skillButtonSpan.innerHTML            = '<button style="width:351px;" class="skillButton" id="' + name + "Button" + '" onclick="pickCurrentSkill(&apos;' + name + '&apos;)">' + skills[i].name + '</button>';
 		insert(div, skillButtonSpan)
 
 
@@ -782,13 +791,13 @@ function addHTML(){
 			style: "width:167px;"
 		})
 		$(document.getElementById('backpackDiv')).append(e)
-		update("currencyDisplay(" + i + ")", "Show " + mainVariablesNames[i])
+		update("currencyDisplay(" + i + ")", "Show " + mainVariables[i].name)
 	}
 	
 	for (let i = 0; i < mainVariables.length; i++) {
-		var id = jsUcfirst(mainVariables[i])
+		var id = jsUcfirst(mainVariables[i].id)
 		var stat                  = document.createElement("span")
-		stat.innerHTML            = '<div class="stat" id="textFor' + id + 'Div">' + mainVariablesNames[i] + ' </div><div class="stat ar" id="textFor' + id + '"  style="display:none ; ">0</div><p id="textFor' + id + 'P"  style="display:none ; "> </p><br  id="textFor' + id + 'Br"   style="display:none ; "/>';
+		stat.innerHTML            = '<div class="stat" id="textFor' + id + 'Div">' + mainVariables[i].name + ' </div><div class="stat ar" id="textFor' + id + '"  style="display:none ; ">0</div><p id="textFor' + id + 'P"  style="display:none ; "> </p><br  id="textFor' + id + 'Br"   style="display:none ; "/>';
 		if (i == 11)
 			document.getElementById('backgroundForValues').prepend(stat)
 		else
@@ -837,8 +846,7 @@ function addHTML(){
 	document.getElementById('textForBetaCoinsDiv').style.textDecoration = 'underline'
 	document.getElementById('textForPieCoinsDiv').style.textDecoration = 'underline'
 
-	function insert(div, thing)
-	{
+	function insert(div, thing) {
 		div.insertBefore(thing, div.firstChild);
 	}
 	
@@ -857,4 +865,175 @@ function addHTML(){
 	}
 	
 	addEnlightenments()
+	
+	for (let i = 0; i < divs.length; i++) {
+		for (let k = 0; k < divs[i].elements.length; k++) {
+			thing = divs[i].elements[k]
+			
+			function addDiv() {
+				if (thing.format == 'basicUnlock') {
+					addTo ($ ("<div />", {
+						class: "basicDiv",
+						id: thing.buy + 'UnlockDiv',
+					}), divs[i].div)
+				}
+				else {
+					addTo ($ ("<div />", {
+						class: "basicDiv",
+						id: thing.id,
+					}), divs[i].div)
+				}
+					
+			}
+			
+			if (thing.format == 'basicBuy') {
+				addDiv()
+				addTo ($ ("<button />", {
+					class: "specialButton",
+					onclick: 'universalBuy("' + thing.buy + '",' + thing.priceNum + ',"' + thing.priceType + '")',
+					html: thing.buttonText
+				}), thing.id)
+				
+				addTo ($ ("<p />", {
+					class: "basicText",
+					html: thing.text1
+				}), thing.id)
+				
+				thingToBuy = 'Unknown Currency'
+				for (let j = 0; j < mainVariables.length; j++) {
+					if (mainVariables[j].id == thing.priceType)
+						thingToBuy = mainVariables[j].name
+				}
+				
+				addTo ($ ("<p />", {
+					class: "basicText",
+					html: 'Price: ' + thing.priceNum + ' ' + thingToBuy
+				}), thing.id)
+					
+			}
+			else if (thing.format == 'basicUnlock') {
+				addDiv()
+				addTo ($ ("<button />", {
+					class: "specialButton",
+					onclick: 'universalBuy("' + thing.buy + '",' + thing.priceNum + ',"' + thing.priceType + '")',
+					html: thing.buttonText
+				}), thing.buy + 'UnlockDiv')
+				
+				addTo ($ ("<p />", {
+					class: "basicText",
+					html: thing.text1
+				}), thing.buy + 'UnlockDiv')
+				
+				thingToBuy = 'Unknown Currency'
+				for (let j = 0; j < mainVariables.length; j++) {
+					if (mainVariables[j].id == thing.priceType)
+						thingToBuy = mainVariables[j].name
+				}
+				
+				addTo ($ ("<p />", {
+					class: "basicText",
+					html: 'Price: ' + thing.priceNum + ' ' + thingToBuy
+				}), thing.buy + 'UnlockDiv')
+					
+			}
+			else if (thing.format == 'bulkBuy') {
+				addDiv()
+				addTo ($ ("<button />", {
+					class: "specialButton",
+					onclick: 'bulkableBuyMax("' + thing.buy + '",' + thing.priceNum + ')',
+					html: thing.buttonText,
+					id: thing.buttonId
+				}), thing.id)
+				
+				addTo ($ ("<button />", {
+					class: "specialButton",
+					onclick: 'toggle("' + thing.bulkToggle + ')',
+					html: thing.bulkAmount + 'x',
+					style: 'width:80px',
+					id: thing.bulkId
+				}), thing.id)
+				
+				addTo ($ ("<p />", {
+					class: "basicText",
+					html: thing.text1
+				}), thing.id)
+				
+				thingToBuy = 'Unknown Currency'
+				for (let j = 0; j < mainVariables.length; j++) {
+					if (mainVariables[j].id == thing.priceType)
+						thingToBuy = mainVariables[j].name
+				}
+				
+				addTo ($ ("<p />", {
+					class: "basicText",
+					html: 'Price: ' + thing.priceNum + ' ' + thingToBuy
+				}), thing.id)
+					
+			}
+			else {
+				addDiv()
+				for (let j = 0; j < thing.elements.length; j++) {
+					elem = thing.elements[j]
+					if (elem.type == 'button' || elem.onClick != undefined) {
+						if (elem.id == undefined) {
+							if (elem.style == undefined) {
+								addTo ($ ("<button />", {
+									class: "specialButton",
+									onclick: 'divs[' + i + '].elements[' + k + '].elements[' + j + '].onClick()',
+									html: elem.text
+								}), thing.id)
+							}
+							else {
+								addTo ($ ("<button />", {
+									class: "specialButton",
+									onclick: 'divs[' + i + '].elements[' + k + '].elements[' + j + '].onClick()',
+									html: elem.text,
+									style: elem.style
+								}), thing.id)
+							}
+								
+						}
+						else {
+							if (elem.style == undefined) {
+								addTo ($ ("<button />", {
+									class: "specialButton",
+									onclick: 'divs[' + i + '].elements[' + k + '].elements[' + j + '].onClick()',
+									html: elem.text,
+									id: elem.id
+								}), thing.id)
+							}
+							else {
+								addTo ($ ("<button />", {
+									class: "specialButton",
+									onclick: 'divs[' + i + '].elements[' + k + '].elements[' + j + '].onClick()',
+									html: elem.text,
+									id: elem.id,
+									style: elem.style
+								}), thing.id)
+							}
+						}
+							
+					}
+					else if (elem.type == 'p' || elem.type == undefined) {
+						if (elem.id == undefined) {
+							addTo ($ ("<p />", {
+								class: "basicText",
+								html: elem.text
+							}), thing.id)
+						}
+						else {
+							addTo ($ ("<p />", {
+								class: "basicText",
+								html: elem.text,
+								id: elem.id
+							}), thing.id)
+						}
+							
+					}
+					
+				}
+			}
+		}
+	}
+	
 }

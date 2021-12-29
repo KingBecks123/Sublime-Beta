@@ -16,8 +16,7 @@ function loadStuff(savegame) {
 		Object.assign(gameData.serf, savegame.serf)
 
 		backwardsCompatibility(gameData.versionNumber)
-		gameData.versionNumber = 181
-		updateAfterLoad()
+		gameData.versionNumber = 184
 	} else {
 		update("newInfo", "Save File Empty.")
 	}
@@ -52,6 +51,25 @@ function backwardsCompatibility(versionNumber) {
 	if (gameData.versionNumber < 181) {
 		gameData.forestWell = 0
 		gameData.pieCoinsInWell = 0
+	}
+	if (gameData.versionNumber < 182)
+		gameData.currencyBrokerAmount = gameData.currencyBrokerTransferAmount
+	
+	if (gameData.versionNumber < 183)
+		gameData.basicApplicantPrice = gameData.applicantPrice
+	
+	if (gameData.versionNumber < 184) {
+		gameData.employeeSpeedOnApplication = gameData.applicantSpeed
+		gameData.employeeWageOnApplication = gameData.applicantWage
+		gameData.employeeHungerOnApplication = gameData.applicantHunger
+		gameData.currencyBrokerFeeOnApplication = gameData.currencyApplicantFee
+		gameData.currencyBrokerSpeedOnApplication = gameData.currencyApplicantSpeed
+		gameData.currencyBrokerPriceOnApplication = gameData.currencyApplicantPrice
+		gameData.currencyBrokerAmountOnApplication = gameData.currencyApplicantTransferAmount
+		gameData.pieMerchantPieCoinPriceOnApplication = gameData.pieApplicantPieCoinPrice
+		gameData.pieMerchantBetaCoinPriceOnApplication = gameData.pieApplicantBetaCoinPrice
+		gameData.pieMerchantMaxPayOnApplication = gameData.pieApplicantMaxPay
+		gameData.pieMerchantCharmOnApplication = gameData.pieApplicantCharm
 	}
 }
 
@@ -122,35 +140,36 @@ function pickCurrentTask(x) {
 	taskTwo = gameData.currentTask2
 
 	if (!event.shiftKey && gameData.toggleActions) {
-
 		if (gameData.ambidextrousSkillLevel == gameData.ambidextrousSkillLevelMax) {
-			if (taskOne == x && taskOne !== "none" && taskTwo !== x) {
+			
+			if (taskOne == x)
 				gameData.currentTask = "none"
-			} else if (taskOne == "none" && taskTwo !== x) {
+			else if (taskTwo == x)
+				gameData.currentTask2 = "none"
+			
+			else if (taskOne == "none" && taskTwo !== x) {
 				if (!((taskTwo == 'makeJuice' && x == 'makeMaxJuice') || (taskTwo == 'makeMaxJuice' && x == 'makeJuice') || (taskTwo == 'usePeelers' && x == 'useMaxPeelers') || (taskTwo == 'useMaxPeelers' && x == 'usePeelers')))
 					gameData.currentTask = x
-			} else if (taskTwo == x && taskTwo !== "none") {
-				gameData.currentTask2 = "none"
-			} else if (taskTwo == "none") {
+			} 
+			
+			else if (taskTwo == "none") {
 				if (!((taskOne == 'makeJuice' && x == 'makeMaxJuice') || (taskOne == 'makeMaxJuice' && x == 'makeJuice') || (taskOne == 'usePeelers' && x == 'useMaxPeelers') || (taskOne == 'useMaxPeelers' && x == 'usePeelers')))
 					gameData.currentTask2 = x
 			}
-		} else {
-			if (taskOne == x && taskOne !== "none") {
+		} 
+		else {
+			if (taskOne == x)
 				gameData.currentTask = "none"
-			} else {
+			else
 				gameData.currentTask = x
-			}
 		}
-	} else {
+	} else
 		startCurrentTask(x)
-	}
-
 }
 
 function pickCurrentSkill(x) {
 	if (gameData.toggleActions && !event.shiftKey && gameData.multitasking) {
-		if (gameData.currentSkill == x && gameData.currentSkill !== "none") {
+		if (gameData.currentSkill == x && x != "none") {
 			gameData.currentSkill = "none"
 		} else {
 			gameData.currentSkill = x
@@ -228,7 +247,10 @@ function moveBar(x) {
 		
 	}
 	else {
-		elem.style.width = gameData[i] + "%"
+		if (gameData[i] <= 0.1)
+			elem.style.width = "0%"
+		else
+			elem.style.width = gameData[i] + "%"
 		elem.innerHTML = "" + Math.ceil(gameData[i]) + "%"
 		max = 100
 	}
@@ -309,8 +331,6 @@ function basicBarSkill(variable, speed) {
 		if (gameData.currentEnlightenment != 'none')
 			time /= gameData.wisdomUpgradeskillSavyLevel + 1
 		
-		
-		console.log(time)
 		setTimeout(variableBar + "()", time)
 
 
@@ -354,14 +374,17 @@ function barStart(variable) {
 
 function barStartGranularSkillBasic(variable, useSkillTrainer) {
 	variableBar = variable + "Bar"
-	if (canStartBar(variable) && gameData[variable + "SkillLevel"] < gameData[variable + "SkillLevelMax"] && gameData.eat >= gameData[variable + "SkillLevel"]) {
-		gameData.eat -= gameData[variable + "SkillLevel"]
-		if (gameData.skillTrainer == 1 && useSkillTrainer == true) {
+	if (gameData[variable + "SkillLevel"] < gameData[variable + "SkillLevelMax"] && gameData.eat >= gameData[variable + "SkillLevel"]) {
+		if (gameData.skillTrainer == 1 && useSkillTrainer == true && gameData.currentSkill != variable) {
+			gameData.eat -= gameData[variable + "SkillLevel"]
 			gameData[variableBar] = 100
-		} else {
-			gameData[variableBar] = 0
+			eval(variableBar + "()")
 		}
-		eval(variableBar + "()")
+		else if (canStartBar(variable)) {
+			gameData.eat -= gameData[variable + "SkillLevel"]
+			gameData[variableBar] = 0
+			eval(variableBar + "()")
+		}
 	}
 }
 
@@ -447,7 +470,7 @@ function updateAreaNumbers() {
 }
 
 function currencyDisplay(id) {
-	variable = mainVariables[id] + 'ShowVariable'
+	variable = mainVariables[id].id + 'ShowVariable'
 	if (gameData[variable])
 		gameData[variable] = false
 	else
@@ -603,4 +626,16 @@ function indexing (id, variable) {
 		if (eval(id + '[i].id') == gameData[variable])
 			return i
 	}
+}
+
+function smartChange (id, x, limit) {
+	if (limit == undefined)
+		limit = infinity
+	
+	if (x >= 0) {
+		if (gameData[id] + x <= limit)
+			gameData[id] += x
+	}
+	else if (gameData[id] - x >= 0)
+		gameData[id] -= x
 }

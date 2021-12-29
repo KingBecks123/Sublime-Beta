@@ -1,208 +1,3 @@
-var loopNumberBasket = 0;
-var loopNumberGoldenLimes = 0;
-var loopNumberTimePlayed = 0;
-var loopNumberLimeRot = 0
-var loopNumbercurrentTask = 0;
-var numberOfBasicAchievements = 7;
-var numberOfSpecialAchievements = 2;
-var autoCollectingVariable = '(gameData.nourishment + 1) * 100 + autoCollectingRingAmount()'
-
-mainVariables       = ['limes'  , 'rottenLimes' , 'peeledLimes' , 'juice'  , 'coins'  , 'megaCoins' , 'alphaCoins' , 'betaCoins' , 'pies'   , 'pieCoins' , 'goldenLimes', 'realLimes', 'wisdom'];
-mainVariablesNames  = ['Limes'  , 'Rotten Limes', 'Peeled Limes', 'Juice'  , 'Coins'  , 'Mega Coins', 'Alpha Coins', 'Beta Coins', 'Pies'   , 'Pie Coins', 'Golden Limes', 'Real Limes', 'Wisdom'];
-
-mainVariablesColor  = ['#00B300', '#00B300'     , '#72B301'     , '#00B33D', '#AEB301', '#B40001'   , '#B37700'    , '#AEB301'   , '#964D1A', '#964D1A'  , '#AEB301', '#00B300'   , '#99DEFF'];
-mainVariablesColor2 = ['#00FF01', '#00FF01'     , '#A0FF01'     , '#00FF55', '#F8FF01', '#FE0000'   , '#FFAA01'    , '#F8FF01'   , '#C67848', '#C67848'  , '#F8FF01', '#00FF01'   , '#4DC3FF'];
-
-mainSkills =      ['keenEye' , 'rottenWisdom' , 'limebidextrous', 'intelligence', 'knifebidextrous', 'motivation', 'ambidextrous', 'bitterSpeed' ];
-mainSkillsNames = ['Keen Eye', 'Rotten Wisdom', 'Limebidextrous', 'Intelligence', 'Knifebidextrous', 'Motivation', 'Ambidextrous', 'Bitter Speed'];
-
-//Area Variables
-avs       = [ 
-	{
-		area: 'serf',
-		name: 'Serf',
-		backgroundColor: '#DEAD85',
-		//variables
-		v: [
-			{
-				id: 'rice',
-				name: 'Rice',
-				mainColor: '#DEAD85',
-				darkColor: '#BBBBBB',
-
-			},
-			{
-				id: 'coins',
-				name: 'Coins',
-				mainColor: '#B37700',
-				darkColor: '#B37700',
-
-			},
-		],
-	},
-]
-
-enlightenments = [
-	{
-		name: 'Genuine Rotten Wisdom',
-		id : 'genuineRottenWisdom',
-		goalName: 'Get ',
-		goalName2: ' rotten limes',
-		goal: 'gameData.rottenLimes >= goalAmount',
-		firstCompletionName: 'none',
-		perCompletionName: 'none',
-		perCompletionDifficulty: '10',
-	},
-	{
-		name: 'Limes Are Life',
-		id : 'limesAreLife',
-		goalName: 'Get ',
-		goalName2: ' limes',
-		goal: 'gameData.limes >= goalAmount',
-		firstCompletionName: 'none',
-		perCompletionName: 'none',
-		perCompletionDifficulty: '10',
-	},
-	{
-		name: 'Entrepreneurial',
-		id : 'entrepreneurial',
-		goalName: 'Get ',
-		goalName2: ' coins',
-		goal: 'gameData.coins >= goalAmount',
-		firstCompletionName: 'none',
-		perCompletionName: 'none',
-		perCompletionDifficulty: '10',
-	},
-	{
-		name: 'Advanced Entrepreneurial',
-		id : 'entrepreneurialAdvanced',
-		goalName: 'Get ',
-		goalName2: ' mega coins',
-		goal: 'gameData.megaCoins >= goalAmount',
-		firstCompletionName: 'none',
-		perCompletionName: 'none',
-		perCompletionDifficulty: '10',
-	},
-	{
-		name: 'The Key Lime',
-		id : 'theKeyLime',
-		goalName: 'Get ',
-		goalName2: ' pies',
-		goal: 'gameData.pies >= goalAmount',
-		firstCompletionName: 'none',
-		perCompletionName: 'none',
-		perCompletionDifficulty: '10',
-	},
-]
-
-enlightenmentHinderances = [
-	{
-		name: 'Decimation',
-		id : 'decimation',
-		affect: 'If any of your items can be divided by 10 you lose all of that item',
-		multiplier: '3',
-	},
-	{
-		name: 'Blight',
-		id : 'blight',
-		affect: 'Limes slowly rot',
-		multiplier: '3',
-	},
-	{
-		name: 'Resistance',
-		id : 'resistance',
-		affect: 'All delivery costs are quadrupled',
-		multiplier: '8',
-	},
-	{
-		name: 'Anticartography',
-		id : 'anticartography',
-		affect: 'All map costs are quadrupled',
-		multiplier: '4',
-	},
-	{
-		name: 'Famine',
-		id : 'famine',
-		affect: 'Collecting limes from clicking or auto collection does nothing',
-		multiplier: '4',
-	},
-]
-
-wisdomUpgrades = [
-	{
-		name: 'Minimum Rotten Limes',
-		id : 'minimumRottenLimes',
-		description: 'Increase base rotten limes per lime collection by 1',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 'none',
-	},
-	{
-		name: 'Minimum Limes',
-		id : 'minimumLimes',
-		description: 'Increase base limes per lime collection by 1',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 'none',
-	},
-	{
-		name: 'Lime Season',
-		id : 'limeSeason',
-		description: 'Doubles lime collection in all challenges',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 1,
-	},
-	{
-		name: 'Skill Savy',
-		id : 'skillSavy',
-		description: 'Doubles skill speed in all challenges',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 1,
-	},
-	{
-		name: 'Coin Safe',
-		id : 'coinSafe',
-		description: 'Increases starting coins by 1 in all challenges',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 'none',
-	},
-	{
-		name: 'Critical Acclaim',
-		id : 'criticalAcclaim',
-		description: 'Increase base respect per lime disease completion by 1',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 'none',
-	},
-	{
-		name: 'Beta Testing',
-		id : 'betaTesting',
-		description: 'Doubles all beta coin collection',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 1,
-	},
-	{
-		name: 'Pie-leasant',
-		id : 'pieleasant',
-		description: 'Increases pie employee potential charm by 1',
-		initialPrice: 1,
-		priceIncrease: '+= 1',
-		maxLevel: 'none',
-	},
-	{
-		name: 'Buy A Well',
-		id : 'buyAWell',
-		description: 'Continue your lime journey into the beyond',
-		initialPrice: 50,
-		priceIncrease: '+= 1',
-		maxLevel: 1,
-	},
-]
-
 function mainGameLoopSlow() {
 
 	
@@ -230,40 +25,37 @@ function mainGameLoopSlow() {
 	
 	if (gameData.currentEnlightenmentHinderance == 'blight') {
 		loopNumberLimeRot += 1
-		if(loopNumberLimeRot == 20 && gameData.limes > 0)
-		{
+		if(loopNumberLimeRot == 20 && gameData.limes > 0) {
 			gameData.limes -= 1
 			loopNumberLimeRot = 0
 		}
 	}
 	
-	if(gameData.isThereACustomer) {
-		if(gameData.customerWaitTime < 5)
-			update("customerButton", ":)")
-		else if(gameData.customerWaitTime >= 5 && gameData.customerWaitTime < 10)
-			update("customerButton", ":l")
-		else if(gameData.customerWaitTime >= 10 && gameData.customerWaitTime < 15)
-			update("customerButton", ":(")
-		else if (gameData.customerWaitTime == 15) {
-			gameData.isThereACustomer = 0
-			gameData.customerWaitTime = 0
-			update("customerButton", "  ")
-			update("couldFindCustomer", "The customer left")	
-		}
-	}
+	
+	if (gameData.isThereACustomer)
+		gameData.customerWaitTime += 1
 	else
-		update("customerButton", "  ")
-		
+		gameData.customerWaitTime = 0
+	
+	if (gameData.customerWaitTime >= 15) {
+		gameData.isThereACustomer = 0
+		gameData.customerWaitTime = 0
+	}
+	
+	
 	if (gameData.flourAsPieIngredient > 0 && gameData.juiceAsPieIngredient > 0 && gameData.pieConveyorBeltOn)
 		bakePie()
 	
+	if (gameData.bachelorsDegreeFinance) {
+		if(beckyRandom(2) == 1 && gameData.alphaCoinsExchangeRate < 200)
+			gameData.alphaCoinsExchangeRate += 1
+		else if (gameData.alphaCoinsExchangeRate > 50)
+			gameData.alphaCoinsExchangeRate -= 1
+	}
 	
 	updateFieldStuffSlow()
-	updateBrokerStuffSlow()
 	updateDiseaseStuffSlow()
 
-	
-	gameData.customerWaitTime += 1
 	moveBar('achievement')
 	updateMapTileAesthetic()
 	
@@ -578,7 +370,7 @@ function travelToNextVillage() {
 		for (i = 1; i <= numberOfSpecialAchievements; i++)
 			saveBeforeWipe('specialAchievement' + i)
 		
-		saveWipeValues = ['surveillanceCamera2', 'versionNumber', 'nationalJuiceMarketing', 'creditScore2', 'creditScore3', 'coinsMax', 'respectMilestone10000', 'unlockBenevolence', 'nationalTradeCert', 'bigGloves', 'desktopMode', 'nutritionists', 'megaCoinsInBankMax', 'betterTraining', 'showBarPercent', 'hideCompletedSkills', 'hideMaxedPurchases', 'researchers', 'upgradeMoreStorage', 'changeResearchersBy10Unlock', 'rottenActualWisdom', 'tickspeed', 'timePlayed'];
+		saveWipeValues = ['surveillanceCamera2', 'versionNumber', 'nationalJuiceMarketing', 'creditScore2', 'creditScore3', 'coinsMax', 'respectMilestone10000', 'unlockBenevolence', 'nationalTradeCert', 'bigGloves', 'nutritionists', 'megaCoinsInBankMax', 'betterTraining', 'showBarPercent', 'hideCompletedSkills', 'hideMaxedPurchases', 'researchers', 'upgradeMoreStorage', 'changeResearchersBy10Unlock', 'rottenActualWisdom', 'tickspeed', 'timePlayed'];
 
 		for (let i = 0; i < saveWipeValues.length; i++) {
 			saveBeforeWipe(saveWipeValues[i])		
@@ -694,14 +486,12 @@ function storageUnlockFunction (x) {
 }
 
 function changeZoomSize() {
-	if (gameData.changeZoomSize == 150) {
-		gameData.changeZoomSize = 100
-		document.body.style.zoom=1.0;
-	}
-	else {
-		gameData.changeZoomSize += 10
-		document.body.style.zoom= gameData.changeZoomSize / 100;
-	}
+	if (gameData.changeZoomSize == 160)
+		gameData.changeZoomSize = 60
+	else
+		gameData.changeZoomSize += 20
+	
+document.body.style.zoom = gameData.changeZoomSize / 100
 }
 
 function benevolenceToggle() {

@@ -2,40 +2,31 @@ function updateAfterLoad() {
 
 	calculateOfflineProgress()
 
-	for (let i = 0; i < mainSkills.length; i++) {
-		restartBar(mainSkills[i])
-
-		if (gameData[mainSkills[i] + 'SkillLevel'] > gameData[mainSkills[i] + 'SkillLevelMax']) {
-			gameData[mainSkills[i] + 'SkillLevel'] = gameData[mainSkills[i] + 'SkillLevelMax']
-		}
+	for (let i = 0; i < skills.length; i++) {
+		restartBar(skills[i].id)
 	}
-
-	restartBar("learnANewSkill")
-	restartBar("juicer")
-	restartBar("peeler")
-	restartBar("advertise")
-	restartBar("eat")
-	restartBar("teach")
-	restartBar("watertight")
-	restartBar("surveying")
-	restartBar("benevolence")
-	restartBar("coinsToAlpha")
-	restartBar("convertCoinsNow")
-	restartBar("alphaToBeta")
-	restartBar("findPieCustomers")
-	restartBar("bakePie")
-	restartBar("harvestRice")
-	restartBar("scavenge")
-	restartBar("delivery")
-
-
-
+	
+	barsToRestart = ["learnANewSkill", "juicer", "peeler", "advertise", "eat", "teach", "coinsToAlpha", "convertCoinsNow", "alphaToBeta", "findPieCustomers", "bakePie", "harvestRice", "delivery", "scavenge"]
+	for (let i = 0; i < barsToRestart.length; i++)
+		restartBar(barsToRestart[i])
+	
+	for (i = 0; i < science.length; i++)
+		restartScience(science[i].id, i)
+	
+	function restartScience(id, i) {
+		if (canStartBar(id))
+			gameData[id + 'BarRunning'] = false
+		else
+			scienceMover(i)
+	}
+	
 	if (gameData.bellowsBar > 0) {
 		bellowsBar()
 	}
 
 	moveBar('delivery')
 	moveBar('bakePie')
+	moveBar('findPieCustomers')
 	moveWell()
 
 	if (gameData.workingBar <= 100 && (gameData.workingBar != 0 || gameData.employeeWorking > 0)) {
@@ -117,18 +108,18 @@ function updateValues() {
 	}
 	
 	for (let i = 0; i < mainVariables.length; i++) {
-		updateNumber(mainVariables[i])
+		updateNumber(mainVariables[i].id)
 		
 		if (gameData.currentEnlightenmentHinderance == 'decimation' && gameData[mainVariables[i]] % 10 == 0)
-			gameData[mainVariables[i]] = 0
+			gameData[mainVariables[i].id] = 0
 	}
 
 	for (let i = 1; i < mainVariables.length; i++) {
 		
-		if (gameData[mainVariables[i]] > 0)
-			gameData[mainVariables[i] + 'UnlockedVariable'] = true
+		if (gameData[mainVariables[i].id] > 0)
+			gameData[mainVariables[i].id + 'UnlockedVariable'] = true
 
-		if (gameData[mainVariables[i] + 'UnlockedVariable'])
+		if (gameData[mainVariables[i].id + 'UnlockedVariable'])
 			tabs('currencyDisplay(' + i + ')', 'inline-block')
 		else
 			hide('currencyDisplay(' + i + ')')
@@ -159,7 +150,6 @@ function updateValues() {
 		,"textForTimePlayed"                 , "Total Time Played: " + gameData.timePlayed.toLocaleString() + " Seconds"
 		,"textForLakes"                      , gameData.limeDiseaseLakes.toLocaleString() + " Lakes"
 		,"currentSpeedEmployee"              , "Current speed: " + gameData.employeeCurrentSpeed.toLocaleString() + " limes per minute."
-		,"speedEmployee"                     , "Speed: " + gameData.employeeSpeed.toLocaleString() + "% Of What I'm Taught."
 		,"textForJuicePricePrice"            , "Price: " + juicePricePrice.toLocaleString() + " Coins"
 		,"textForNourishmentPrice"           , "You Need: " + gameData.nourishmentPrice.toLocaleString() + " Limes"
 		,"juicersAmount"                     , gameData.juicers.toLocaleString() + " / " + gameData.juicersMax.toLocaleString() + " Juicers"
@@ -167,10 +157,9 @@ function updateValues() {
 		,"basketsAmount"                     , gameData.baskets.toLocaleString() + " / " + gameData.basketsMax.toLocaleString() + " Baskets"
 		,"maxBaskets"                        , gameData.basketsMax.toLocaleString() + " baskets fit under the current tree."
 		,"buyMegaCoinsTimes"                 , "Transfer times: " + gameData.buyMegaCoinsTimes + " / " + gameData.buyMegaCoinsTimesMax
-		,"textForAutomaticallyCollectsLimes" , "Automatically collects limes at " + (gameData.shoes + 1) + "/s"
+		,"textForAutomaticallyCollectsLimes" , "Automatically gather at " + (gameData.shoes + 1) + " / second"
 		,"textForBetterTraining"             , "Current maximum: " + (gameData.betterTraining + 10).toLocaleString() + "00%"
 		,"textForCoinsMax"                   , "Current maximum: " + gameData.coinsMax.toLocaleString() + " Coins"
-		,"textForCurrentEmployees"           , "Current Employees: " + gameData.employees.toLocaleString() + " / " + gameData.maxEmployees.toLocaleString()
 		,"numberOfCivilians"                 , "Number Of Civilians: " + gameData.civiliansTotal.toLocaleString()
 		,"betterTrainingPrice"               , "Price: " + gameData.betterTraining.toLocaleString() + " Mega Coins"
 		,"sellYourJuiceAmount"               , "You Will Deliver " + gameData.juiceBulkAmountToggle.toLocaleString() + " / " + gameData.juiceBulkAmountMax.toLocaleString() + " Juice"
@@ -228,23 +217,8 @@ function updateValues() {
 	} else {
 		update("workingEmployee", "Employee is idle.")
 	}
-	if (gameData.applicationReady == 1) {
-		update("application",
-			"<br>" +
-			"Skills: Can Collect Limes." + "<br>" +
-			"Speed: " + gameData.applicantSpeed.toLocaleString() + "% Of What I'm Taught." + "<br>" +
-			"Price: " + gameData.applicantPrice.toLocaleString() + " Coins." + "<br>" +
-			"Wages: " + gameData.applicantWage.toLocaleString() + " Coins Per Minute." + "<br>" +
-			"Hunger: " + gameData.applicantHunger.toLocaleString() + " Limes Per Second." + "<br>" +
-			"<br>"
-		)
-
-
-		showBasicDiv("applicationInfo")
-	} else {
+	if (!gameData.applicationReady)
 		update("application", "Pin applications here")
-		hide("applicationInfo")
-	}
 
 	updateHiringArea()
 
@@ -254,8 +228,8 @@ function updateValues() {
 	moveBasket()
 
 
-	for (let i = 0; i < mainSkills.length; i++) {
-		update(mainSkills[i] + "SkillLevel", gameData[mainSkills[i] + "SkillLevel"] + " / " + gameData[mainSkills[i] + "SkillLevelMax"])
+	for (let i = 0; i < skills.length; i++) {
+		update(skills[i].id + "SkillLevel", gameData[skills[i].id + "SkillLevel"] + " / " + gameData[skills[i].id + "SkillLevelMax"])
 	}
 
 	update("rottenWisdom", 100 * gameData.rottenWisdomSkillLevel / gameData.rottenWisdomSkillLevelMax + "% Chance")
@@ -285,15 +259,12 @@ function updateValues() {
 	else
 		gameData.juiceBulkAmountMax = 100
 
-	if (gameData.pinUnlock == 1) {
-		hide("pinUnlockDiv")
+	if (gameData.pinUnlock) {
 		var x = document.getElementsByClassName("pinButton");
 		for (i = 0; i < x.length; i++) {
 			x[i].style.display = "inline-block";
 		}
-
-	} else
-		showBasicDiv("pinUnlockDiv")
+	}
 
 
 
@@ -413,14 +384,6 @@ function updateValues() {
 	else
 		hide("buySkillToggler")
 
-
-	if (gameData.pieBucket == 1 && gameData.pieFlourBucket == 1)
-		showBasicDiv("bucketThinSteelPlating")
-	else
-		hide("bucketThinSteelPlating")
-
-	update("bucketHeight", "Current heights: " + (gameData.bucketThinSteelPlating * 5 + 20).toLocaleString() + " Units")
-
 	if (gameData.diseaseControlFinished == 1) {
 		hide("diseaseControlStart")
 		tabs("startDiseaseTask", "block")
@@ -451,17 +414,11 @@ function updateValues() {
 	else
 		update("deliveryToggleStandardButton", "Hyper Delivery")
 
-
-	if (gameData.diseaseTileSymbols == 0)
-		update("diseaseTileSymbolsButton", "Disease Tiles: Blank")
-	else
-		update("diseaseTileSymbolsButton", "Disease Tiles: Symbols")
-
 	if (gameData.shiftClickOption) {
 		update("shiftClickOption", "Don't Toggle: Shift Click")
 		tabs("toggleActionsButton", "none")
 	} else {
-		update("shiftClickOption", "Don't Toggle: Button Option")
+		update("shiftClickOption", "Don't Toggle: Button")
 		if(gameData.learnANewSkill > -2)
 			tabs("toggleActionsButton", "inline-block")
 	}
@@ -475,11 +432,6 @@ function updateValues() {
 		hide("decreaseJuiceSoldButton")
 		hide("increaseJuiceSoldButton")
 	}
-
-	if (gameData.deliveryManager == 0 && gameData.maps >= 3)
-		showBasicDiv("buyADeliveryManager")
-	else
-		hide("buyADeliveryManager")
 
 
 	if (gameData.respectMilestone10000) {
@@ -507,23 +459,11 @@ function updateValues() {
 	if (gameData.maps > 1) {
 		tabs("hiringAreaButton", "inline-block")
 		tabs("marketStore", "inline-block")
-		hide("buyAnotherMapDiv")
 	}
-
-	if (gameData.maps == 2) {
-		showBasicDiv("buyThirdMapDiv")
-	} else {
-		hide("buyThirdMapDiv")
-	}
-	
-	if (gameData.maps == 3)
-		showBasicDiv("buyFourthMapDiv")
 	
 	
 	if(gameData.maps > 3)
-	{
-		hide("buyFourthMapDiv")
-		showBasicDiv("tasksButton")
+	{showBasicDiv("tasksButton")
 	}
 
 	if (gameData.maps > 2 || gameData.villageNumber > 1) {
@@ -554,17 +494,13 @@ function updateValues() {
 		hide("fasterTransportDiv")
 	}
 
-	if (gameData.maps > 3)
-	{
-		tabs("diseaseTileSymbolsButton", "inline-block")
+	if (gameData.maps > 3) {
 		update("specialAchievement2", "Buy a Giant Map after only sending one delivery in that town")
 
 		if (gameData.respectBillboard == 0)
 			tabs("respectBillboard", "inline-block")
 		else
 			hide("respectBillboard")
-	} else {
-		hide("diseaseTileSymbolsButton")
 	}
 	
 	if (gameData.maps > 4) {
@@ -581,9 +517,9 @@ function updateValues() {
 
 	if (gameData.maps >= 2 && gameData.bulkBuyUnlock == 0) {
 		tabs("bulkBuyUnlockDiv", "block")
-	} else if (gameData.maps < 2 && gameData.bulkBuyUnlock == 1) {
+	} else if (gameData.maps < 2 && gameData.bulkBuyUnlock) {
 		hide("bulkBuyUnlockDiv")
-	} else if (gameData.maps >= 2 && gameData.bulkBuyUnlock == 1) {
+	} else if (gameData.maps >= 2 && gameData.bulkBuyUnlock) {
 		hide("bulkBuyUnlockDiv")
 
 		if (gameData.bulkBuyUnlock2) {
@@ -600,19 +536,12 @@ function updateValues() {
 
 
 
-	if (gameData.maps >= 2 && gameData.storageUnlock == 0) {
+	if (gameData.maps >= 2 && !gameData.storageUnlock) {
 		tabs("storageUnlockDiv", "block")
-		hide("storageDiv")
 	} else if (gameData.maps < 2) {
 		hide("storageUnlockDiv")
-		hide("storageDiv")
-	} else if (gameData.maps >= 2 && gameData.storageUnlock == 1) {
-		tabs("storageDiv", "block")
+	} else if (gameData.maps >= 2 && gameData.storageUnlock) {
 		hide("storageUnlockDiv")
-
-		if (gameData.storageJuicersUnlock == 1 && gameData.storagePeelersUnlock == 1) {
-			hide("storageDiv")
-		}
 	}
 	
 	if (gameData.fork == 0 && gameData.learnANewSkill > -2)
@@ -625,20 +554,6 @@ function updateValues() {
 		showBasicDiv('buyShoesDiv')
 	else
 		hide('buyShoesDiv')
-
-	if (gameData.hideCompletedSkills == 0)
-		update("hideCompletedSkillsButton", "Completed Skills Shown")
-	else
-		update("hideCompletedSkillsButton", "Completed Skills Hidden")
-
-
-	if (gameData.hideMaxedPurchases == 0) {
-		update("hideMaxedPurchasesButton", "Maxed Purchases Shown")
-	} else {
-		update("hideMaxedPurchasesButton", "Maxed Purchases Hidden")
-	}
-
-
 
 	if (gameData.hasAdvertised && !gameData.surveillanceCamera)
 		showBasicDiv("offlineEmployee")
@@ -686,11 +601,9 @@ function updateValues() {
 	}
 
 
-	//Check Hide
 	checkHide(gameData.advertisingLevel2, "advertisingLeaflets")
 	checkHide(gameData.advertisingLevel3, "advertisingBillboard")
-	checkHide(gameData.storagePeelersUnlock, "storagePeelersDiv")
-	checkHide(gameData.storageJuicersUnlock, "storageJuicersDiv")
+
 	checkHide(gameData.changeResearchersBy10Unlock, "changeResearchersBy10Unlock")
 	checkShow(gameData.changeResearchersBy10Unlock, "upgradeChangeResearchersBy10")
 	checkShow(gameData.rottenActualWisdom, "upgradeRottenActualWisdomUnlock")
@@ -706,32 +619,26 @@ function updateValues() {
 	}
 
 	if (gameData.lookAround >= 3) {
-		if (gameData.hideMaxedPurchases == 1 && gameData.juicers == gameData.juicersMax) {
+		if (gameData.hideMaxedPurchases == 1 && gameData.juicers == gameData.juicersMax)
 			hide("buyAJuicerDiv")
-		} else {
+		else
 			showBasicDiv("buyAJuicerDiv")
-		}
 
-		if (gameData.hideMaxedPurchases == 1 && gameData.baskets == gameData.basketsMax) {
+		if (gameData.hideMaxedPurchases == 1 && gameData.baskets == gameData.basketsMax)
 			hide("buyABasketDiv")
-		} else {
+		else
 			showBasicDiv("buyABasketDiv")
-		}
 		
-		if (gameData.maps > 0) {
+		if (gameData.maps > 0)
 			hide("buyAMapDiv")
-		} else {
+		else
 			showBasicDiv("buyAMapDiv")
-		}
 		
-		if (gameData.scavengeUnlocked) {
+		if (gameData.scavengeUnlocked)
 			hide("scavengingUnlock")
-		} else {
+		else
 			showBasicDiv("scavengingUnlock")
-		}
 	}
-
-	checkHide(gameData.tomes, "tomeDiv")
 
 	for (i = 1; i <= 3; i++) {
 		if (gameData.tomes == i)
@@ -764,28 +671,8 @@ function updateValues() {
 
 	if (gameData.knife >= 1) {
 		showBasicDiv("knifeDiv")
-
-		if (gameData.hideMaxedPurchases == 1 && gameData.peelers == gameData.peelersMax) {
-			hide("buyAPeelerDiv")
-		} else if (gameData.knifebidextrousSkillLevel == gameData.knifebidextrousSkillLevelMax) {
-			showBasicDiv("buyAPeelerDiv")
-		}
-
-		if (gameData.knifebidextrousSkillLevel == gameData.knifebidextrousSkillLevelMax && gameData.maps > 1) {
-			showBasicDiv("sharperPeelerDiv")
-		} else {
-			hide("sharperPeelerDiv")
-		}
-
-
-		hide("buyKnifeDiv")
-	} else {
-		hide("buyAPeelerDiv")
-		hide("sharperPeelerDiv")
 	}
 
-
-	checkHide(gameData.sharperPeelers, "sharperPeelerDiv")
 	checkHide(gameData.silkRobe, "buyARobe")
 	checkHide(gameData.unlockDiseaseAreaSwamp, "unlockDiseaseAreaSwamp")
 
@@ -848,7 +735,7 @@ function updateValues() {
 		document.getElementById('learnANewSkillButton').style.backgroundColor = 'darkgray';
 		gameData.learnANewSkillBar = 100;
 	} else
-		document.getElementById('learnANewSkillButton').style.backgroundColor = '#FFBB9A';
+		document.getElementById('learnANewSkillButton').style.backgroundColor = '#DEAD85';
 
 
 
@@ -873,9 +760,9 @@ function updateValues() {
 		hide("goldenLimesInfo")
 
 
-	for (let i = 0; i < mainSkills.length; i++) {
+	for (let i = 0; i < skills.length; i++) {
 		if (gameData.learnANewSkill >= i) {
-			showOrHideSkill(mainSkills[i])
+			showOrHideSkill(skills[i].id)
 		}
 	}
 	
@@ -909,10 +796,6 @@ function updateValues() {
 	}
 
 	update("endStats", "Total Time Played: " + gameData.timePlayed.toLocaleString() + " Seconds")
-	update("bucketThinSteelPlatingPrice", "Price: " + (gameData.bucketThinSteelPlating * 5 + 20).toLocaleString() + " Pie Coins")
-	
-	if(gameData.hasSoldPie)
-		checkHideOrShow(gameData.trainTransport, 'trainTransportDiv')
 
 	if(gameData.trainTransport)
 		tabs('deliveryToggleTrainButton', 'inline-block')
@@ -959,7 +842,50 @@ function updateValues() {
 		show('allDiseaseControlTask')
 		update('allDiseaseControlTaskVis', 'Hide Disease Control Task')
 	}
-	
-	 updateFieldStuff()
 
+	updateFieldStuff()
+	update("pieMerchantPieCoinPrice"     , "Pie Coin Wages: "    + gameData.pieMerchantPieCoinPrice.toLocaleString() + ".")
+	update("pieMerchantBetaCoinPrice"    , "Beta Coin Wages: "   + gameData.pieMerchantBetaCoinPrice.toLocaleString() + ".")
+	update("pieMerchantMaxPay"           , "Max Wage Advances: " + gameData.pieMerchantMaxPay.toLocaleString() + ".")
+	update("pieMerchantCharm"            , "Charm: "             + gameData.pieMerchantCharm.toLocaleString() + ".")
+	update("speedEmployee", "Speed: " + gameData.employeeSpeed.toLocaleString() + "% of what I'm taught.")
+	update("wageEmployee", "Wages: " + gameData.employeeWage.toLocaleString() + " Coins per minute.")
+	update("hungerEmployee", "Hunger: " + gameData.employeeHunger.toLocaleString() + " Limes per second.")
+	
+	if (gameData.limeDiseaseLakes < 10)
+		benevolenceRespectIncreaseText = 0
+	else
+		benevolenceRespectIncreaseText = (Math.pow(2, gameData.limeDiseaseLakes - 10)) * gameData.benevolence
+	
+	update("benevolenceRespectIncrease", "Respect increase:  " + benevolenceRespectIncreaseText.toLocaleString())
+	checkShowOrHide(gameData.benevolence, "benevolence")
+	
+	if (!gameData.unlockBenevolence && gameData.respectMilestone1000)
+		showBasicDiv("unlockBenevolence")
+	else
+		hide("unlockBenevolence")
+	
+	for (let i = 0; i < divs.length; i++) {
+		for (let k = 0; k < divs[i].elements.length; k++) {
+			elem = divs[i].elements[k]
+			if (elem.format == 'basicUnlock') {
+				if (elem.show != undefined) {
+					if (elem.show() && gameData[elem.buy] == 0)
+						show(elem.buy + 'UnlockDiv')
+					else
+						hide(elem.buy + 'UnlockDiv')
+				}
+			}
+			else {
+				if (elem.update != undefined)
+					elem.update()
+				if (elem.show != undefined) {
+					if (elem.show())
+						show(elem.id)
+					else
+						hide(elem.id)
+				}
+			}
+		}
+	}
 }

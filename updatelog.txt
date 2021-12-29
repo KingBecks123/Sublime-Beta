@@ -1,5 +1,26 @@
 Update Log
 
+21/12/27
+	Rewrote all the code for sciences
+
+21/12/26
+	Rewrote the enlightenment completion code to take the hinderance into consideration
+	Made collect limes line up with other buttons
+	Widened the trade tab for easier use :)
+	Made the options UI more pretty
+	Removed desktop / mobile mode
+	Fixed misaligned skills divs
+	Changed learn a new skill color to the default special button color
+	Changed buy juicers color
+	Reworded the toggle actions button
+	Removed disease tile symbol option
+	Reworded collect limes to gather
+	Fixed bug with pie bar not filling after reloading and filling without having sell pie selected
+	Completely reworked the pie bar
+	Completely reworked the Coins To Alpha bar
+	Completely reworked the Instant Skiller to work while a skill is running
+	Completely reworked the hiring / application system
+
 21/12/21
 	Fixed bug with beta coin bar restarting too quickly
 	Fixed tasks not immediately showing up

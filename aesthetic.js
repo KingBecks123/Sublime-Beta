@@ -15,24 +15,6 @@ limesRelatedAccent = "#4DFE89";
 yellowAccent = "#FCFF4E";
 
 function addAesthetic() {
-	var one = document.getElementById('skillsSection1')
-	var two = document.getElementById('skillsSection2')
-	var skills = document.getElementById('skills')
-	
-	if (gameData.desktopMode == 0) {
-		skills.style.width = '380px'
-		one.style.position = 'relative'
-		two.style.position = 'relative'
-		update("desktopModeButton", "In Mobile Mode")
-	} else {
-		skills.style.width = '760px'
-		one.style.top = '0'
-		one.style.position = 'absolute'
-		two.style.position = 'absolute'
-		two.style.right = '0'
-		update("desktopModeButton", "In Desktop Mode")
-	}
-	
 	twoToggleButtons('foodToggleRottenLimesButton', 'foodToggleLimesButton', gameData.foodTypeToggle)
 	twoToggleButtons('juicePeeledLimesToggleButton', 'juiceLimesToggleButton', gameData.limeTypeToJuice)
 
@@ -67,6 +49,9 @@ function addAesthetic() {
 	toggleAesthetic("pieConveyorBeltOn")
 	toggleAesthetic("toggleActions")
 	toggleAesthetic("textForA2BBrokerAmountToggle")
+	toggleAesthetic("hideCompletedSkills")
+	toggleAesthetic("hideMaxedPurchases")
+
 
 	currentTaskAesthetic('peelerPeel')
 	currentTaskAesthetic('peelerPeelMax')
@@ -78,17 +63,17 @@ function addAesthetic() {
 	currentTaskAesthetic('scavenge')
 
 
-	ifMaxDarkGray("basket")
-	ifMaxDarkGray("juicer")
-	ifMaxDarkGray("peeler")
+	ifMaxDarkGray("basket", '#DEAD85')
+	ifMaxDarkGray("juicer", '#99FF99')
+	ifMaxDarkGray("peeler", accent4)
 	
-	function ifMaxDarkGray(x) {
+	function ifMaxDarkGray(x, color) {
 		button = "buyA" + jsUcfirst(x) + "Button"
 
 		if (gameData[x + 's'] == gameData[x + 'sMax']) {
 			colorChanger(button, grayAccent)
 		} else {
-			colorChanger(button, accent4)
+			colorChanger(button, color)
 		}
 	}
 
@@ -181,11 +166,6 @@ function addAesthetic() {
 	else
 		colorChanger('checkResultsButton', grayAccent)
 
-	if (gameData.increaseJuicePricePermanance < 1)
-		colorChanger('increaseJuicePriceButton', accent4)
-	else
-		colorChanger('increaseJuicePriceButton', '#FF999A')
-
 	if (gameData.isAutoCollecting)
 		colorChanger('autoCollectingButton', grayAccent)
 	else
@@ -204,14 +184,6 @@ function addAesthetic() {
 	function currentTaskAesthetic(x) {
 		button = x + "Button"
 		if (gameData.currentTask == x || gameData.currentTask2 == x)
-			colorChanger(button, accent4Dark)
-		else
-			colorChanger(button, accent4)
-	}
-
-	function currentSkillAesthetic(x) {
-		button = x + "Button"
-		if (gameData.currentSkill == x)
 			colorChanger(button, accent4Dark)
 		else
 			colorChanger(button, accent4)
@@ -238,8 +210,12 @@ function addAesthetic() {
 			x[i].style['padding'] = "1px 10px 1px 10px";
 			x[i].style['border-radius'] = "12px";
 		}
-		for (let i = 0; i < mainSkills.length; i++) {
-			currentSkillAesthetic(mainSkills[i])
+		for (let i = 0; i < skills.length; i++) {
+			button = skills[i].id + "Button"
+			if (gameData.currentSkill == skills[i].id)
+				colorChanger(button, accent4Dark)
+			else
+				colorChanger(button, accent4)
 		}
 	} else {
 		for (i = 0; i < x.length; i++) {
@@ -295,14 +271,13 @@ function changeVariablesColorAesthetic() {
 			color = "#99DEFF"
 			colorDark = "#4DC3FF"
 		}
-		else
-		{
-			color = mainVariablesColor[i]
-			colorDark = mainVariablesColor2[i]
+		else {
+			color = '#' + mainVariables[i].mainColor
+			colorDark = '#' + mainVariables[i].secondaryColor
 		}
 		
-		colorChangerText('textFor' + jsUcfirst(mainVariables[i]) + 'Div', colorDark)
-		colorChangerText('textFor' + jsUcfirst(mainVariables[i]), color)
+		colorChangerText('textFor' + jsUcfirst(mainVariables[i].id) + 'Div', colorDark)
+		colorChangerText('textFor' + jsUcfirst(mainVariables[i].id), color)
 	}
 	
 	for (let i = 0; i < avs.length; i++) {
